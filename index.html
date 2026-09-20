@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azu Modification — Brawlhalla Colour Scheme Editor</title>
+  <meta name="description" content="Visual colour scheme editor for Brawlhalla ColorSchemeTypes with live preview, code export, and sharing.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Azu Modification">
+  <meta property="og:title" content="Azu Modification — Brawlhalla Colour Scheme Editor">
+  <meta property="og:description" content="Visual colour scheme editor for Brawlhalla ColorSchemeTypes.">
+  <meta property="og:url" id="meta-og-url" content="https://talafhah1.github.io/ColourGuyElfOnline/">
+  <meta property="og:image" id="meta-og-image" content="https://dummyimage.com/1200x630/0a1324/e9f2f0.png&text=Azu+Modification">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Azu Modification — Brawlhalla Colour Scheme Editor">
+  <meta name="twitter:description" content="Visual colour scheme editor for Brawlhalla ColorSchemeTypes.">
+  <meta name="twitter:image" id="meta-twitter-image" content="https://dummyimage.com/1200x630/0a1324/e9f2f0.png&text=Azu+Modification">
+
+  <link rel="icon" type="image/png" href="data:,">
+
+  <!-- App styles (CodeMirror is bundled in codemirror.bundle.js, JSZip
+       inside app.js, further down), so the app works fully offline —
+       no CDN, no internet needed). -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ======== Header ======== -->
+  <header class="header">
+    <div class="header-logo">
+      <img class="header-logo-img" src="data:image/png;base64,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" width="28" height="28" alt="Logo">
+      <span class="header-title">Azu <span class="header-title-thin">Modification</span></span>
+    </div>
+    <div class="header-actions">
+      <div class="donate-wrap" id="donate-wrap">
+        <button id="btn-donate" class="btn btn-donate" type="button">Donate</button>
+        <div class="donate-popover" id="donate-popover">
+          <p class="donate-popover-text">If u like my work ill be gratefull if u donate me</p>
+          <a class="donate-popover-link" href="https://www.paypal.com/paypalme/osoreo" target="_blank" rel="noopener noreferrer">Open PayPal ↗</a>
+        </div>
+      </div>
+      <button id="btn-brawlhalla-path" class="btn btn-icon-only" type="button" title="Set your Brawlhalla folder"></button>
+      <button id="btn-customize" class="btn btn-icon-only" type="button" title="Customize appearance (background, text colour, dark mode)"></button>
+    </div>
+  </header>
+
+  <!-- ======== Tabs ======== -->
+  <div class="tabs-bar" id="tabs-bar" role="tablist" aria-label="Work tabs"></div>
+
+  <!-- ======== Toolbar ======== -->
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <div id="game-dd"></div>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group">
+      <button id="btn-randomise" class="btn" type="button" title="Randomise colours"><span class="btn-icon"></span><span class="btn-label">Randomise</span></button>
+      <div class="toolbar-hue-group" title="Swap two components (rows) or just two individual colour cells">
+        <span class="btn-icon toolbar-swap-icon"></span>
+        <span class="btn-label toolbar-hue-label">Swap</span>
+        <button id="btn-swap" class="btn btn-sm" type="button" title="Swap two whole components (rows)">Row</button>
+        <button id="btn-swap-cell" class="btn btn-sm" type="button" title="Swap just two individual colour cells">Cell</button>
+      </div>
+      <button id="btn-shade" class="btn" type="button" title="Auto shade from base colours"><span class="btn-icon"></span><span class="btn-label">Auto Shade</span></button>
+      <div class="toolbar-hue-group" title="Shift the hue of the currently selected row">
+        <button id="btn-hue-minus" class="btn btn-sm btn-icon-only" type="button" title="Shift selected row's hue -15° (keeps each shade's saturation/brightness)">&#8249;</button>
+        <span class="btn-label toolbar-hue-label">Hue</span>
+        <button id="btn-hue-plus" class="btn btn-sm btn-icon-only" type="button" title="Shift selected row's hue +15° (keeps each shade's saturation/brightness)">&#8250;</button>
+      </div>
+      <div class="toolbar-hue-group" title="Force a specific tone onto the whole selected row, even if it currently has no saturation (Hue ± only rotates whatever saturation a cell already has, so it can't put colour into a grey row)">
+        <input type="color" id="tint-row-color" value="#4d95a8" title="Pick the tone to apply to the whole row">
+        <span class="btn-label toolbar-hue-label">Tint</span>
+        <button id="btn-tint-row" class="btn btn-sm" type="button" title="Apply the picked tone to every shade in the selected row">Apply</button>
+      </div>
+      <div class="toolbar-hue-group" title="Darken/lighten the currently selected row (keeps hue and saturation)">
+        <button id="btn-bright-minus" class="btn btn-sm btn-icon-only" type="button" title="Darken selected row (keeps each shade's hue/saturation)">&#9662;</button>
+        <span class="btn-label toolbar-hue-label">Bright</span>
+        <button id="btn-bright-plus" class="btn btn-sm btn-icon-only" type="button" title="Lighten selected row (keeps each shade's hue/saturation)">&#9652;</button>
+      </div>
+      <button id="btn-gradient" class="btn" type="button" title="Pick 2 cells in the same row: the ones in between will fade gradually"><span class="btn-icon"></span><span class="btn-label">Gradient</span></button>
+      <button id="btn-invert" class="btn" type="button" title="Invert all colours"><span class="btn-icon"></span><span class="btn-label">Invert</span></button>
+      <div class="toolbar-hue-group" title="Desaturate colours to greyscale">
+        <span class="btn-icon toolbar-desat-icon"></span>
+        <span class="btn-label toolbar-hue-label">Grey</span>
+        <button id="btn-desat-col" class="btn btn-sm" type="button" title="Desaturate only the selected column to greyscale">Col</button>
+        <button id="btn-desat-all" class="btn btn-sm" type="button" title="Desaturate every column to greyscale">All</button>
+      </div>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group shade-intensity-group">
+      <label for="shade-intensity" class="toolbar-label" title="Controls how strong Auto Shade / Randomise / row-fill shading is (Lite ↔ Strong)">Shading</label>
+      <input id="shade-intensity" type="range" min="0" max="2" step="0.1" value="1" title="Shading intensity">
+      <span id="shade-intensity-value" class="toolbar-value">Normal (100%)</span>
+    </div>
+  </div>
+
+
+  <!-- ======== Main 3-column layout ======== -->
+  <main class="app-main">
+
+    <!-- Left: Colour Picker -->
+    <aside class="panel panel-picker">
+      <h2 class="panel-title">Colour Picker</h2>
+      <div id="picker-panel"></div>
+    </aside>
+
+    <!-- Centre: Colour Grid (hero) -->
+    <section class="panel panel-grid">
+      <div class="grid-type-row">
+        <div class="sprite-type-group" title="Which sprite type the default palette and sprite colour-matching should use">
+          <button id="sprite-type-color-btn" class="btn btn-sm sprite-type-color-btn" type="button" title="Color — the game's own 30-colour ColorSchemeType layout">Color</button>
+          <div id="sprite-type-shared-dd" title="Dash, Gravity Cancel, Last Jump, and any custom/signature sprite type — shared, full 36-colour layout"></div>
+        </div>
+        <button id="btn-sprite-types-save" class="btn btn-sm btn-icon-only" type="button" title="Save current colours as a new Sprite Type (writes the XML automatically)"></button>
+        <button id="btn-sprite-types-folder" class="btn btn-sm btn-icon-only" type="button" title="Open custom sprite types folder (drop XML files here, then Reload)"></button>
+        <button id="btn-sprite-types-reload" class="btn btn-sm btn-icon-only" type="button" title="Reload custom sprite types from folder"></button>
+      </div>
+      <div id="grid-panel"></div>
+      <div class="grid-history" aria-label="Colour history timeline">
+        <button id="btn-undo" class="btn btn-sm btn-icon-only" type="button" title="Undo" disabled>
+          <span class="btn-icon"></span>
+        </button>
+        <div id="history-strip" class="history-strip" role="list" aria-label="History states"></div>
+        <button id="btn-redo" class="btn btn-sm btn-icon-only" type="button" title="Redo" disabled>
+          <span class="btn-icon"></span>
+        </button>
+        <button id="btn-history-delete" class="btn btn-sm btn-icon-only btn-danger" type="button" title="Delete selected history state" disabled>
+          <span class="btn-icon"></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Right: Code Editor -->
+    <aside class="panel panel-editor">
+
+      <div class="sprite-section" id="section-sprite">
+        <div class="sprite-toolbar section-header" onclick="if (!event.target.closest('button, input, select')) toggleSection('section-sprite')">
+          <h2 class="panel-title sprite-title">Sprite</h2>
+          <div class="sprite-toolbar-btns">
+            <button id="btn-sprite-upload" class="btn btn-sm" type="button" title="Upload sprite (select several PNG/JPG or several SVG frames to preview them recoloured as an animation, in filename order — don't mix the two)" onclick="event.stopPropagation()"><span class="btn-icon"></span><span class="btn-label">Upload sprite</span></button>
+            <input type="file" id="sprite-file-input" accept="image/*,.svg,image/svg+xml" multiple hidden>
+            <button id="btn-sprite-zip-colors" class="btn btn-sm" type="button" title="Upload a .zip of SVG sprites, a .zip of .swf files, or one/more .swf files, and list every distinct colour used across the ones you pick" onclick="event.stopPropagation()"><span class="btn-icon"></span><span class="btn-label">Analyze</span></button>
+            <input type="file" id="sprite-zip-colors-input" accept=".zip,application/zip,.swf" multiple hidden>
+            <button id="btn-sprite-preview-zip" class="btn btn-sm" type="button" title="Upload a .zip of SVG sprites to preview them all recoloured with the current palette AND arm the Download button below, OR a .zip of .swf files (or one/several .swf files directly) to preview every decoded shape with a checkbox — download exports only the shapes that changed colour and are still checked, as .svg — auto-detected from what you pick. Re-uses the last file picked if you already have one loaded." onclick="event.stopPropagation()"><span class="btn-icon"></span><span class="btn-label">Preview</span></button>
+            <input type="file" id="sprite-preview-zip-input" accept=".zip,application/zip,.swf" multiple hidden>
+            <button class="section-toggle" type="button" aria-label="Collapse/expand" onclick="event.stopPropagation(); toggleSection('section-sprite')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+          </div>
+        </div>
+        <div class="section-body-wrap">
+          <div class="section-body-inner">
+            <div class="sprite-preview is-empty" id="sprite-preview">
+              <span class="sprite-empty" id="sprite-empty">Click or drag a sprite here</span>
+              <div class="sprite-zoom-layer" id="sprite-zoom-layer">
+                <canvas id="sprite-canvas"></canvas>
+                <svg id="sprite-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+              </div>
+              <div class="sprite-zoom-controls" id="sprite-zoom-controls">
+                <button id="btn-sprite-zoom-out" class="btn btn-sm btn-icon-only" type="button" title="Zoom out" disabled>−</button>
+                <span id="sprite-zoom-level" class="sprite-zoom-level">100%</span>
+                <button id="btn-sprite-zoom-in" class="btn btn-sm btn-icon-only" type="button" title="Zoom in" disabled>+</button>
+                <button id="btn-sprite-zoom-reset" class="btn btn-sm btn-icon-only" type="button" title="Reset zoom" disabled>⤾</button>
+              </div>
+              <div class="sprite-anim-controls" id="sprite-anim-controls" style="display:none">
+                <button id="btn-sprite-anim-toggle" class="btn btn-sm btn-icon-only" type="button" title="Play/Pause animation">⏸</button>
+                <span id="sprite-anim-frame" class="sprite-zoom-level">1/1</span>
+                <select id="sprite-anim-fps" class="btn btn-sm" title="Animation speed">
+                  <option value="4">4 fps</option>
+                  <option value="8" selected>8 fps</option>
+                  <option value="12">12 fps</option>
+                  <option value="24">24 fps</option>
+                </select>
+              </div>
+            </div>
+            <div class="sprite-actions">
+              <button id="btn-sprite-recolor-upload" class="btn btn-sm" type="button" disabled title="Upload the same sprite recoloured (PNG or SVG): uses the already-detected positions to extract the new scheme directly"><span class="btn-icon"></span><span class="btn-label">Recoloured → Palette</span></button>
+              <input type="file" id="sprite-recolor-file-input" accept="image/*,.svg,image/svg+xml" hidden>
+              <button id="btn-sprite-copy-png" class="btn btn-sm" type="button" disabled title="Copy the current sprite (with the palette applied) to the clipboard as PNG"><span class="btn-icon"></span><span class="btn-label">Copy PNG</span></button>
+              <button id="btn-sprite-download-svg" class="btn btn-sm" type="button" disabled style="display:none" title="Download the SVG with the current palette colours already applied"><span class="btn-icon"></span><span class="btn-label">Download SVG</span></button>
+              <button id="btn-sprite-clear" class="btn btn-sm" type="button" disabled title="Remove sprite"><span class="btn-icon"></span><span class="btn-label">Clear</span></button>
+              <button id="btn-sprite-mark-skin" class="btn btn-sm" type="button" disabled title="Click a skin-toned area on the sprite to exclude it from recolouring (it will keep its original pixels/fill forever)"><span class="btn-label">Mark skin</span></button>
+              <button id="btn-sprite-clear-skin" class="btn btn-sm" type="button" disabled title="Clear all skin marks on this sprite"><span class="btn-label">Clear skin marks</span></button>
+              <select id="sprite-outline-width" class="btn btn-sm" title="Outline width">
+                <option value="0" selected>Outline +0px</option>
+                <option value="1">Outline +1px</option>
+                <option value="2">Outline +2px</option>
+              </select>
+            </div>
+            <div class="sprite-status" id="sprite-status"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="template-section" id="section-template">
+        <div class="section-header" onclick="toggleSection('section-template')">
+          <h2 class="panel-title template-title">Palette Template</h2>
+          <button class="section-toggle" type="button" aria-label="Collapse/expand" onclick="event.stopPropagation(); toggleSection('section-template')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+        </div>
+        <div class="section-body-wrap">
+          <div class="section-body-inner">
+            <label class="template-dropzone" id="template-dropzone" for="template-file-input">
+              <span id="template-dropzone-label">Import</span>
+              <div class="template-fname" id="template-fname"></div>
+            </label>
+            <input type="file" id="template-file-input" accept=".json,.xml,.svg,.ini,.txt,.palette,.wcolor,image/*" hidden>
+            <div class="template-actions">
+              <button id="btn-template-map" class="btn btn-sm btn-primary" type="button" disabled title="Sample colours from the template"><span class="btn-icon"></span><span class="btn-label">Map from template</span></button>
+            </div>
+            <div class="template-actions">
+              <button id="btn-template-clear" class="btn btn-sm" type="button" disabled title="Remove template"><span class="btn-icon"></span><span class="btn-label">Clear palette</span></button>
+            </div>
+            <div class="template-actions">
+              <button id="btn-paste-code" class="btn btn-sm" type="button" title="Paste XML / JSON / INI / pcode text to load a colour scheme"><span class="btn-icon"></span><span class="btn-label">Paste code</span></button>
+            </div>
+            <div class="template-status" id="template-status"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-wrap" style="display:none">
+        <textarea id="editor-textarea"></textarea>
+      </div>
+
+      <div class="template-section export-section" id="section-export">
+        <div class="section-header" onclick="toggleSection('section-export')">
+          <h2 class="panel-title template-title">Export &amp; Install</h2>
+          <button class="section-toggle" type="button" aria-label="Collapse/expand" onclick="event.stopPropagation(); toggleSection('section-export')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+        </div>
+        <div class="section-body-wrap">
+          <div class="section-body-inner">
+            <div class="editor-actions">
+              <button id="btn-genimg" class="btn btn-sm" type="button" title="Generate share image"><span class="btn-icon"></span><span class="btn-label">Image</span></button>
+              <button id="btn-share" class="btn btn-sm" type="button" title="Copy share link"><span class="btn-icon"></span><span class="btn-label">Share</span></button>
+              <button id="btn-copy" class="btn btn-sm" type="button" title="Copy code"><span class="btn-icon"></span><span class="btn-label">Copy</span></button>
+              <button id="btn-download-xml" class="btn btn-sm" type="button" title="Export XML"><span class="btn-icon"></span><span class="btn-label">Download XML</span></button>
+              <button id="btn-download-wcolor" class="btn btn-sm" type="button" title="Export .wcolor"><span class="btn-icon"></span><span class="btn-label">Download .wcolor</span></button>
+            </div>
+            <div class="editor-actions">
+              <button id="btn-sprite-batch-zip-download" class="btn btn-sm" type="button" style="display:none" title="Download the recoloured .zip generated from your last Preview upload"><span class="btn-icon"></span><span class="btn-label">Download</span></button>
+              <button id="btn-swf-shapes-batch-download" class="btn btn-sm" type="button" style="display:none" title="Download a .zip of individual .svg files, one per SWF shape that changed colour and is still checked in the preview"><span class="btn-icon"></span><span class="btn-label">Download SWF shapes (SVG)</span></button>
+              <button id="btn-swf-shapes-bulk-export" class="btn btn-sm btn-primary" type="button" style="display:none" title="Pick a target .swf and inject every SWF shape that's still checked in the preview directly into it, replacing the originals in place (matched by CharacterID — pick the same .swf the shapes came from). Desktop app only, needs FFDec."><span class="btn-icon"></span><span class="btn-label">Export to SWF</span></button>
+            </div>
+
+            <div class="editor-actions" id="install-actions" style="display:none">
+              <label class="btn btn-sm" style="display:flex;align-items:center;gap:6px;cursor:pointer" title="Installs into an isolated copy of the swf (UI_MainMenu.swf from GameBanana), without touching your real Brawlhalla">
+                <input type="checkbox" id="gamebanana-profile-toggle" style="margin:0">
+                <span class="btn-label">Build for GameBanana</span>
+              </label>
+              <select id="install-target-select" class="btn btn-sm" title="Which existing in-game colour this replaces"></select>
+              <button id="btn-install" class="btn btn-sm btn-primary" type="button" title="Build the .pcode and inject it into Brawlhalla's swf"><span class="btn-label">Install to Brawlhalla</span></button>
+              <button id="btn-open-gamebanana-folder" class="btn btn-sm" type="button" style="display:none" title="Open the folder containing the GameBanana build's UI_MainMenu.swf"><span class="btn-label">Open build folder</span></button>
+            </div>
+
+            <div class="editor-actions" id="uninstall-actions" style="display:none">
+              <select id="uninstall-target-select" class="btn btn-sm" title="Which installed colour to remove"></select>
+              <button id="btn-uninstall" class="btn btn-sm" type="button" title="Remove this installed colour from Brawlhalla"><span class="btn-label">Remove colour</span></button>
+              <button id="btn-reset-all" class="btn btn-sm" type="button" title="Restore Brawlhalla's swf to its original state (undo every installed colour)"><span class="btn-label">Reset all colours</span></button>
+              <button id="btn-update-color-values" class="btn btn-sm" type="button" title="After a Brawlhalla update: re-detect the new internal identifiers, update AppAllInOne.py, and relink your already-installed UI_MainMenu.swf — all in one step"><span class="btn-label">Update Color Values</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  <div id="image-modal" class="modal-overlay">
+    <div id="image-modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal image-modal-card">
+      <h3 class="modal-title">Generated Colour Scheme Image</h3>
+      <div class="image-preview-wrap">
+        <canvas id="image-preview-canvas" width="1200" height="675" aria-label="Generated colour scheme image preview"></canvas>
+      </div>
+      <div class="modal-actions">
+        <button id="image-close" class="btn btn-sm" type="button">Close</button>
+        <button id="image-copy" class="btn btn-sm btn-primary" type="button">Copy PNG</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="progress-modal" class="modal-overlay progress-modal-overlay">
+    <div class="modal-backdrop"></div>
+    <div class="modal progress-modal-card">
+      <div class="progress-spinner" aria-hidden="true"></div>
+      <p id="progress-modal-title" class="progress-modal-title">Working…</p>
+      <p id="progress-modal-subtitle" class="progress-modal-subtitle">This can take a few minutes. Please don't close the app.</p>
+      <div id="progress-modal-bar-wrap" class="progress-modal-bar-wrap" style="display:none">
+        <div id="progress-modal-bar" class="progress-modal-bar"></div>
+      </div>
+      <p id="progress-modal-percent" class="progress-modal-percent" style="display:none">0%</p>
+    </div>
+  </div>
+
+  <div id="brawlhalla-path-modal" class="modal-overlay">
+    <div id="brawlhalla-path-modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal">
+      <h3 class="modal-title">Brawlhalla Folder</h3>
+      <p id="brawlhalla-path-status" class="brawlhalla-path-status"></p>
+      <input id="brawlhalla-path-input" class="modal-input" type="text" spellcheck="false"
+        placeholder="C:\Program Files (x86)\Steam\steamapps\common\Brawlhalla">
+      <div class="modal-actions" style="justify-content:space-between">
+        <button id="brawlhalla-path-clear" class="btn btn-sm" type="button" title="Forget the saved folder and auto-detect again">Auto-detect instead</button>
+        <div style="display:flex;gap:0.5rem">
+          <button id="brawlhalla-path-browse" class="btn btn-sm" type="button">Browse…</button>
+          <button id="brawlhalla-path-save" class="btn btn-sm btn-primary" type="button">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sprite-colors-modal" class="modal-overlay">
+    <div id="sprite-colors-modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal">
+      <h3 class="modal-title" id="sprite-colors-modal-title">Colours in ZIP</h3>
+      <div id="sprite-colors-list" class="modal-input" style="max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;padding:8px"></div>
+      <div class="modal-actions">
+        <button id="sprite-colors-copy" class="btn btn-sm" type="button">Copy list</button>
+        <button id="sprite-colors-close" class="btn btn-sm btn-primary" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sprite-zip-preview-modal" class="modal-overlay">
+    <div id="sprite-zip-preview-modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal image-modal-card">
+      <h3 class="modal-title" id="sprite-zip-preview-modal-title">ZIP Preview</h3>
+      <input type="text" id="zip-preview-search" class="modal-input" placeholder="Search by name…" autocomplete="off">
+      <div class="zip-preview-toolbar">
+        <span id="zip-preview-select-toolbar" style="display:none;gap:6px">
+          <button id="btn-zip-preview-select-all" class="btn btn-sm" type="button" title="Check every visible sprite/shape (included in the export)">Select all</button>
+          <button id="btn-zip-preview-select-none" class="btn btn-sm" type="button" title="Uncheck every visible sprite/shape (left out of the export)">Select none</button>
+        </span>
+        <button id="btn-sprite-zip-manual-mode" class="btn btn-sm" type="button" title="With this on, clicking a sprite opens it in the main editor to manually change one of its colours without touching the rest of the palette or the other sprites">Manual mode: off</button>
+        <button id="btn-zip-preview-clear" class="btn btn-sm btn-danger" type="button" title="Clear the shapes/sprites currently shown here and forget the last uploaded file, so the next Preview or upload starts fresh">Clear shapes</button>
+      </div>
+      <div id="sprite-zip-preview-grid" class="zip-preview-grid"></div>
+      <div class="modal-actions">
+        <button id="sprite-zip-preview-close" class="btn btn-sm btn-primary" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="shape-picker-modal" class="modal-overlay">
+    <div id="shape-picker-modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal">
+      <h3 class="modal-title" id="shape-picker-modal-title">Pick files</h3>
+      <p id="shape-picker-modal-hint" class="shape-picker-hint"></p>
+      <input type="text" id="shape-picker-search" class="modal-input" placeholder="Search by name…" autocomplete="off">
+      <div class="zip-preview-toolbar">
+        <button id="shape-picker-select-all" class="btn btn-sm" type="button">Select all</button>
+        <button id="shape-picker-select-none" class="btn btn-sm" type="button">Select none</button>
+      </div>
+      <div id="shape-picker-list" class="shape-picker-list"></div>
+      <div class="modal-actions">
+        <button id="shape-picker-cancel" class="btn btn-sm" type="button">Cancel</button>
+        <button id="shape-picker-continue" class="btn btn-sm btn-primary" type="button">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="paste-code-modal" class="modal-overlay">
+    <div id="paste-code-modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal">
+      <h3 class="modal-title">Paste Colour Scheme Code</h3>
+      <textarea id="paste-code-textarea" class="modal-input" rows="12" spellcheck="false"
+        style="font-family:monospace;font-size:12px;resize:vertical;min-height:200px"
+        placeholder="Paste ColorSchemeType XML, JSON, .wcolor/.ini, SVG template, or decompiled pcode (.txt) here…"></textarea>
+      <div class="modal-actions">
+        <button id="paste-code-cancel" class="btn btn-sm" type="button">Cancel</button>
+        <button id="paste-code-apply" class="btn btn-sm btn-primary" type="button">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="customize-modal" class="modal-overlay">
+    <div id="customize-modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal customize-modal-card">
+      <h3 class="modal-title">Customize Appearance</h3>
+
+      <div class="customize-row">
+        <span class="customize-label">Dark mode</span>
+        <label class="customize-switch">
+          <input type="checkbox" id="customize-dark-toggle">
+          <span class="customize-switch-track"></span>
+        </label>
+      </div>
+
+      <div class="customize-row customize-row-col">
+        <span class="customize-label">Background image</span>
+        <div class="customize-bg-preview" id="customize-bg-preview"></div>
+        <div class="customize-bg-controls">
+          <label class="btn btn-sm" for="customize-bg-input" style="cursor:pointer">Upload image</label>
+          <input type="file" id="customize-bg-input" accept="image/*" hidden>
+          <button id="customize-bg-clear" class="btn btn-sm" type="button">Remove</button>
+        </div>
+        <span class="customize-hint">Header, toolbar and panels turn transparent so the image shows behind everything.</span>
+      </div>
+
+      <div class="customize-row">
+        <span class="customize-label">Text colour</span>
+        <div class="customize-color-controls">
+          <input type="color" id="customize-text-color" value="#e9f2f0">
+          <button id="customize-text-color-reset" class="btn btn-sm" type="button">Reset</button>
+        </div>
+      </div>
+
+      <div class="customize-row">
+        <span class="customize-label">Font</span>
+        <div class="customize-color-controls">
+          <select id="customize-font-select" class="btn btn-sm" title="Choose a font for the whole app">
+            <option value="">System default</option>
+            <optgroup label="Sans-serif">
+              <option value="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Segoe UI</option>
+              <option value="Arial, Helvetica, sans-serif">Arial</option>
+              <option value="'Helvetica Neue', Helvetica, Arial, sans-serif">Helvetica Neue</option>
+              <option value="Verdana, Geneva, sans-serif">Verdana</option>
+              <option value="Tahoma, Geneva, sans-serif">Tahoma</option>
+              <option value="Calibri, Candara, sans-serif">Calibri</option>
+              <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+              <option value="'Century Gothic', sans-serif">Century Gothic</option>
+              <option value="Futura, 'Trebuchet MS', sans-serif">Futura</option>
+            </optgroup>
+            <optgroup label="Serif">
+              <option value="Georgia, 'Times New Roman', serif">Georgia</option>
+              <option value="'Times New Roman', Times, serif">Times New Roman</option>
+              <option value="'Palatino Linotype', Palatino, serif">Palatino</option>
+              <option value="Garamond, Baskerville, serif">Garamond</option>
+              <option value="'Book Antiqua', Palatino, serif">Book Antiqua</option>
+              <option value="Cambria, Georgia, serif">Cambria</option>
+            </optgroup>
+            <optgroup label="Monospace">
+              <option value="'Courier New', Courier, monospace">Courier New</option>
+              <option value="Consolas, 'Courier New', monospace">Consolas</option>
+              <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
+              <option value="'Cascadia Code', 'Fira Code', Consolas, monospace">Cascadia Code</option>
+            </optgroup>
+            <optgroup label="Display / Decorative">
+              <option value="Impact, 'Arial Black', sans-serif">Impact</option>
+              <option value="'Arial Black', Impact, sans-serif">Arial Black</option>
+              <option value="Papyrus, fantasy">Papyrus</option>
+              <option value="'Brush Script MT', cursive">Brush Script MT</option>
+              <option value="'Comic Sans MS', 'Comic Sans', cursive">Comic Sans MS</option>
+            </optgroup>
+          </select>
+          <button id="customize-font-reset" class="btn btn-sm" type="button">Reset</button>
+        </div>
+      </div>
+
+      <div class="customize-row">
+        <span class="customize-label" title="Corrects the whole palette (locked rows are skipped) for the selected colour blindness type: shifts colour information that's invisible to that viewer into channels they can still see, so confusing colour pairs become distinguishable. A real change: it updates the grid, the sprite preview, Copy PNG, the exported XML/.wcolor, and what gets installed into the game — not a simulation, and not just a screen filter.">Colour blindness correction</span>
+        <div class="customize-color-controls">
+          <select id="cvd-select" class="btn btn-sm" title="Colour blindness type to apply">
+            <option value="protanopia">Protanopia</option>
+            <option value="deuteranopia">Deuteranopia</option>
+            <option value="tritanopia">Tritanopia</option>
+            <option value="achromatopsia">Achromatopsia</option>
+          </select>
+          <button id="btn-cvd-apply" class="btn btn-sm" type="button" title="Apply this transform to the whole palette">Apply</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="customize-close" class="btn btn-sm btn-primary" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Plantilla SVG para la imagen de "compartir esquema" (antes vivia
+       como un string embebido dentro de script.js). Va como
+       type="text/plain" a proposito: asi el navegador no la ejecuta ni
+       la parsea como HTML, y app.js la lee con .textContent sin fetch()
+       (fetch a archivos locales no funciona empaquetado con pywebview,
+       que abre este archivo con file://). -->
+  <script type="text/plain" id="keres-svg-template"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="2000"
+   height="2000"
+   viewBox="0 0 529.16665 529.16668"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="Keres.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.28956021"
+     inkscape:cx="326.35699"
+     inkscape:cy="1013.6061"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1111"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:showpageshadow="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#505050"
+     inkscape:document-rotation="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2">
+    <rect
+       style="opacity:1;fill:#9b9b9b;fill-opacity:1;stroke:none;stroke-width:1.07176387;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="rectBackdrop"
+       width="529.16669"
+       height="529.16669"
+       x="0"
+       y="-232.16669"
+       rx="21.575197"
+       transform="translate(0,232.16667)" />
+  </g>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,232.16667)">
+    <rect
+       rx="10.066534"
+       y="-111.51667"
+       x="211.66667"
+       height="50.006248"
+       width="50.006248"
+       id="HairLt_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="Hair_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="264.58334"
+       y="-111.51667"
+       rx="10.066534" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="HairDk_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="317.5"
+       y="-111.51667"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="-58.599998"
+       x="158.75"
+       height="50.006248"
+       width="50.006248"
+       id="Body1VL_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="Body1Lt_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="211.66667"
+       y="-58.599998"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="-58.599998"
+       x="264.58334"
+       height="50.006248"
+       width="50.006248"
+       id="Body1_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="Body1Dk_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="317.5"
+       y="-58.599998"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="-58.599998"
+       x="370.41666"
+       height="50.006248"
+       width="50.006248"
+       id="Body1VD_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="Body1Acc_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="423.33334"
+       y="-58.599998"
+       rx="10.066534" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="Body2VL_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="158.75"
+       y="-5.6833344"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="-5.6833344"
+       x="211.66667"
+       height="50.006248"
+       width="50.006248"
+       id="Body2Lt_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="Body2_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="264.58334"
+       y="-5.6833344"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="-5.6833344"
+       x="317.5"
+       height="50.006248"
+       width="50.006248"
+       id="Body2Dk_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="Body2VD_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="370.41666"
+       y="-5.6833344"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="-5.6833344"
+       x="423.33334"
+       height="50.006248"
+       width="50.006248"
+       id="Body2Acc_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       rx="10.066534"
+       y="47.233334"
+       x="158.75"
+       height="50.006248"
+       width="50.006248"
+       id="SpecialVL_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="SpecialLt_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="211.66667"
+       y="47.233334"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="47.233334"
+       x="264.58334"
+       height="50.006248"
+       width="50.006248"
+       id="Special_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="SpecialDk_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="317.5"
+       y="47.233334"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="47.233334"
+       x="370.41666"
+       height="50.006248"
+       width="50.006248"
+       id="SpecialVD_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="SpecialAcc_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="423.33334"
+       y="47.233334"
+       rx="10.066534" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="ClothVL_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="158.75"
+       y="100.15"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="100.15"
+       x="211.66667"
+       height="50.006248"
+       width="50.006248"
+       id="ClothLt_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="Cloth_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="264.58334"
+       y="100.15"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="100.15"
+       x="317.5"
+       height="50.006248"
+       width="50.006248"
+       id="ClothDk_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       rx="10.066534"
+       y="153.06667"
+       x="158.75"
+       height="50.006248"
+       width="50.006248"
+       id="WeaponVL_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="WeaponLt_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="211.66667"
+       y="153.06667"
+       rx="10.066534" />
+    <rect
+       rx="10.066534"
+       y="153.06667"
+       x="264.58334"
+       height="50.006248"
+       width="50.006248"
+       id="Weapon_Swap"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="WeaponDk_Swap"
+       width="50.006248"
+       height="50.006248"
+       x="317.5"
+       y="153.06667"
+       rx="10.066534" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       width="50.006248"
+       height="50.006248"
+       x="423.33331"
+       y="153.06667"
+       rx="10.066534"
+       id="WeaponAcc_Swap" />
+    <text
+       id="txtWeapon"
+       y="185.59984"
+       x="34.395832"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579"
+         y="185.59984"
+         x="34.395832"
+         id="tspan899"
+         sodipodi:role="line">Weapon</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       x="34.395832"
+       y="132.68315"
+       id="txtCloth"><tspan
+         sodipodi:role="line"
+         id="tspan895"
+         x="34.395832"
+         y="132.68315"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579">Cloth</tspan></text>
+    <text
+       id="txtSpecial"
+       y="79.766495"
+       x="34.395832"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579"
+         y="79.766495"
+         x="34.395832"
+         id="tspan891"
+         sodipodi:role="line">Special</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       x="34.395832"
+       y="26.849825"
+       id="txtBody2"><tspan
+         sodipodi:role="line"
+         id="tspan887"
+         x="34.395832"
+         y="26.849825"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579">Body<tspan
+   id="tspan885"
+   style="font-size:31.75px">2</tspan></tspan></text>
+    <text
+       id="txtBody1"
+       y="-26.066845"
+       x="34.395832"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579"
+         y="-26.066845"
+         x="34.395832"
+         id="tspan877"
+         sodipodi:role="line">Body<tspan
+   id="tspan875"
+   style="font-size:31.75px">1</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       x="34.395832"
+       y="-78.983498"
+       id="txtHair"><tspan
+         sodipodi:role="line"
+         id="tspan881"
+         x="34.395832"
+         y="-78.983498"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579">Hair</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       x="431.27084"
+       y="-131.90018"
+       id="txtAccent"><tspan
+         sodipodi:role="line"
+         id="tspan923"
+         x="431.27084"
+         y="-131.90018"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579">Acc</tspan></text>
+    <text
+       id="txtVeryDark"
+       y="-131.90018"
+       x="381"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579"
+         y="-131.90018"
+         x="381"
+         id="tspan915"
+         sodipodi:role="line">VD</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       x="328.08334"
+       y="-131.90018"
+       id="txtDk"><tspan
+         sodipodi:role="line"
+         id="tspan919"
+         x="328.08334"
+         y="-131.90018"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579">Dk</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       x="279.08249"
+       y="-131.90018"
+       id="txtNeutral"><tspan
+         sodipodi:role="line"
+         id="tspan911"
+         x="279.08249"
+         y="-131.90018"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579">N</tspan></text>
+    <text
+       id="txtLight"
+       y="-131.90018"
+       x="222.25"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579"
+         y="-131.90018"
+         x="222.25"
+         id="tspan907"
+         sodipodi:role="line">Lt</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       x="169.33333"
+       y="-131.90018"
+       id="txtVeryLight"
+       inkscape:label="txtVeryLight"><tspan
+         sodipodi:role="line"
+         id="tspan871"
+         x="169.33333"
+         y="-131.90018"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579">VL</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579"
+       x="79.375"
+       y="-179.80034"
+       id="txtTitle"><tspan
+         sodipodi:role="line"
+         id="tspan826"
+         x="79.375"
+         y="-179.80034"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:42.3333px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579">Aa</tspan></text>
+  </g>
+</svg>
+</script>
+
+  <!-- CodeMirror (libreria de terceros) primero, la app despues -->
+  <script defer src="codemirror.bundle.js"></script>
+  <script defer src="app.js"></script>
+</body>
+</html>
