@@ -12,6 +12,8 @@ Ejecutar:
 Para convertirlo en un .exe (Windows), ver instrucciones al final de este archivo.
 """
 
+import base64
+import hashlib
 import importlib.util
 import os
 import re
@@ -242,6 +244,70 @@ def _persistent_module_dir():
     return path
 
 
+def _bundle_fingerprint():
+    """Hash de los archivos que trae ESTE .exe (ya extraidos en
+    _MEIPASS): el motor (AppAllInOne.py o AppPublic.py), mas
+    index.html/app.js/styles.css/codemirror.bundle.js. Cambia solo
+    cuando se compila un .exe con codigo distinto, sin necesitar
+    mantener un numero de version a mano. None en modo script (python
+    AppLauncher.py), donde este chequeo no aplica."""
+    if not hasattr(sys, "_MEIPASS"):
+        return None
+    names = (
+        "AppAllInOne.py", "AppPublic.py", "index.html", "app.js",
+        "styles.css", "codemirror.bundle.js",
+    )
+    h = hashlib.sha256()
+    for name in names:
+        path = os.path.join(sys._MEIPASS, name)
+        try:
+            with open(path, "rb") as f:
+                h.update(f.read())
+        except OSError:
+            pass
+    return h.hexdigest()
+
+
+def _reset_stale_cache_if_new_build():
+    """Si el .exe recien abierto trae codigo distinto al de la ultima
+    apertura (fingerprint distinto), borra:
+      - engine/     copia persistente editable de AllInOne/Public. Si no
+                     se borra, un .exe nuevo sigue arrancando con el
+                     motor (y los DEFAULT_CLASS/VECTOR/ARRAY) de la
+                     version VIEJA, aunque el .exe nuevo traiga otros.
+      - webview_data/  perfil/cache de WebView2. Puede quedar sirviendo
+                     HTML/JS viejo despues de actualizar el .exe.
+    NO toca installed_schemes.json ni config.json (carpeta de
+    Brawlhalla guardada, dentro de AzuModification/ pero fuera de esas
+    dos subcarpetas), asi que actualizar el .exe no hace perder eso.
+    Se llama ANTES de que _persistent_module_dir()/get_storage_path()
+    creen esas carpetas para esta ejecucion."""
+    fingerprint = _bundle_fingerprint()
+    if fingerprint is None:
+        return  # modo script: no hay ".exe nuevo" que detectar
+
+    base = os.getenv("APPDATA") or os.path.expanduser("~")
+    root = os.path.join(base, "AzuModification")
+    os.makedirs(root, exist_ok=True)
+    marker_path = os.path.join(root, "build_fingerprint.txt")
+
+    try:
+        previous = Path(marker_path).read_text(encoding="utf-8").strip()
+    except OSError:
+        previous = None
+
+    if previous == fingerprint:
+        return  # mismo build de siempre, no tocar nada
+
+    for folder in ("engine", "webview_data"):
+        shutil.rmtree(os.path.join(root, folder), ignore_errors=True)
+
+    try:
+        Path(marker_path).write_text(fingerprint, encoding="utf-8")
+    except OSError:
+        pass
+
+
 def _load_allinone_module():
     """Devuelve el módulo AppAllInOne (o AppPublic si el primero no
     existe) con las funciones/constantes que el launcher necesita.
@@ -257,7 +323,15 @@ def _load_allinone_module():
       y las próximas aperturas del .exe siguen usando esa misma copia
       (con los identificadores ya actualizados) en vez de volver a
       partir de cero cada vez.
+
+      Si el .exe es una version nueva (codigo distinto al de la ultima
+      apertura), _reset_stale_cache_if_new_build() borra esa copia
+      persistente (y el cache de WebView2) ANTES de sembrarla de
+      nuevo, para no seguir arrastrando el motor/cache de una version
+      vieja.
     """
+    _reset_stale_cache_if_new_build()
+
     if not hasattr(sys, "_MEIPASS"):
         try:
             import AppAllInOne as AllInOne
@@ -447,18 +521,209 @@ def get_sprite_types_dir():
     'Paste Colour Scheme Code') para que aparezcan como sprite types
     nuevos en el selector, sin tocar ningun script. Un archivo por
     sprite type; el nombre del archivo (sin .xml) se usa como nombre a
-    menos que el XML traiga ColorSchemeName. Vive junto a los scripts
-    (al lado del .exe/.py real) en vez de AppData, para que sea facil
-    encontrarla y compartirla junto con el resto de la carpeta."""
-    path = os.path.join(_real_base_dir(), "SpriteTypes")
+    menos que el XML traiga ColorSchemeName. Vive en AppData (junto a
+    installed_schemes.json y PreRenders, ver get_data_dir), no al lado
+    del .exe/.py real -- asi no deja carpetas sueltas en dist\\ ni en la
+    carpeta del proyecto cada vez que la app arranca."""
+    path = os.path.join(get_data_dir(), "SpriteTypes")
     os.makedirs(path, exist_ok=True)
     return path
+
+
+def get_prerenders_dir():
+    """Carpeta en AppData (junto a installed_schemes.json, ver
+    get_data_dir) donde el boton 'PreRenders' guarda los sprites que la
+    persona sube a mano desde ahi -- separada de SpriteTypes (que guarda
+    paletas/XML, no imagenes). Tiene una subcarpeta por sprite type (la
+    key activa en el selector: 'color', 'dash', 'gc', 'lastjump' o
+    'custom:<archivo>.xml') para que la galeria pueda filtrar por tipo
+    sin mezclar sprites de distintos tipos."""
+    path = os.path.join(get_data_dir(), "PreRenders")
+    os.makedirs(path, exist_ok=True)
+    return path
+
+
+def _prerenders_type_dir(sprite_type):
+    """Subcarpeta de get_prerenders_dir() para un sprite type dado. El
+    nombre del tipo (puede traer ':' o nombres de archivo si es un
+    custom:*.xml) se sanitiza igual que save_sprite_type_xml antes de
+    usarlo como nombre de carpeta."""
+    safe = re.sub(r'[\\/:*?"<>|]+', "_", (sprite_type or "color").strip())
+    safe = safe or "color"
+    path = os.path.join(get_prerenders_dir(), safe)
+    os.makedirs(path, exist_ok=True)
+    return path
+
+
+_PRERENDER_MIME_BY_EXT = {
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+}
+
+
+def _seed_bundled_prerenders():
+    """Copia a AppData\\AzuModification\\PreRenders los PreRenders que
+    hayan quedado empaquetados dentro del .exe (carpeta PreRenders al
+    lado del script/.exe -- ver Empaquetar_AzuModification.bat, mismo
+    patron que la carpeta ffdec) -- para que quien instala el .exe ya
+    vea sprites de ejemplo en la galeria 'PreRenders' desde el primer
+    arranque, sin tener que subirlos a mano uno por uno. Solo copia lo
+    que todavia no exista en AppData: nunca pisa (ni borra) un sprite
+    que la persona ya guardo o saco por su cuenta desde "+ Add", asi que
+    es seguro llamarlo en cada arranque, no solo la primera vez."""
+    bundled = resource_path("PreRenders")
+    if not os.path.isdir(bundled):
+        return
+    dest_base = get_prerenders_dir()
+    try:
+        type_keys = os.listdir(bundled)
+    except Exception:
+        return
+    for type_key in type_keys:
+        src_folder = os.path.join(bundled, type_key)
+        if not os.path.isdir(src_folder):
+            continue
+        dest_folder = os.path.join(dest_base, type_key)
+        os.makedirs(dest_folder, exist_ok=True)
+        try:
+            filenames = os.listdir(src_folder)
+        except Exception:
+            continue
+        for filename in filenames:
+            src_file = os.path.join(src_folder, filename)
+            if not os.path.isfile(src_file):
+                continue
+            dest_file = os.path.join(dest_folder, filename)
+            if not os.path.exists(dest_file):
+                try:
+                    shutil.copy2(src_file, dest_file)
+                except Exception:
+                    pass
+
+
+def _seed_bundled_sprite_types():
+    """Copia a AppData\\AzuModification\\SpriteTypes los .xml de
+    sprite types que hayan quedado empaquetados dentro del .exe
+    (carpeta SpriteTypes al lado del script/.exe -- mismo patron que
+    PreRenders y ffdec, ver Empaquetar_AzuModification.bat), para que
+    quien instala el .exe ya vea esos sprite types en el selector desde
+    el primer arranque. Solo copia lo que todavia no exista en AppData:
+    nunca pisa un .xml que la persona ya guardo/reemplazo por su cuenta
+    con 'Save as SpriteType', asi que es seguro llamarlo en cada
+    arranque, no solo la primera vez."""
+    bundled = resource_path("SpriteTypes")
+    if not os.path.isdir(bundled):
+        return
+    dest = get_sprite_types_dir()
+    try:
+        filenames = os.listdir(bundled)
+    except Exception:
+        return
+    for filename in filenames:
+        if not filename.lower().endswith(".xml"):
+            continue
+        src_file = os.path.join(bundled, filename)
+        if not os.path.isfile(src_file):
+            continue
+        dest_file = os.path.join(dest, filename)
+        if not os.path.exists(dest_file):
+            try:
+                shutil.copy2(src_file, dest_file)
+            except Exception:
+                pass
 
 
 class Api:
     """Puente entre el JS de index.html y el pipeline de AppAllInOne.py.
     Cada metodo publico queda expuesto en JS como
     window.pywebview.api.<nombre>(...) y devuelve una Promise."""
+
+    def list_prerenders(self, sprite_type=None):
+        """Lee get_prerenders_dir() y devuelve cada sprite guardado ya
+        como data URL (base64), listo para pintarse directo en la
+        grilla de la galeria 'PreRenders' sin pedirle nada a la
+        persona. Si sprite_type es None, devuelve los de todos los
+        tipos juntos; si no, solo los de ese tipo. Un archivo roto o
+        con extension no soportada se saltea en vez de tirar abajo el
+        resto de la lista."""
+        results = []
+        base = get_prerenders_dir()
+        if sprite_type:
+            type_keys = [sprite_type]
+        else:
+            try:
+                type_keys = sorted(os.listdir(base))
+            except Exception:
+                type_keys = []
+        for type_key in type_keys:
+            safe = re.sub(r'[\\/:*?"<>|]+', "_", (type_key or "color").strip()) or "color"
+            folder = os.path.join(base, safe)
+            if not os.path.isdir(folder):
+                continue
+            try:
+                filenames = sorted(os.listdir(folder))
+            except Exception:
+                continue
+            for filename in filenames:
+                fpath = os.path.join(folder, filename)
+                if not os.path.isfile(fpath):
+                    continue
+                mime = _PRERENDER_MIME_BY_EXT.get(os.path.splitext(filename)[1].lower())
+                if not mime:
+                    continue
+                try:
+                    with open(fpath, "rb") as f:
+                        raw = f.read()
+                except Exception:
+                    continue
+                b64 = base64.b64encode(raw).decode("ascii")
+                results.append({
+                    "filename": filename,
+                    "spriteType": type_key,
+                    "dataUrl": f"data:{mime};base64,{b64}",
+                })
+        return results
+
+    def save_prerender(self, data_url, filename, sprite_type):
+        """Guarda un sprite (mandado desde JS como data URL, ya en
+        base64 -- ver _fileToDataURL en app.js) en
+        PreRenders/<sprite_type>/<nombre>, para que 'PreRenders' lo
+        vuelva a mostrar en la galeria la proxima vez sin tener que
+        resubirlo. Si ya existe un archivo con ese nombre en ese tipo,
+        se le agrega un sufijo numerico en vez de pisarlo."""
+        m = re.match(r'^data:([^;]+);base64,(.*)$', data_url or "", re.S)
+        if not m:
+            raise ValueError("data_url invalida")
+        raw = base64.b64decode(m.group(2))
+        safe_name = re.sub(r'[\\/:*?"<>|]+', "", (filename or "sprite").strip())
+        safe_name = safe_name.rstrip(". ") or "sprite"
+        folder = _prerenders_type_dir(sprite_type)
+        stem, ext = os.path.splitext(safe_name)
+        candidate = safe_name
+        i = 1
+        while os.path.exists(os.path.join(folder, candidate)):
+            candidate = f"{stem} ({i}){ext}"
+            i += 1
+        with open(os.path.join(folder, candidate), "wb") as f:
+            f.write(raw)
+        return {"filename": candidate, "spriteType": sprite_type}
+
+    def delete_prerender(self, sprite_type, filename):
+        """Borra un sprite guardado en PreRenders (boton '\u00d7' de la
+        galeria). No tira error si ya no existe -- simplemente devuelve
+        False."""
+        folder = _prerenders_type_dir(sprite_type)
+        safe_name = os.path.basename(filename or "")
+        fpath = os.path.join(folder, safe_name)
+        try:
+            if os.path.isfile(fpath):
+                os.remove(fpath)
+                return True
+        except Exception:
+            pass
+        return False
 
     def list_custom_sprite_types(self):
         """Lee cada .xml de get_sprite_types_dir() y le pasa el texto
@@ -604,8 +869,28 @@ class Api:
     def get_pushbyte_options(self):
         """Solo los pushbytes disponibles para instalar colores custom
         (rango Soul Fire..CMYK), para que el selector "Install to
-        Brawlhalla" no ofrezca pisar un color real del juego."""
+        Brawlhalla" no ofrezca pisar un color real del juego. Si el modo
+        developer esta destrabado, devuelve todos los colores viejos."""
         return AllInOne.get_pushbyte_options()
+
+    def get_dev_mode_status(self):
+        """True si el modo developer (todos los colores, sin la
+        restriccion de AppPublic) ya esta destrabado en esta maquina."""
+        try:
+            return AllInOne.is_dev_mode_unlocked()
+        except AttributeError:
+            # AppAllInOne.py no tiene restriccion que destrabar: ya
+            # muestra todos los colores por defecto.
+            return True
+
+    def unlock_dev_mode(self, code):
+        """Ingresa el codigo del modo developer. Si es correcto, saca la
+        restriccion de solo-colores-permitidos (y team colors ocultos)
+        de forma persistente en esta maquina."""
+        try:
+            return AllInOne.unlock_dev_mode(code)
+        except AttributeError:
+            return {"success": True, "message": "Esta build ya tiene todos los colores disponibles."}
 
     def get_team_slot_options(self):
         """Los 16 slots de team color (TeamRed1..4/TeamBlue1..4/
@@ -1030,6 +1315,8 @@ def main():
     # arranque (_MEIPASS) y se pierde al cerrar el .exe, en vez de quedar
     # guardado junto a installed_schemes.json en AppData\AzuModification.
     AllInOne.configure_paths(get_data_dir())
+    _seed_bundled_prerenders()
+    _seed_bundled_sprite_types()
 
     html_path = resource_path("index.html")
 

@@ -80,6 +80,30 @@ if exist "ffdec\ffdec.bat" (
     echo lado de este .bat, con "ffdec.bat" adentro, y volve a correr esto.
 )
 
+set PRERENDERS_FLAG=
+if exist "PreRenders" (
+    echo Se encontro la carpeta PreRenders\ - se incluira dentro del .exe
+    echo ^(sprites de ejemplo para la galeria "PreRenders"^).
+    set PRERENDERS_FLAG=--add-data "PreRenders;PreRenders"
+) else (
+    echo AVISO: no se encontro la carpeta PreRenders\ junto a este script -
+    echo el .exe se armara sin sprites de ejemplo precargados en la galeria
+    echo "PreRenders" ^(la persona puede seguir agregando los suyos con
+    echo "+ Add" una vez abierto el programa; quedan guardados en AppData^).
+)
+
+set SPRITETYPES_FLAG=
+if exist "SpriteTypes" (
+    echo Se encontro la carpeta SpriteTypes\ - se incluira dentro del .exe
+    echo ^(sprite types de ejemplo para el selector^).
+    set SPRITETYPES_FLAG=--add-data "SpriteTypes;SpriteTypes"
+) else (
+    echo AVISO: no se encontro la carpeta SpriteTypes\ junto a este script -
+    echo el .exe se armara sin sprite types de ejemplo precargados ^(la
+    echo persona puede seguir agregando los suyos con "Save as SpriteType";
+    echo quedan guardados en AppData^).
+)
+
 echo.
 echo Generando el ejecutable (esto puede tardar unos minutos)...
 python -m PyInstaller --noconfirm --onefile --windowed %ICON_FLAG% ^
@@ -90,6 +114,8 @@ python -m PyInstaller --noconfirm --onefile --windowed %ICON_FLAG% ^
     --add-data "app.js;." ^
     %ENGINE_FLAG% ^
     %FFDEC_FLAG% ^
+    %PRERENDERS_FLAG% ^
+    %SPRITETYPES_FLAG% ^
     AppLauncher.py
 
 if errorlevel 1 (
@@ -106,8 +132,15 @@ echo   dist\AzuModification.exe
 echo ============================================
 echo.
 echo Para distribuirlo, solo hace falta copiar ese .exe: los .py,
-echo index.html, codemirror.bundle.js, app.js, styles.css (y ffdec, si
-echo estaba presente) quedaron empacados adentro.
+echo index.html, codemirror.bundle.js, app.js, styles.css (y ffdec,
+echo PreRenders y SpriteTypes, si estaban presentes) quedaron empacados
+echo adentro.
+echo.
+echo Nota: los PreRenders y SpriteTypes empacados se copian a
+echo %%APPDATA%%\AzuModification\PreRenders y \SpriteTypes la primera vez
+echo que se abre el programa (sin pisar lo que la persona ya haya
+echo agregado/borrado por su cuenta), igual que "Update Color Values"
+echo hace con el engine.
 echo.
 echo Nota: "Update Color Values" ahora guarda su copia editable en
 echo %%APPDATA%%\AzuModification\engine (no en el .exe), para que los

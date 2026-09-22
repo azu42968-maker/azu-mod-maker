@@ -147,11 +147,64 @@ HIDDEN_PUSHBYTE_NAMES = {"White", "Black", "Skyforged", "Goldforged", "Crystalfo
 # oculta de los selectores, igual que AppPublic.py.
 HIDE_TEAM_COLORS = True
 
+# ============================================================================
+# MODO DEVELOPER: destraba TODOS los colores (incluidos los ocultos y los
+# team colors) sin tener que repackagear con AppAllInOne.py. Se activa
+# escribiendo el codigo DEV_MODE_PASSCODE en el modal "Brawlhalla Folder"
+# (boton del engranaje). El estado se guarda en config.json (AppConfig.py),
+# asi que sobrevive a cerrar y reabrir la app.
+# ============================================================================
+DEV_MODE_PASSCODE = "200922"
+
+
+def _dev_mode_flag_path():
+    import AppConfig
+    return AppConfig.get_config_dir() / "dev_mode.flag"
+
+
+def is_dev_mode_unlocked():
+    """True si alguna vez se ingreso el codigo correcto en esta maquina."""
+    try:
+        return _dev_mode_flag_path().exists()
+    except Exception:
+        return False
+
+
+def unlock_dev_mode(code):
+    """Compara el codigo ingresado contra DEV_MODE_PASSCODE. Si coincide,
+    deja una marca persistente y devuelve {"success": True}. Si no,
+    {"success": False} sin revelar el codigo correcto."""
+    if (code or "").strip() != DEV_MODE_PASSCODE:
+        return {"success": False, "message": "Codigo incorrecto."}
+    try:
+        _dev_mode_flag_path().write_text("1", encoding="utf-8")
+    except Exception as e:
+        return {"success": False, "message": f"No se pudo guardar: {e}"}
+    return {"success": True, "message": "Modo developer activado: todos los colores disponibles."}
+
+
+def lock_dev_mode():
+    """Vuelve a la restriccion normal (por si algun dia hace falta un
+    boton de 'desactivar' en la UI)."""
+    try:
+        p = _dev_mode_flag_path()
+        if p.exists():
+            p.unlink()
+    except Exception:
+        pass
+
 
 def get_allowed_pushbytes():
     """Numeros del rango PUSHBYTE_RANGE_START..END que ademas no estan en
     HIDDEN_PUSHBYTE_NAMES. Es la unica fuente de verdad para que numeros
-    se pueden elegir al instalar (GUI y consola usan esto)."""
+    se pueden elegir al instalar (GUI y consola usan esto).
+
+    Si el modo developer esta activo (unlock_dev_mode con el codigo
+    correcto), se ignoran ambas restricciones y se devuelven TODOS los
+    pushbytes de OLD_COLOR_NAMES (1..len(OLD_COLOR_NAMES)), igual que
+    AppAllInOne.py."""
+    if is_dev_mode_unlocked():
+        return list(range(1, len(OLD_COLOR_NAMES) + 1))
     return [
         i for i in range(PUSHBYTE_RANGE_START, PUSHBYTE_RANGE_END + 1)
         if OLD_COLOR_NAMES[i - 1] not in HIDDEN_PUSHBYTE_NAMES
@@ -207,8 +260,9 @@ def get_team_identifiers():
 def get_team_slot_options():
     """Para el selector "Instalar en slot de equipo" del launcher: devuelve
     [{"slot": "TeamRed1", "label": "Rojo 1"}, ...] en TEAM_SLOT_ORDER.
-    Vacio si HIDE_TEAM_COLORS esta activo."""
-    if HIDE_TEAM_COLORS:
+    Vacio si HIDE_TEAM_COLORS esta activo (salvo que el modo developer
+    este destrabado, en cuyo caso siempre se muestran)."""
+    if HIDE_TEAM_COLORS and not is_dev_mode_unlocked():
         return []
     return [
         {"slot": slot, "label": TEAM_SLOT_LABELS.get(slot, slot)}
@@ -1228,8 +1282,9 @@ def uninstall_scheme(
 def list_installed_team_schemes(base_dir):
     """Para el selector de "Quitar color de equipo" en la UI: devuelve
     [{"slot": "TeamRed1", "label": "Rojo 1", "scheme_name": ...}, ...] en
-    TEAM_SLOT_ORDER. Vacio si HIDE_TEAM_COLORS esta activo."""
-    if HIDE_TEAM_COLORS:
+    TEAM_SLOT_ORDER. Vacio si HIDE_TEAM_COLORS esta activo (salvo modo
+    developer destrabado)."""
+    if HIDE_TEAM_COLORS and not is_dev_mode_unlocked():
         return []
     store_path = os.path.join(base_dir, "installed_team_schemes.json")
     installed = load_installed_schemes(store_path)

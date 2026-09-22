@@ -2816,6 +2816,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('brawlhalla-path-clear').addEventListener('click', clearBrawlhallaPath);
   checkBrawlhallaPathOnStartup();
 
+  /* Developer mode (unlock every colour) */
+  const devModeBtn = document.getElementById('dev-mode-unlock-btn');
+  const devModeInput = document.getElementById('dev-mode-code-input');
+  if (devModeBtn) devModeBtn.addEventListener('click', unlockDevMode);
+  if (devModeInput) {
+    devModeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') unlockDevMode();
+    });
+  }
+
   /* Customize appearance button + modal */
   const customizeBtn = document.getElementById('btn-customize');
   if (customizeBtn) {
@@ -3250,11 +3260,28 @@ function initSpriteUI() {
   const preview = document.getElementById('sprite-preview');
   if (!fileInput || !uploadBtn || !preview) return;
 
-  uploadBtn.addEventListener('click', () => fileInput.click());
+  /* "PreRenders" (was "Upload sprite"): opens the saved-sprites gallery
+   * for the current sprite type straight away instead of a file picker —
+   * see openPreRendersGallery(). New sprites are added from the "+ Add"
+   * button inside that modal (addFilesToPreRenders), which is what still
+   * drives sprite-file-input/fileInput below. */
+  uploadBtn.addEventListener('click', () => openPreRendersGallery());
   fileInput.addEventListener('change', () => {
     if (fileInput.files && fileInput.files.length) loadSpriteFiles(fileInput.files);
     fileInput.value = '';
   });
+
+  const preRendersAddBtn = document.getElementById('btn-prerenders-add');
+  const preRendersAddInput = document.getElementById('prerenders-add-input');
+  if (preRendersAddBtn && preRendersAddInput) {
+    preRendersAddBtn.addEventListener('click', () => preRendersAddInput.click());
+    preRendersAddInput.addEventListener('change', () => {
+      if (preRendersAddInput.files && preRendersAddInput.files.length) addFilesToPreRenders(preRendersAddInput.files);
+      preRendersAddInput.value = '';
+    });
+  }
+  document.getElementById('prerenders-close')?.addEventListener('click', closePreRendersModal);
+  document.getElementById('prerenders-modal-backdrop')?.addEventListener('click', closePreRendersModal);
 
   const animToggleBtn = document.getElementById('btn-sprite-anim-toggle');
   if (animToggleBtn) animToggleBtn.addEventListener('click', (e) => { e.stopPropagation(); _toggleSpriteAnimation(); });
@@ -5395,6 +5422,168 @@ function openSpriteZipPreviewModal(items, failCount, sourceName) {
 
 function closeSpriteZipPreviewModal() {
   document.getElementById('sprite-zip-preview-modal')?.classList.remove('open');
+}
+
+/* ---- PreRenders (sprites saved to AppData, per sprite type) --------- */
+
+/** fullPath-style key ("spriteType/filename") -> item, for the gallery
+ *  currently shown in the "PreRenders" modal. Only used to look items up
+ *  again on click (the grid render already closes over each item, but
+ *  this keeps the same lookup shape as _zipPreviewItemsByPath). */
+let _preRendersItemsByKey = {};
+
+/** "PreRenders" entry point (replaces the old "Upload sprite" file
+ *  picker): asks the Python bridge for every sprite already saved in
+ *  AppData for the CURRENT sprite type (activeSpriteType) and shows them
+ *  in a grid, same look as "Preview". Clicking one loads it straight
+ *  into the Sprite editor; "+ Add" inside the modal is what actually
+ *  saves new sprites here (see addFilesToPreRenders). Desktop app only —
+ *  there's no AppData to read from in the browser. */
+async function openPreRendersGallery() {
+  if (!isDesktopApp()) { showToast('PreRenders only works in the desktop app', 'error'); return; }
+  let items = [];
+  try {
+    items = await window.pywebview.api.list_prerenders(activeSpriteType);
+  } catch (e) {
+    showToast(`Could not load PreRenders: ${e.message || e}`, 'error');
+    return;
+  }
+  renderPreRendersModal(items);
+}
+
+/** Paints openPreRendersGallery()'s (or a post-add/delete refresh's)
+ *  results into #prerenders-grid and opens the modal. Reuses the same
+ *  .zip-preview-* CSS classes as the "Preview" grid so it looks like the
+ *  same feature, but with much simpler per-cell behaviour: no checkboxes,
+ *  no manual mode, no "changed" badge — just click-to-load and a small
+ *  delete button. */
+function renderPreRendersModal(items) {
+  const title = document.getElementById('prerenders-modal-title');
+  if (title) {
+    const label = SPRITE_TYPE_LABELS[activeSpriteType] || activeSpriteType;
+    title.textContent = `PreRenders — ${label} (${items.length})`;
+  }
+
+  _preRendersItemsByKey = {};
+  const grid = document.getElementById('prerenders-grid');
+  if (grid) {
+    grid.innerHTML = '';
+    if (!items.length) {
+      const empty = document.createElement('p');
+      empty.className = 'zip-preview-empty-note';
+      empty.textContent = 'No sprites saved here yet for this sprite type — use "+ Add" to save one.';
+      grid.appendChild(empty);
+    }
+    for (const item of items) {
+      _preRendersItemsByKey[`${item.spriteType}/${item.filename}`] = item;
+
+      const cell = document.createElement('div');
+      cell.className = 'zip-preview-item zip-preview-clickable';
+      cell.title = 'Click to load this sprite into the editor';
+      cell.addEventListener('click', () => loadPreRenderIntoEditor(item));
+
+      const thumb = document.createElement('div');
+      thumb.className = 'zip-preview-thumb';
+      const img = document.createElement('img');
+      img.src = item.dataUrl;
+      img.alt = item.filename;
+      img.style.maxWidth = '100%';
+      img.style.maxHeight = '100%';
+      img.style.objectFit = 'contain';
+      thumb.appendChild(img);
+
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'prerenders-delete-btn';
+      delBtn.title = 'Delete this PreRender';
+      delBtn.textContent = '\u00d7';
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deletePreRender(item);
+      });
+      thumb.appendChild(delBtn);
+      cell.appendChild(thumb);
+
+      const name = document.createElement('span');
+      name.className = 'zip-preview-name';
+      name.textContent = item.filename;
+      name.title = item.filename;
+      cell.appendChild(name);
+
+      grid.appendChild(cell);
+    }
+  }
+  document.getElementById('prerenders-modal')?.classList.add('open');
+}
+
+function closePreRendersModal() {
+  document.getElementById('prerenders-modal')?.classList.remove('open');
+}
+
+/** Turns a saved PreRender's data URL back into a File and feeds it
+ *  through the normal single-sprite loader (loadSpriteFile) — so it
+ *  lands in the editor exactly like a fresh upload would. */
+async function loadPreRenderIntoEditor(item) {
+  try {
+    const res = await fetch(item.dataUrl);
+    const blob = await res.blob();
+    loadSpriteFile(new File([blob], item.filename, { type: blob.type }));
+  } catch (e) {
+    showToast('Could not load that PreRender into the editor', 'error');
+    return;
+  }
+  closePreRendersModal();
+  const section = document.getElementById('section-sprite');
+  if (section) {
+    section.classList.remove('is-collapsed');
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+/** "+ Add" inside the PreRenders modal: saves each picked file into
+ *  AppData (Python's save_prerender) tagged with whatever sprite type is
+ *  CURRENTLY active, then re-opens the gallery so they show up right
+ *  away. Purely a save-for-later action — doesn't touch the main editor
+ *  (use a saved PreRender's thumbnail, or the empty preview box/drag &
+ *  drop, to actually load a sprite for editing). */
+async function addFilesToPreRenders(fileList) {
+  const files = Array.from(fileList || []).filter(Boolean);
+  if (!files.length) return;
+  let saved = 0;
+  for (const file of files) {
+    try {
+      const dataUrl = await _fileToDataURL(file);
+      await window.pywebview.api.save_prerender(dataUrl, file.name, activeSpriteType);
+      saved++;
+    } catch (e) {
+      showToast(`Could not save "${file.name}": ${e.message || e}`, 'error');
+    }
+  }
+  if (saved) showToast(`Saved ${saved} sprite${saved === 1 ? '' : 's'} to PreRenders`, 'info');
+  openPreRendersGallery();
+}
+
+/** Delete button on a PreRenders thumbnail. */
+async function deletePreRender(item) {
+  try {
+    await window.pywebview.api.delete_prerender(item.spriteType, item.filename);
+  } catch (e) {
+    showToast(`Could not delete "${item.filename}": ${e.message || e}`, 'error');
+    return;
+  }
+  openPreRendersGallery();
+}
+
+/** Reads a File as a data: URL (base64) — used to hand sprite bytes over
+ *  the pywebview bridge, which only carries plain JSON-serialisable
+ *  values (no raw File/Blob). */
+function _fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error || new Error('Could not read file'));
+    reader.readAsDataURL(file);
+  });
 }
 
 /** "Clear shapes" button: wipes whatever's currently shown in the
@@ -9574,6 +9763,55 @@ async function refreshBrawlhallaPathStatus() {
 function openBrawlhallaPathModal() {
   document.getElementById('brawlhalla-path-modal').classList.add('open');
   refreshBrawlhallaPathStatus();
+  refreshDevModeStatus();
+}
+
+/** Modo developer: destraba todos los colores (incluidos los ocultos y
+ *  team colors) escribiendo el codigo en el modal de Brawlhalla Folder. */
+async function refreshDevModeStatus() {
+  const status = document.getElementById('dev-mode-status');
+  const input = document.getElementById('dev-mode-code-input');
+  const btn = document.getElementById('dev-mode-unlock-btn');
+  if (!status) return;
+  if (!isDesktopApp()) {
+    status.textContent = '';
+    return;
+  }
+  try {
+    const unlocked = await window.pywebview.api.get_dev_mode_status();
+    if (unlocked) {
+      status.textContent = 'Developer mode: unlocked (all colours available).';
+      if (input) input.style.display = 'none';
+      if (btn) btn.style.display = 'none';
+    } else {
+      status.textContent = 'Enter the developer code to unlock every colour.';
+      if (input) input.style.display = '';
+      if (btn) btn.style.display = '';
+    }
+  } catch (e) {
+    status.textContent = '';
+  }
+}
+
+async function unlockDevMode() {
+  if (!isDesktopApp()) return;
+  const input = document.getElementById('dev-mode-code-input');
+  const code = input ? input.value.trim() : '';
+  if (!code) return;
+  try {
+    const result = await window.pywebview.api.unlock_dev_mode(code);
+    showToast(result.message, result.success ? 'info' : 'error');
+    if (result.success) {
+      if (input) input.value = '';
+      await refreshDevModeStatus();
+      // Refresca el selector de "Install to Brawlhalla" (colores +
+      // team colors) para que los nuevos slots aparezcan sin tener que
+      // reiniciar la app.
+      if (typeof populateInstallTargetSelect === 'function') populateInstallTargetSelect();
+    }
+  } catch (e) {
+    showToast(`Unlock failed: ${e.message || e}`, 'error');
+  }
 }
 
 function closeBrawlhallaPathModal() {

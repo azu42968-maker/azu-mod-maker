@@ -5,7 +5,7 @@ a = Analysis(
     ['AppLauncher.py'],
     pathex=[],
     binaries=[],
-    datas=[('index.html', '.'), ('styles.css', '.'), ('codemirror.bundle.js', '.'), ('app.js', '.'), ('AppPublic.py', '.')],
+    datas=[('index.html', '.'), ('styles.css', '.'), ('codemirror.bundle.js', '.'), ('app.js', '.'), ('AppPublic.py', '.'), ('ffdec', 'ffdec'), ('PreRenders', 'PreRenders')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

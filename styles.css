@@ -2548,6 +2548,35 @@ body.has-custom-bg .panel     { position: relative; z-index: 10; }
   padding: 4px;
 }
 
+.prerenders-delete-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.prerenders-delete-btn:hover {
+  background: var(--danger, #d64545);
+}
+
+.zip-preview-empty-note {
+  grid-column: 1 / -1;
+  color: var(--text-muted, #aaa);
+  font-size: 12px;
+  text-align: center;
+  padding: 1rem 0;
+}
+
 .zip-preview-name {
   font-size: 11px;
   color: var(--text-muted, #aaa);

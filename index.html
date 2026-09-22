@@ -137,7 +137,7 @@
         <div class="sprite-toolbar section-header" onclick="if (!event.target.closest('button, input, select')) toggleSection('section-sprite')">
           <h2 class="panel-title sprite-title">Sprite</h2>
           <div class="sprite-toolbar-btns">
-            <button id="btn-sprite-upload" class="btn btn-sm" type="button" title="Upload sprite (select several PNG/JPG or several SVG frames to preview them recoloured as an animation, in filename order — don't mix the two)" onclick="event.stopPropagation()"><span class="btn-icon"></span><span class="btn-label">Upload sprite</span></button>
+            <button id="btn-sprite-upload" class="btn btn-sm" type="button" title="Open your saved PreRenders for the current sprite type — click one to load it into the editor, or use &quot;+ Add&quot; inside to save new ones" onclick="event.stopPropagation()"><span class="btn-icon"></span><span class="btn-label">PreRenders</span></button>
             <input type="file" id="sprite-file-input" accept="image/*,.svg,image/svg+xml" multiple hidden>
             <button id="btn-sprite-zip-colors" class="btn btn-sm" type="button" title="Upload a .zip of SVG sprites, a .zip of .swf files, or one/more .swf files, and list every distinct colour used across the ones you pick" onclick="event.stopPropagation()"><span class="btn-icon"></span><span class="btn-label">Analyze</span></button>
             <input type="file" id="sprite-zip-colors-input" accept=".zip,application/zip,.swf" multiple hidden>
@@ -302,6 +302,13 @@
           <button id="brawlhalla-path-save" class="btn btn-sm btn-primary" type="button">Save</button>
         </div>
       </div>
+      <hr style="border-color:var(--border-color, #333); margin:14px 0 10px">
+      <p id="dev-mode-status" class="brawlhalla-path-status"></p>
+      <div style="display:flex;gap:0.5rem">
+        <input id="dev-mode-code-input" class="modal-input" type="text" spellcheck="false"
+          placeholder="Developer code" style="flex:1">
+        <button id="dev-mode-unlock-btn" class="btn btn-sm btn-primary" type="button">Unlock</button>
+      </div>
     </div>
   </div>
 
@@ -333,6 +340,21 @@
       <div id="sprite-zip-preview-grid" class="zip-preview-grid"></div>
       <div class="modal-actions">
         <button id="sprite-zip-preview-close" class="btn btn-sm btn-primary" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="prerenders-modal" class="modal-overlay">
+    <div id="prerenders-modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal image-modal-card">
+      <h3 class="modal-title" id="prerenders-modal-title">PreRenders</h3>
+      <div class="zip-preview-toolbar">
+        <button id="btn-prerenders-add" class="btn btn-sm btn-primary" type="button" title="Save new sprite(s) here for the current sprite type"><span class="btn-icon"></span><span class="btn-label">+ Add</span></button>
+        <input type="file" id="prerenders-add-input" accept="image/*,.svg,image/svg+xml" multiple hidden>
+      </div>
+      <div id="prerenders-grid" class="zip-preview-grid"></div>
+      <div class="modal-actions">
+        <button id="prerenders-close" class="btn btn-sm btn-primary" type="button">Close</button>
       </div>
     </div>
   </div>
