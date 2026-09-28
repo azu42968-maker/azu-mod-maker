@@ -2356,7 +2356,7 @@ let scheme  = new ColorSchemeType();
 let gameSchemes = [];           // GameColorSchemeType[]
 let stringTable = {};           // key → display name
 
-let grid, picker, editor, gameDD, spriteTypeColorBtn, spriteTypeSharedDD;
+let grid, picker, editor, gameDD, orgDD, spriteTypeColorBtn, spriteTypeSharedDD;
 let historyStripEl, undoBtn, redoBtn, historyDeleteBtn;
 let historyStates = [];
 let historyIndex = -1;
@@ -2434,6 +2434,18 @@ const DEFAULT_DROPDOWN_ICON = '<span class="history-mini">'
   + '<span class="history-mini-cell" style="background-color:#7AC7D9"></span><span class="history-mini-cell" style="background-color:#7AC7D9"></span><span class="history-mini-cell" style="background-color:#7AC7D9"></span><span class="history-mini-cell" style="background-color:#7AC7D9"></span><span class="history-mini-cell" style="background-color:#7AC7D9"></span><span class="history-mini-cell" style="background-color:#7AC7D9"></span>'
   + '</span>';
 
+/* Org Colors: custom palettes shown in the "Org Colors" dropdown.
+   hex = 30 RRGGBB values in COLOR_PROPS order. */
+const ORG_COLOR_SCHEMES = [
+  { label: "SiB", hex: ["434A66", "1E222B", "010206", "FFFFFF", "FEFEFF", "F5F6FB", "C1C1E5", "8A8CC5", "8A7DD4", "9EE1FD", "53BFE3", "2E468E", "111E55", "0F183C", "0F0C27", "92C9FF", "50E4FF", "14C7F9", "1E547F", "223659", "111243", "F5F6FB", "E1E8FF", "C3C3DB", "6E6EA4", "C1C1E5", "8985A6", "2F3541", "141416", "15BBF7"] },
+  { label: "Obsidian", hex: ["424242", "181818", "000000", "8C8C8C", "414141", "1D1D1D", "0A0A0A", "000000", "2B2B2B", "515151", "262626", "101010", "050505", "000000", "191919", "2C2C2C", "212121", "151515", "040404", "000000", "151515", "6B6B6B", "494949", "313131", "141414", "878787", "3F3F3F", "1D1D1D", "000000", "474747"] },
+  { label: "Rose", hex: ["822B45", "5C0118", "41000D", "CC9AAC", "802A44", "2B000B", "1E0006", "160003", "5C0118", "160003", "120104", "0D0103", "070001", "010102", "282E35", "FFD2D2", "D0012B", "5C0118", "2B000B", "1E030A", "690050", "FFFFFF", "F5F8FA", "EAF1F5", "D8E3EE", "FDFDFD", "AAA1A3", "5E4E51", "1E030A", "CACACA"] },
+  { label: "Acid Monochrome", hex: ["EDEDED", "CACACA", "878787", "3C3C3C", "272727", "181818", "0B0B0B", "060606", "232323", "494949", "333333", "232323", "131313", "0B0B0B", "2B2B2B", "FBFBFB", "F5F5F5", "CFCFCF", "646464", "212121", "7C7C7C", "EFEFEF", "D4D4D4", "A0A0A0", "6D6D6D", "CCCCCC", "808080", "181818", "111111", "808080"] },
+  { label: "Acid Pink", hex: ["3F3F46", "18181B", "050505", "5A5A60", "404044", "27272A", "141416", "09090B", "1F1F22", "FFE6F2", "FFB3D9", "FF66B2", "CC0077", "660033", "FF1493", "FFFFFF", "FF99CC", "FF3399", "B30059", "4D0026", "FF66B2", "71717A", "52525B", "3F3F46", "27272A", "606065", "3A3A40", "1F1F22", "0F0F12", "FF69B4"] },
+  { label: "Acid Org", hex: ["4A4A4F", "2D312B", "050505", "5A5A60", "404044", "27272A", "141416", "09090B", "1F1F22", "EAFFE5", "DDFFB3", "ABFF66", "36CC00", "0C6600", "72FF14", "FFFFFF", "B4FF99", "8FFF33", "30B300", "054D00", "9CFF66", "82828C", "62626F", "6A6A6C", "343437", "606065", "3A3A40", "1F1F22", "0F0F12", "93FF6B"] },
+  { label: "Royald Gold", hex: ["535560", "2C2B31", "07070A", "FEFEFF", "FEFEFF", "F0F4FF", "C9D5F8", "808AAF", "C1C1BF", "636569", "373A3F", "222527", "161A1C", "010102", "282E35", "FEFEEA", "F5E689", "D9AB25", "65300B", "471A00", "F7C82D", "797F8C", "585E69", "41454D", "202A33", "FEFEEA", "F5E689", "D9AB25", "65300B", "F7C82D"] }
+];
+
 /* ---- Init ---------------------------------------------------------- */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -2452,6 +2464,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     searchable: true,
     defaultIconHtml: DEFAULT_DROPDOWN_ICON,
   });
+  orgDD = new Dropdown(document.getElementById('org-dd'), {
+    placeholder: 'Org Colors',
+    searchable: false,
+    defaultIconHtml: DEFAULT_DROPDOWN_ICON,
+  });
+  orgDD.setItems([{
+    label: 'Org Colors',
+    items: ORG_COLOR_SCHEMES.map((s, i) => ({
+      value: 'org:' + i,
+      label: s.label,
+      iconHtml: _miniGridHtmlFromHex(s.hex.join('')),
+    })),
+  }]);
   /* "Color" gets its own dedicated button (restricted 30-cell layout,
      game-accurate schema). Every other sprite type — Dash, Gravity
      Cancel, Last Jump, and any custom/signature type loaded from XML —
@@ -2657,10 +2682,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    if (orgDD) orgDD.reset();
     const locked = grid.getLockedColumns();
     for (const p of COLOR_PROPS) {
       if (!locked.has(getColumnFromProp(p))) scheme[p] = gs[p];
     }
+    refreshAll({ recordHistory: true });
+    showToast(`Loaded "${item.label}"`, 'info');
+  });
+
+  orgDD.onChange((value, item) => {
+    const idx = parseInt(String(value).replace('org:', ''), 10);
+    const org = ORG_COLOR_SCHEMES[idx];
+    if (!org) return;
+    const locked = grid.getLockedColumns();
+    COLOR_PROPS.forEach((p, i) => {
+      if (!locked.has(getColumnFromProp(p))) scheme[p] = parseInt(org.hex[i], 16);
+    });
+    gameDD.reset();   // only one preset dropdown shows a selection at a time
     refreshAll({ recordHistory: true });
     showToast(`Loaded "${item.label}"`, 'info');
   });
@@ -2964,6 +3003,7 @@ function bind(id, fn) {
 
 function clearSchemeSelections() {
   gameDD.reset();
+  if (orgDD) orgDD.reset();
 }
 
 function _columnLabel(colId) {
