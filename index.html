@@ -18,14 +18,10 @@
 
   <link rel="icon" type="image/png" href="data:,">
 
-  <!-- App styles (CodeMirror is bundled in codemirror.bundle.js, JSZip
-       inside app.js, further down), so the app works fully offline —
-       no CDN, no internet needed). -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- ======== Header ======== -->
   <header class="header">
     <div class="header-logo">
       <img class="header-logo-img" src="data:image/png;base64,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" width="28" height="28" alt="Logo">
@@ -44,10 +40,8 @@
     </div>
   </header>
 
-  <!-- ======== Tabs ======== -->
   <div class="tabs-bar" id="tabs-bar" role="tablist" aria-label="Work tabs"></div>
 
-  <!-- ======== Toolbar ======== -->
   <div class="toolbar">
     <div class="toolbar-group">
       <div id="game-dd"></div>
@@ -95,17 +89,13 @@
     </div>
   </div>
 
-
-  <!-- ======== Main 3-column layout ======== -->
   <main class="app-main">
 
-    <!-- Left: Colour Picker -->
     <aside class="panel panel-picker">
       <h2 class="panel-title">Colour Picker</h2>
       <div id="picker-panel"></div>
     </aside>
 
-    <!-- Centre: Colour Grid (hero) -->
     <section class="panel panel-grid">
       <div class="grid-type-row">
         <div class="sprite-type-group" title="Which sprite type the default palette and sprite colour-matching should use">
@@ -131,7 +121,6 @@
       </div>
     </section>
 
-    <!-- Right: Code Editor -->
     <aside class="panel panel-editor">
 
       <div class="sprite-section" id="section-sprite">
@@ -485,15 +474,8 @@
     </div>
   </div>
 
-  <!-- Toast container -->
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- Plantilla SVG para la imagen de "compartir esquema" (antes vivia
-       como un string embebido dentro de script.js). Va como
-       type="text/plain" a proposito: asi el navegador no la ejecuta ni
-       la parsea como HTML, y app.js la lee con .textContent sin fetch()
-       (fetch a archivos locales no funciona empaquetado con pywebview,
-       que abre este archivo con file://). -->
   <script type="text/plain" id="keres-svg-template"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    width="2000"
@@ -957,7 +939,6 @@
 </svg>
 </script>
 
-  <!-- CodeMirror (libreria de terceros) primero, la app despues -->
   <script defer src="codemirror.bundle.js"></script>
   <script defer src="app.js"></script>
 </body>

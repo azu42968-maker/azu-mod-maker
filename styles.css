@@ -1,28 +1,22 @@
-/* BASICS */
 
 .CodeMirror {
-  /* Set height, width, borders, and global font properties here */
   font-family: monospace;
   height: 300px;
   color: black;
   direction: ltr;
 }
 
-/* PADDING */
-
 .CodeMirror-lines {
-  padding: 4px 0; /* Vertical padding around content */
+  padding: 4px 0;
 }
 .CodeMirror pre.CodeMirror-line,
 .CodeMirror pre.CodeMirror-line-like {
-  padding: 0 4px; /* Horizontal padding of content */
+  padding: 0 4px;
 }
 
 .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
-  background-color: white; /* The little square between H and V scrollbars */
+  background-color: white;
 }
-
-/* GUTTER */
 
 .CodeMirror-gutters {
   border-right: 1px solid #ddd;
@@ -41,14 +35,11 @@
 .CodeMirror-guttermarker { color: black; }
 .CodeMirror-guttermarker-subtle { color: #999; }
 
-/* CURSOR */
-
 .CodeMirror-cursor {
   border-left: 1px solid black;
   border-right: none;
   width: 0;
 }
-/* Shown when moving in bi-directional text */
 .CodeMirror div.CodeMirror-secondarycursor {
   border-left: 1px solid silver;
 }
@@ -83,7 +74,6 @@
   100% {}
 }
 
-/* Can style cursor different in overwrite (non-insert) mode */
 .CodeMirror-overwrite .CodeMirror-cursor {}
 
 .cm-tab { display: inline-block; text-decoration: inherit; }
@@ -98,8 +88,6 @@
   top: 0; bottom: 0;
   position: absolute;
 }
-
-/* DEFAULT THEME */
 
 .cm-s-default .cm-header {color: blue;}
 .cm-s-default .cm-quote {color: #090;}
@@ -137,17 +125,10 @@
 
 .CodeMirror-composing { border-bottom: 2px solid; }
 
-/* Default styles for common addons */
-
 div.CodeMirror span.CodeMirror-matchingbracket {color: #0b0;}
 div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
 .CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }
 .CodeMirror-activeline-background {background: #e8f2ff;}
-
-/* STOP */
-
-/* The rest of this file contains styles related to the mechanics of
-   the editor. You probably shouldn't touch them. */
 
 .CodeMirror {
   position: relative;
@@ -156,13 +137,11 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
 }
 
 .CodeMirror-scroll {
-  overflow: scroll !important; /* Things will break if this is overridden */
-  /* 50px is the magic margin used to hide the element's real scrollbars */
-  /* See overflow: hidden in .CodeMirror */
+  overflow: scroll !important;
   margin-bottom: -50px; margin-right: -50px;
   padding-bottom: 50px;
   height: 100%;
-  outline: none; /* Prevent dragging from highlighting the element */
+  outline: none;
   position: relative;
   z-index: 0;
 }
@@ -171,9 +150,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
   border-right: 50px solid transparent;
 }
 
-/* The fake, visible scrollbars. Used to force redraw during scrolling
-   before actual scrolling happens, thus preventing shaking and
-   flickering artifacts. */
 .CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
   position: absolute;
   z-index: 6;
@@ -230,11 +206,10 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
 
 .CodeMirror-lines {
   cursor: text;
-  min-height: 1px; /* prevents collapsing before first draw */
+  min-height: 1px;
 }
 .CodeMirror pre.CodeMirror-line,
 .CodeMirror pre.CodeMirror-line-like {
-  /* Reset some styles that the rest of the page might have set */
   -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0;
   border-width: 0;
   background: transparent;
@@ -268,7 +243,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
 .CodeMirror-linewidget {
   position: relative;
   z-index: 2;
-  padding: 0.1px; /* Force widget margins to stay inside of the container */
+  padding: 0.1px;
 }
 
 .CodeMirror-widget {}
@@ -279,7 +254,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
   outline: none;
 }
 
-/* Force content-box sizing for the elements where we expect it */
 .CodeMirror-scroll,
 .CodeMirror-sizer,
 .CodeMirror-gutter,
@@ -327,26 +301,17 @@ div.CodeMirror-dragcursors {
   background-color: rgba(255, 255, 0, .4);
 }
 
-/* Used to force a border model for a node */
 .cm-force-border { padding-right: .1px; }
 
 @media print {
-  /* Hide the cursor when printing */
   .CodeMirror div.CodeMirror-cursors {
     visibility: hidden;
   }
 }
 
-/* See issue #2901 */
 .cm-tab-wrap-hack:after { content: ''; }
 
-/* Help users use markselection to safely style text background */
 span.CodeMirror-selectedtext { background: none; }
-/*
-  Name:       material
-  Author:     Mattia Astorino (http://github.com/equinusocio)
-  Website:    https://material-theme.site/
-*/
 
 .cm-s-material-darker.CodeMirror {
   background-color: #212121;
@@ -467,7 +432,6 @@ span.CodeMirror-selectedtext { background: none; }
   color: #DECB6B;
 }
 
-
 .cm-s-material-darker .cm-error {
   color: rgba(255, 255, 255, 1.0);
   background-color: #FF5370;
@@ -476,11 +440,7 @@ span.CodeMirror-selectedtext { background: none; }
 .cm-s-material-darker .CodeMirror-matchingbracket {
   text-decoration: underline;
   color: white !important;
-}/* ======================================================================
-   styles.css — Full application styles with dark / light theming
-   ====================================================================== */
-
-/* ---- CSS Custom Properties  (inverted Esports v.2) ----------------- */
+}
 
 :root,
 [data-theme="dark"] {
@@ -528,8 +488,6 @@ span.CodeMirror-selectedtext { background: none; }
   --grid-empty:    #cad7ce;
 }
 
-/* ---- Reset --------------------------------------------------------- */
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -548,8 +506,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Con imagen de fondo personalizada, se oscurece con un overlay para que
-   la imagen sea ambiente y no compita con la UI. */
 body.has-custom-bg {
   background-image:
     linear-gradient(rgba(6, 8, 12, 0.45), rgba(6, 8, 12, 0.45)),
@@ -558,8 +514,6 @@ body.has-custom-bg {
 
 input, button, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
-
-/* ---- Header -------------------------------------------------------- */
 
 .header {
   display: flex;
@@ -588,8 +542,6 @@ button { cursor: pointer; }
   font-weight: 400;
   color: var(--text-dim);
 }
-
-/* ---- Buttons ------------------------------------------------------- */
 
 .btn {
   display: inline-flex;
@@ -747,8 +699,6 @@ button { cursor: pointer; }
 
 .btn-icon svg { width: 14px; height: 14px; }
 
-/* ---- Tabs bar (browser-like windows) -------------------------------- */
-
 .tabs-bar {
   display: flex;
   align-items: flex-end;
@@ -842,8 +792,6 @@ button { cursor: pointer; }
   border-color: var(--accent);
 }
 
-/* ---- Toolbar ------------------------------------------------------- */
-
 .toolbar {
   display: flex;
   align-items: center;
@@ -910,8 +858,6 @@ button { cursor: pointer; }
   min-width: 84px;
   white-space: nowrap;
 }
-
-/* ---- Dropdown ------------------------------------------------------ */
 
 .dropdown {
   position: relative;
@@ -1097,8 +1043,6 @@ button { cursor: pointer; }
 .dropdown-item:hover .dropdown-item-icon,
 .dropdown-item.active .dropdown-item-icon { border-color: rgba(255,255,255,.55); }
 
-/* ---- Main layout --------------------------------------------------- */
-
 .app-main {
   display: grid;
   grid-template-columns: 250px 1fr 400px;
@@ -1178,12 +1122,8 @@ button { cursor: pointer; }
   margin-top: 0.5rem;
 }
 
-/* ---- Colour Picker Widget ------------------------------------------ */
-
-/* Container */
 .pk { display: flex; flex-direction: column; gap: 6px; }
 
-/* ---- Canvas-mode & slider-mode tab bars ---- */
 .pk-tabs {
   display: flex;
   gap: 2px;
@@ -1207,7 +1147,6 @@ button { cursor: pointer; }
 }
 .pk-tab.active { background: var(--accent); color: #fff; }
 
-/* ---- Canvas area ---- */
 .pk-area { display: flex; flex-direction: column; }
 
 .pk-row { display: flex; gap: 6px; }
@@ -1229,7 +1168,6 @@ button { cursor: pointer; }
 
 .pk-grey-w, .pk-wheel-w { overflow: visible; border-radius: 0; }
 
-/* Pointer — dot */
 .pk-dot {
   position: absolute;
   width: 12px; height: 12px;
@@ -1242,7 +1180,6 @@ button { cursor: pointer; }
 }
 .pk-dot-ring { border-color: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.4), inset 0 0 0 1px rgba(0,0,0,.25); }
 
-/* Pointer — bar (hue/value strip) */
 .pk-bar {
   position: absolute;
   left: -2px; right: -2px;
@@ -1254,7 +1191,6 @@ button { cursor: pointer; }
   transform: translateY(-50%);
   top: 0;
 }
-/* Vertical bar for greyscale */
 .pk-bar-v {
   left: auto; right: auto;
   width: 4px; height: auto;
@@ -1262,7 +1198,6 @@ button { cursor: pointer; }
   transform: translateX(-50%);
 }
 
-/* ---- Swatches ---- */
 .pk-swatches {
   display: flex; gap: 2px;
   border-radius: 4px; overflow: hidden;
@@ -1270,7 +1205,6 @@ button { cursor: pointer; }
 }
 .pk-sw { flex: 1; }
 
-/* ---- Quick transform bar ---- */
 .pk-quick-title-row {
   display: flex;
   align-items: center;
@@ -1378,7 +1312,6 @@ button { cursor: pointer; }
   display: block;
 }
 
-/* ---- Slider rows ---- */
 .pk-sliders { display: flex; flex-direction: column; gap: 4px; }
 
 .pk-srow {
@@ -1442,7 +1375,6 @@ button { cursor: pointer; }
 }
 .pk-field:focus { border-color: var(--border-focus); }
 
-/* Hide native number spinners */
 .pk-field::-webkit-inner-spin-button,
 .pk-field::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .pk-field[type="number"] { -moz-appearance: textfield; appearance: textfield; }
@@ -1454,7 +1386,6 @@ button { cursor: pointer; }
   flex-shrink: 0;
 }
 
-/* ---- Hex row ---- */
 .pk-hex-row {
   display: flex;
   align-items: center;
@@ -1485,8 +1416,6 @@ button { cursor: pointer; }
 }
 .pk-hex-btn svg { width: 12px; height: 12px; }
 .pk-hex-btn:hover { color: var(--text); border-color: var(--border-focus); }
-
-/* ---- Colour Grid --------------------------------------------------- */
 
 .panel-grid {
   overflow: auto;
@@ -1667,7 +1596,6 @@ button { cursor: pointer; }
   z-index: 3;
 }
 
-/* ---- Multi-select mode (batch Quick Transform edits) ---- */
 .color-grid.grid-multiselect .grid-cell {
   cursor: cell;
 }
@@ -1723,10 +1651,6 @@ button { cursor: pointer; }
   margin-bottom: 0.5rem;
 }
 
-/* Sprite-type selector: "Color" gets its own dedicated button (30-cell,
-   game-accurate layout); every other sprite type — Dash, Gravity Cancel,
-   Last Jump, and any custom/signature type — shares the dropdown next to
-   it and unlocks the full 36-cell grid. */
 .sprite-type-group {
   display: flex;
   align-items: center;
@@ -1742,18 +1666,6 @@ button { cursor: pointer; }
   max-width: 150px;
 }
 
-/* Section-specific buttons, shown/hidden based on the active sprite type
-   (see syncSpriteTypeSelectors, which toggles .is-color-sprite-type on
-   <body>):
-   - Sprite-recolour ZIP tools ("red" group) only make sense for the
-     non-Color sprite types (Dash / Gravity Cancel / Last Jump / custom),
-     whose sprites need colour-matching against a seed palette — hidden
-     while Color is active.
-   - Colour-scheme install tools ("blue" group) only make sense for
-     Color, since that's the actual installable in-game skin colour
-     scheme — hidden for every other sprite type. !important is needed
-     since these also carry an inline display:none/'' toggled by
-     isDesktopApp()-gated JS logic; this rule layers on top of that. */
 .is-color-sprite-type #btn-sprite-zip-colors,
 .is-color-sprite-type #btn-sprite-batch-zip-download {
   display: none !important;
@@ -1852,8 +1764,6 @@ body:not(.is-color-sprite-type) #uninstall-actions {
   cursor: default;
   pointer-events: none;
 }
-
-/* ---- Sprite Panel ---------------------------------------------------- */
 
 .sprite-section {
   display: flex;
@@ -2010,8 +1920,6 @@ body:not(.is-color-sprite-type) #uninstall-actions {
   min-height: 13px;
 }
 
-/* ---- Palette Template Panel ------------------------------------------ */
-
 .template-section {
   display: flex;
   flex-direction: column;
@@ -2072,8 +1980,6 @@ body:not(.is-color-sprite-type) #uninstall-actions {
   min-height: 13px;
 }
 
-/* Export & Install section reuses .template-section spacing but is the
-   last block in the editor panel, so it doesn't need a trailing divider. */
 .export-section {
   border-bottom: none;
   margin-bottom: 0;
@@ -2084,8 +1990,6 @@ body:not(.is-color-sprite-type) #uninstall-actions {
   margin-top: 0;
   justify-content: flex-start;
 }
-
-/* ---- Code Editor Panel --------------------------------------------- */
 
 .panel-editor {
   display: flex;
@@ -2136,8 +2040,6 @@ body:not(.is-color-sprite-type) #uninstall-actions {
 .editor-actions .btn {
   flex: 0 0 auto;
 }
-
-/* ---- Modal --------------------------------------------------------- */
 
 .modal-overlay {
   position: fixed;
@@ -2194,11 +2096,6 @@ body:not(.is-color-sprite-type) #uninstall-actions {
 
 .modal-input:focus { border-color: var(--border-focus); }
 
-/* Cuando hay una imagen de fondo personalizada, el "chrome" grande de la
-   app (header, toolbar, tabs, los 3 paneles) pasa a un fondo oscuro
-   semitransparente con blur, en vez de transparente puro: la imagen se
-   sigue notando detrás pero el contenido no se mezcla con ella. Los
-   bordes se suavizan para no sumar ruido visual encima de la foto. */
 body.has-custom-bg .header,
 body.has-custom-bg .toolbar,
 body.has-custom-bg .tabs-bar,
@@ -2209,21 +2106,11 @@ body.has-custom-bg .panel {
   border-color: rgba(255, 255, 255, 0.07);
 }
 
-/* backdrop-filter convierte a cada uno en su propio "stacking context", así
-   que sin esto sus popovers/menús desplegables (Donate, dropdowns del
-   toolbar, etc.) quedaban tapados por la sección siguiente en vez de
-   flotar por encima. Se les da un orden explícito: header > tabs > toolbar
-   > paneles, de arriba hacia abajo de la pantalla. */
 body.has-custom-bg .header    { position: relative; z-index: 40; }
 body.has-custom-bg .tabs-bar  { position: relative; z-index: 30; }
 body.has-custom-bg .toolbar   { position: relative; z-index: 20; }
 body.has-custom-bg .panel     { position: relative; z-index: 10; }
 
-/* Full-screen progress overlay shown while a long-running desktop-app
-   operation (e.g. Update Color Values) is in flight. Unlike the other
-   modals it has no close button and can't be dismissed by clicking the
-   backdrop — it disappears only once the JS call resolves — so it's
-   obvious the app is busy instead of looking frozen/unresponsive. */
 .progress-modal-overlay { z-index: 900; }
 
 .progress-modal-card {
@@ -2263,11 +2150,6 @@ body.has-custom-bg .panel     { position: relative; z-index: 10; }
   margin: 0;
 }
 
-/* Optional percentage bar shown instead of the spinner for operations
-   that can report real progress (e.g. Export to SWF, one shape at a
-   time) — see showProgressOverlay()'s withPercent argument. Hidden by
-   default; the spinner-only overlay (no known total, e.g. Update Color
-   Values) is unaffected. */
 .progress-modal-bar-wrap {
   width: 100%;
   height: 8px;
@@ -2348,7 +2230,6 @@ body.has-custom-bg .panel     { position: relative; z-index: 10; }
   cursor: pointer;
 }
 
-/* Toggle switch (dark mode) */
 .customize-switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink: 0; }
 .customize-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
 .customize-switch-track {
@@ -2615,8 +2496,6 @@ body.has-custom-bg .panel     { position: relative; z-index: 10; }
   }
 }
 
-/* ---- Toast notifications ------------------------------------------- */
-
 .toast-container {
   position: fixed;
   bottom: 1rem;
@@ -2649,14 +2528,10 @@ body.has-custom-bg .panel     { position: relative; z-index: 10; }
 .toast-error   { background: var(--danger-bg);  border: 1px solid var(--danger);  color: var(--danger); }
 .toast-success { background: var(--success-bg); border: 1px solid var(--success); color: var(--success); }
 
-/* ---- Custom Scrollbar ---------------------------------------------- */
-
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
-
-/* ---- Responsive ---------------------------------------------------- */
 
 @media (max-width: 1024px) {
   .app-main {

@@ -1,37 +1,4 @@
 #!/usr/bin/env python3
-"""
-AppAutoPatch.py
-----------------
-Automatiza el paso "manual" que quedaba despues de AppPcodeBuilder.py:
-leer discovery_header.pcode, encontrar los registros de resolvedClass /
-arrayFieldName / resolvedVector, y generar las versiones actualizadas
-de build_header() / build_color_block() / build_team_color_block()
-(las de AppPublic.py) que usan esos registros en vez del nombre
-ofuscado fijo.
-
-OJO - por que NO te pisa AppPublic.py directamente:
-Este script identifica los registros por HEURISTICA de texto (no
-compile ni corri nada de esto en un entorno real), asi que puede
-equivocarse si el compilador ordena las cosas distinto a lo esperado.
-En vez de arriesgarme a romper tu pipeline de colores mientras no
-estas mirando, escribo todo en un archivo nuevo
-(AppPublic_patch_REVISAR.py) + un reporte (patch_report.txt) con lo
-que encontro y por que, para que lo confirmes vos antes de aplicarlo.
-Si al volver el reporte te cierra, aplicar el parche es copiar 3
-funciones -- te dejo tambien un --apply que lo hace solo, PERO no
-corre por default.
-
-Uso (todo junto, sin tocar nada mientras comes):
-    python AppAutoPatch.py --mxmlc "C:\\flex_sdk\\bin\\mxmlc.bat"
-
-Si ya tenes discovery_header.pcode generado (de una corrida anterior
-de AppPcodeBuilder.py) y no queres recompilar:
-    python AppAutoPatch.py --pcode discovery_header.pcode --skip-build
-
-Para aplicar el parche ya revisado (escribe AppPublic.py, con backup):
-    python AppAutoPatch.py --pcode discovery_header.pcode --skip-build --apply
-"""
-
 import argparse
 import re
 import shutil
@@ -54,9 +21,6 @@ def log(msg):
     print(f"[AppAutoPatch] {msg}")
 
 
-# ----------------------------------------------------------------------
-# Paso 1 (opcional): correr AppPcodeBuilder.py para generar el .pcode
-# ----------------------------------------------------------------------
 def run_build(mxmlc_path):
     import AppPcodeBuilder as builder
     import AppUpdater as upd
@@ -80,36 +44,14 @@ def run_build(mxmlc_path):
         return block
 
 
-# ----------------------------------------------------------------------
-# Paso 2: heuristica para ubicar los 3 registros
-# ----------------------------------------------------------------------
 def find_three_final_setlocals(pcode_text):
-    """
-    Busca, dentro del cuerpo del loop, las 3 asignaciones consecutivas
-    (resolvedClass = ...; arrayFieldName = ...; resolvedVector = ...;)
-    que en el .as ocurren TODAS SEGUIDAS, justo antes del 'break'. En
-    pcode compilado eso deberia verse como 3 pares
-    "<algo> / setlocal N" consecutivos (sin otro setlocal intercalado
-    a un registro distinto), inmediatamente antes de un jump/continue
-    que sale del for.
-
-    Devuelve (resolved_class_reg, array_field_name_reg, resolved_vector_reg)
-    o levanta ValueError con el motivo si no esta seguro.
-    """
     lines = [ln.strip() for ln in pcode_text.splitlines()]
 
-    # Encontrar todas las posiciones de "jump"/"continue" (candidatos a
-    # ser el 'break' que sale del for). Para cada una, mirar hacia
-    # atras y ver si hay exactamente 3 setlocal consecutivos (permitiendo
-    # instrucciones intermedias que NO sean setlocal, pero contando los
-    # setlocal en orden de aparicion) justo antes.
     candidates = []
     for idx, line in enumerate(lines):
         if not BREAK_JUMP_RE.search(line):
             continue
 
-        # Mirar hacia atras hasta 40 lineas buscando los ultimos 3
-        # setlocal antes de este jump.
         window = lines[max(0, idx - 40):idx]
         setlocals_in_window = [
             (i, int(m.group(1)))
@@ -123,8 +65,6 @@ def find_three_final_setlocals(pcode_text):
         last_three = setlocals_in_window[-3:]
         regs = [r for _, r in last_three]
         if len(set(regs)) != 3:
-            # tienen que ser 3 registros DISTINTOS (resolvedClass,
-            # arrayFieldName, resolvedVector no pueden compartir slot)
             continue
 
         candidates.append((idx, regs))
@@ -147,14 +87,9 @@ def find_three_final_setlocals(pcode_text):
 
 
 def find_null_check_register(pcode_text):
-    """Busca 'if (resolvedClass == null) return;' -> deberia compilar a
-    algo como: getlocal N / pushnull / ifstricteq/ifeq ... Devuelve el
-    registro N si lo encuentra, para CRUZAR contra resolved_class_reg
-    como verificacion extra (no debe ser la unica fuente de verdad)."""
     lines = pcode_text.splitlines()
     for i, line in enumerate(lines):
         if "pushnull" in line:
-            # mirar 1-2 lineas antes por un getlocal
             for back in range(1, 3):
                 if i - back < 0:
                     continue
@@ -165,9 +100,6 @@ def find_null_check_register(pcode_text):
     return None
 
 
-# ----------------------------------------------------------------------
-# Paso 3: generar el parche como archivo nuevo (NO tocar AppPublic.py)
-# ----------------------------------------------------------------------
 PATCH_TEMPLATE = '''"""
 AppPublic_patch_REVISAR.py
 ----------------------------
@@ -277,9 +209,6 @@ def write_report(pcode_text, regs, candidates, null_check_reg):
     log(f"Reporte en: {REPORT_FILE}")
 
 
-# ----------------------------------------------------------------------
-# Paso 4 (opcional, --apply): aplicar de verdad sobre AppPublic.py
-# ----------------------------------------------------------------------
 def apply_patch():
     if not PATCH_PREVIEW.exists():
         raise SystemExit(f"No existe {PATCH_PREVIEW}. Corre primero sin --apply.")

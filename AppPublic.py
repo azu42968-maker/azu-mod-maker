@@ -1,34 +1,3 @@
-"""
-AllInOne.py
-===========
-Combina en un solo script los 3 pasos que antes corrian por separado:
-
-  1) ValuesFinder.py   -> ya no hace falta: ColorSwapClass/Vector/Array
-                           quedan hardcodeados en DEFAULT_CLASS/DEFAULT_VECTOR/
-                           DEFAULT_ARRAY, y update_dumb.sh los reescribe
-                           directamente aca cada vez que el juego actualiza
-                           (ver update_dumb.sh).
-  2) Execute.py         -> pipeline SVG -> XML -> .pcode (uno por color) + PNG preview.
-  3) BuildMultiColorSwap_EN.py -> junta todos los .pcode de export/ en un
-                           unico MultiColorSwap.pcode (interactivo, como antes).
-
-No inyecta nada en el .swf: el resultado final (MultiColorSwap.pcode)
-queda listo en export/ para inyectarlo a mano con FFDec cuando quieras.
-
-Se puede colocar y ejecutar en CUALQUIER carpeta: todas las rutas
-(import/, export/, img/) se calculan a partir de la ubicacion del propio
-.py, no de una estructura fija de carpetas.
-
-    CualquierCarpeta/
-      AllInOne.py       <- este archivo (va donde quieras)
-      import/           (SVGs y/o XMLs de origen)
-      export/           (se genera solo)
-      img/              (se genera solo)
-
-Uso:
-    python AllInOne.py
-"""
-
 import json
 import os
 import re
@@ -42,14 +11,6 @@ import xml.etree.cElementTree as ET
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 
 
-# ============================================================================
-# Rutas
-# ============================================================================
-# Por defecto, todo relativo a este script (uso normal por consola: "python
-# AllInOne.py"). Cuando se llama desde el launcher/.exe con GUI se debe
-# invocar configure_paths(base_dir) ANTES de correr cualquier paso, para que
-# import/export/etc. apunten a una carpeta persistente (no a la carpeta
-# temporal que crea PyInstaller en cada arranque).
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = SCRIPT_DIR
 IMG_DIR = os.path.join(PROJECT_DIR, "img")
@@ -58,16 +19,10 @@ IMPORT_DIR = os.path.join(PROJECT_DIR, "import")
 OUTPUT_FILE = os.path.join(EXPORT_DIR, "MultiColorSwap.pcode")
 TEAM_OUTPUT_FILE = os.path.join(EXPORT_DIR, "TeamColorSwap.pcode")
 
-# import/export/img se crean/buscan siempre junto al .py,
-# sin importar en que carpeta lo copies o ejecutes.
 PUSHBYTE_MAP_FILE = os.path.join(SCRIPT_DIR, "pushbyte_map.json")
 
 
 def configure_paths(base_dir):
-    """Redirige SCRIPT_DIR/IMG_DIR/EXPORT_DIR/IMPORT_DIR/OUTPUT_FILE a una
-    carpeta persistente. Hay que llamarla ANTES de correr cualquier paso
-    del pipeline cuando se usa desde el launcher/.exe (si no, PyInstaller
-    apunta todo a una carpeta temporal que desaparece al cerrar)."""
     global SCRIPT_DIR, PROJECT_DIR, IMG_DIR, EXPORT_DIR, IMPORT_DIR
     global OUTPUT_FILE, TEAM_OUTPUT_FILE, PUSHBYTE_MAP_FILE
     SCRIPT_DIR = base_dir
@@ -80,13 +35,6 @@ def configure_paths(base_dir):
     PUSHBYTE_MAP_FILE = os.path.join(SCRIPT_DIR, "pushbyte_map.json")
 
 
-# ============================================================================
-# Logging
-# ============================================================================
-# Con VERBOSE_LOG = False (default) no se imprime ni se loguea nada que
-# revele identificadores internos, rutas de FFDec/SWF, nombres de clase,
-# etc. Poné VERBOSE_LOG = True (o la env var AZUMOD_VERBOSE=1) solo para
-# debug local.
 VERBOSE_LOG = os.environ.get("AZUMOD_VERBOSE", "") == "1"
 
 
@@ -99,10 +47,6 @@ def _dbg(*args, **kwargs):
         print(*args, **kwargs)
 
 
-# ColorSwapClass/Vector/Array actuales. update_dumb.sh reescribe estas 3
-# lineas automaticamente cada vez que decompila una version nueva del
-# juego (busca la clase con NO_COLOR_SCHEME en el dump y actualiza estos
-# valores) — no hace falta tocarlos a mano.
 DEFAULT_CLASS = "_-o31"
 DEFAULT_VECTOR = "_-YO"
 DEFAULT_ARRAY = "_-t25"
@@ -122,38 +66,15 @@ OLD_COLOR_NAMES = [
     "ES 6", "ES 7", "Guild"
 ]
 
-# Rango de pushbytes "seguro" para tus colores custom: desde "Soul Fire"
-# hasta "CMYK" (igual que AppPublic.py), asi quedan afuera los colores
-# base 1-11 (Blue, Yellow, Green, etc., que el juego usa activamente en
-# otros lados) y los del final (Blacklight en adelante). Cambia estos dos
-# nombres si queres mover el rango a otra franja de OLD_COLOR_NAMES.
 PUSHBYTE_RANGE_FIRST_NAME = "Soul Fire"
 PUSHBYTE_RANGE_LAST_NAME = "CMYK"
 PUSHBYTE_RANGE_START = OLD_COLOR_NAMES.index(PUSHBYTE_RANGE_FIRST_NAME) + 1
 PUSHBYTE_RANGE_END = OLD_COLOR_NAMES.index(PUSHBYTE_RANGE_LAST_NAME) + 1
 
-# Nombres dentro del rango de arriba que NO se ofrecen como opcion para
-# instalar (ni en la GUI ni en el modo consola), aunque su numero caiga
-# dentro de PUSHBYTE_RANGE_START..END. Agregá o sacá nombres aca para
-# ocultar/mostrar mas colores del selector de instalacion.
-# (Vacío = todos los pushbytes del rango permitido quedan disponibles.)
 HIDDEN_PUSHBYTE_NAMES = {"White", "Black", "Skyforged", "Goldforged", "Crystalforged"}
 
-# Igual que arriba pero para los 16 slots de team color: si esta en True,
-# get_team_slot_options() devuelve [] (no aparecen en "Install to
-# Brawlhalla") y list_installed_team_schemes() tambien devuelve [] (no
-# aparecen en "Quitar color"). No borra la funcionalidad -- install/
-# uninstall team scheme siguen andando si se llaman directo -- solo los
-# oculta de los selectores, igual que AppPublic.py.
 HIDE_TEAM_COLORS = True
 
-# ============================================================================
-# MODO DEVELOPER: destraba TODOS los colores (incluidos los ocultos y los
-# team colors) sin tener que repackagear con AppAllInOne.py. Se activa
-# escribiendo el codigo DEV_MODE_PASSCODE en el modal "Brawlhalla Folder"
-# (boton del engranaje). El estado se guarda en config.json (AppConfig.py),
-# asi que sobrevive a cerrar y reabrir la app.
-# ============================================================================
 DEV_MODE_PASSCODE = "200922"
 
 
@@ -163,7 +84,6 @@ def _dev_mode_flag_path():
 
 
 def is_dev_mode_unlocked():
-    """True si alguna vez se ingreso el codigo correcto en esta maquina."""
     try:
         return _dev_mode_flag_path().exists()
     except Exception:
@@ -171,9 +91,6 @@ def is_dev_mode_unlocked():
 
 
 def unlock_dev_mode(code):
-    """Compara el codigo ingresado contra DEV_MODE_PASSCODE. Si coincide,
-    deja una marca persistente y devuelve {"success": True}. Si no,
-    {"success": False} sin revelar el codigo correcto."""
     if (code or "").strip() != DEV_MODE_PASSCODE:
         return {"success": False, "message": "Codigo incorrecto."}
     try:
@@ -184,8 +101,6 @@ def unlock_dev_mode(code):
 
 
 def lock_dev_mode():
-    """Vuelve a la restriccion normal (por si algun dia hace falta un
-    boton de 'desactivar' en la UI)."""
     try:
         p = _dev_mode_flag_path()
         if p.exists():
@@ -195,14 +110,6 @@ def lock_dev_mode():
 
 
 def get_allowed_pushbytes():
-    """Numeros del rango PUSHBYTE_RANGE_START..END que ademas no estan en
-    HIDDEN_PUSHBYTE_NAMES. Es la unica fuente de verdad para que numeros
-    se pueden elegir al instalar (GUI y consola usan esto).
-
-    Si el modo developer esta activo (unlock_dev_mode con el codigo
-    correcto), se ignoran ambas restricciones y se devuelven TODOS los
-    pushbytes de OLD_COLOR_NAMES (1..len(OLD_COLOR_NAMES)), igual que
-    AppAllInOne.py."""
     if is_dev_mode_unlocked():
         return list(range(1, len(OLD_COLOR_NAMES) + 1))
     return [
@@ -211,24 +118,6 @@ def get_allowed_pushbytes():
     ]
 
 
-# ============================================================================
-# TEAM COLORS: identificadores de los 16 slots (TeamRed1..4, TeamBlue1..4,
-# TeamYellow1..4, TeamPurple1..4)
-# ============================================================================
-# A diferencia de los colores custom "normales" (que se guardan como un
-# elemento mas adentro del Vector _-R16 y se acceden por pushbyte), cada
-# team color es una propiedad PROPIA de la clase ColorSwapClass (_-14V),
-# con su propio nombre ofuscado (ej: TeamRed1 -> "_-e3j"). Se accede por
-# nombre directo (getproperty), no por indice, y el Array de 35 colores se
-# escribe con initproperty sobre esa propiedad usando el MISMO nombre de
-# Array (_-J58 / DEFAULT_ARRAY) que los colores normales.
-#
-# ATENCION: estos nombres ofuscados cambian con cada actualizacion del
-# juego, igual que DEFAULT_CLASS/DEFAULT_VECTOR/DEFAULT_ARRAY. Si
-# update_dumb.sh no los reescribe automaticamente todavia, hay que
-# actualizarlos a mano aca cuando el juego saque una version nueva
-# (dumpeando de nuevo la clase NO_COLOR_SCHEME y buscando a que propiedad
-# apunta cada TeamRed/TeamBlue/TeamYellow/TeamPurple).
 DEFAULT_TEAM_PROPS = {
     "TeamRed1": "_-42w", "TeamRed2": "_-v3F", "TeamRed3": "_-v5T", "TeamRed4": "_-Xt",
     "TeamBlue1": "_-u1M", "TeamBlue2": "_-o5J", "TeamBlue3": "_-W1l", "TeamBlue4": "_-L3v",
@@ -236,7 +125,6 @@ DEFAULT_TEAM_PROPS = {
     "TeamPurple1": "_-N59", "TeamPurple2": "_-41D", "TeamPurple3": "_-p5a", "TeamPurple4": "_-V5n",
 }
 
-# Orden/etiquetas para mostrar en la GUI (agrupado por color de equipo).
 TEAM_SLOT_LABELS = {
     "TeamRed1": "TeamRed 1", "TeamRed2": "TeamRed 2", "TeamRed3": "TeamRed 3", "TeamRed4": "TeamRed 4",
     "TeamBlue1": "TeamBlue 1", "TeamBlue2": "TeamBlue 2", "TeamBlue3": "TeamBlue 3", "TeamBlue4": "TeamBlue 4",
@@ -253,15 +141,10 @@ TEAM_SLOT_ORDER = [
 
 
 def get_team_identifiers():
-    """Devuelve el mapa {slot: propiedad_ofuscada} actual para team colors."""
     return dict(DEFAULT_TEAM_PROPS)
 
 
 def get_team_slot_options():
-    """Para el selector "Instalar en slot de equipo" del launcher: devuelve
-    [{"slot": "TeamRed1", "label": "Rojo 1"}, ...] en TEAM_SLOT_ORDER.
-    Vacio si HIDE_TEAM_COLORS esta activo (salvo que el modo developer
-    este destrabado, en cuyo caso siempre se muestran)."""
     if HIDE_TEAM_COLORS and not is_dev_mode_unlocked():
         return []
     return [
@@ -270,21 +153,10 @@ def get_team_slot_options():
     ]
 
 
-# ============================================================================
-# PASO 1: identificadores ColorSwapClass/Vector/Array
-# ============================================================================
-# Ya no se leen de dumb.txt ni de last_values.json en tiempo de ejecucion:
-# viven hardcodeados en DEFAULT_CLASS/DEFAULT_VECTOR/DEFAULT_ARRAY, y
-# update_dumb.sh es quien los actualiza (reescribiendo esas 3 lineas de
-# este archivo) cada vez que sale una version nueva del juego.
 def get_identifiers():
-    """Devuelve el ColorSwapClass/Vector/Array actuales."""
     return DEFAULT_CLASS, DEFAULT_VECTOR, DEFAULT_ARRAY
 
 
-# ============================================================================
-# PASO 2: Execute -> SVG/XML -> .pcode individuales + PNG preview
-# ============================================================================
 def _as_list(value):
     if value is None:
         return []
@@ -692,9 +564,6 @@ def run_execute_pipeline(cls, vec, arr, import_dir):
             _dbg(f'ERROR procesando "{xml_file_name}", se omite este archivo: {e}')
 
 
-# ============================================================================
-# PASO 3: BuildMultiColorSwap -> junta los .pcode de export/ en uno solo
-# ============================================================================
 def old_color_name(pushbyte_num):
     idx = pushbyte_num - 1
     if 0 <= idx < len(OLD_COLOR_NAMES):
@@ -739,9 +608,6 @@ def extract_colors(filepath):
 
 
 def load_pushbyte_map():
-    """Mapa persistente {nombre_color: pushbyte} para que cada color custom
-    siempre reemplace el mismo slot viejo, sin importar el orden en que
-    esten los archivos en import/ ni si sacaste/agregaste alguno."""
     if not os.path.exists(PUSHBYTE_MAP_FILE):
         return {}
     try:
@@ -770,11 +636,6 @@ def print_old_color_options():
 
 
 def ask_pushbyte_numbers(names):
-    """Asigna un pushbyte fijo por NOMBRE (no por posicion en la carpeta),
-    tomado del rango PUSHBYTE_RANGE_START..PUSHBYTE_RANGE_END (Soul Fire..
-    CMYK por defecto). Una vez que un nombre tiene pushbyte asignado, se
-    guarda en pushbyte_map.json y se reusa siempre: sacar o agregar otro
-    color no le mueve el slot a los demas."""
     print_old_color_options()
 
     saved_map = load_pushbyte_map()
@@ -895,16 +756,7 @@ def build_footer():
 end ; method"""
 
 
-# ============================================================================
-# TEAM COLORS: generacion de pcode (mismo footer que arriba, header/bloque
-# distintos porque se accede por nombre de propiedad, no por pushbyte en
-# el Vector)
-# ============================================================================
 def build_team_header(cls):
-    """Igual que build_header, pero sin la parte de "getproperty vec /
-    setlocal 7": los team colors no viven en el Vector, se leen como
-    propiedad directa de la clase (local 5), asi que no hace falta
-    guardar el Vector en ningun local."""
     return f"""
 method
     name null
@@ -940,10 +792,6 @@ method
 
 
 def build_team_color_block(slot_name, prop_name, colors, cls, arr):
-    """slot_name: "TeamRed1", etc (solo para el comentario). prop_name: el
-    nombre ofuscado real (ej "_-e3j") de DEFAULT_TEAM_PROPS[slot_name].
-    A diferencia de build_color_block, aca se llega al objeto por
-    getproperty directo sobre local 5 (la clase), no por pushbyte+Vector."""
     lines = [f"            ; ---- {slot_name} ({prop_name}) — acceso directo por nombre, no por indice ----"]
     lines.append("            getlocal 5")
     lines.append(f'            getproperty QName(PackageNamespace("","4"),"{prop_name}")')
@@ -960,10 +808,6 @@ def build_team_color_block(slot_name, prop_name, colors, cls, arr):
 
 
 def build_merged_team_pcode(cls, arr, installed_team):
-    """installed_team: dict {slot_name: {"colors": [35 ints], "scheme_name": str}}.
-    Arma el pcode completo de TODOS los team colors instalados, en
-    TEAM_SLOT_ORDER (el orden no afecta el resultado, pero mantiene el
-    archivo legible), como string, sin escribir nada a disco."""
     team_props = get_team_identifiers()
     ordered_slots = [s for s in TEAM_SLOT_ORDER if s in installed_team]
     out = build_team_header(cls)
@@ -979,21 +823,6 @@ def build_merged_team_pcode(cls, arr, installed_team):
 
 
 def build_combined_pcode(cls, vec, arr, installed_normal, installed_team):
-    """Arma UN SOLO metodo con TODOS los colores normales (por pushbyte,
-    via build_color_block) Y TODOS los team colors (por propiedad, via
-    build_team_color_block), compartiendo un unico build_header()/
-    build_footer(). build_header ya deja tanto local 5 (la clase, para
-    los team colors) como local 7 (el Vector, para los colores normales)
-    listos, asi que ambos tipos de bloque conviven sin problema dentro
-    del mismo constructor.
-
-    Esto reemplaza generar dos pcodes separados (MultiColorSwap.pcode /
-    TeamColorSwap.pcode) e inyectarlos por separado en la MISMA clase:
-    como cada inyeccion reemplaza el body ENTERO del metodo, inyectar el
-    segundo pcode borraba lo que habia dejado el primero (solo quedaba
-    "instalado" el ultimo tipo que se inyecto). Con un solo pcode
-    combinado, una sola inyeccion, ese problema desaparece.
-    """
     team_props = get_team_identifiers()
 
     normal_names = sorted(installed_normal.keys(), key=lambda n: installed_normal[n]["pushbyte"])
@@ -1015,12 +844,6 @@ def build_combined_pcode(cls, vec, arr, installed_normal, installed_team):
 
 
 def write_combined_pcode(base_dir, cls, vec, arr):
-    """Lee installed_schemes.json + installed_team_schemes.json (los dos
-    stores, normal y team) y escribe export/MultiColorSwap.pcode con
-    build_combined_pcode(). Es lo que deben llamar TODOS los puntos que
-    instalan/quitan un color (normal o de equipo), para que el pcode
-    final siempre refleje ambos stores a la vez y nunca se pisen entre
-    si. Devuelve la ruta del archivo escrito."""
     normal_store = os.path.join(base_dir, "installed_schemes.json")
     team_store = os.path.join(base_dir, "installed_team_schemes.json")
     installed_normal = load_installed_schemes(normal_store)
@@ -1071,11 +894,6 @@ def run_build_multicolor(cls, vec, arr):
     return full_path
 
 
-# ============================================================================
-# Colores desde XML directo en memoria (para el boton "Install" del launcher)
-# ============================================================================
-# Mismo orden/indices que ColorSchemeType.__ParseXmlDict, pero expuesto como
-# datos (no atado a la clase) para poder usarlo sobre un dict cualquiera.
 SWAP_KEY_TO_INDEX = {
     "HairLt_Swap": 1, "Hair_Swap": 2, "HairDk_Swap": 3,
     "Body1VL_Swap": 4, "Body1Lt_Swap": 5, "Body1_Swap": 6, "Body1Dk_Swap": 7,
@@ -1102,10 +920,6 @@ def _decode_swap_hex(val):
 
 
 def colors_from_xml_dict(xml_dict):
-    """xml_dict: el resultado de xmltodict.parse() sobre un
-    <ColorSchemeType>...</ColorSchemeType> (o el dict interno que trae ese
-    tag). Devuelve la lista de 35 colores en el mismo orden que espera el
-    pcode, sin tocar el disco para nada."""
     colors = [0] * 35
     for key, idx in SWAP_KEY_TO_INDEX.items():
         colors[idx] = _decode_swap_hex(xml_dict.get(key))
@@ -1113,9 +927,6 @@ def colors_from_xml_dict(xml_dict):
 
 
 def load_installed_schemes(store_path):
-    """Recuerda, entre una instalacion y la siguiente, los colores y el
-    pushbyte de cada scheme ya instalado (para no perderlos al agregar uno
-    nuevo)."""
     if not os.path.exists(store_path):
         return {}
     try:
@@ -1132,9 +943,6 @@ def save_installed_schemes(store_path, installed):
 
 
 def build_merged_pcode(cls, vec, arr, installed):
-    """installed: dict {nombre: {"colors": [35 ints], "pushbyte": int}}.
-    Arma el MultiColorSwap.pcode completo (todos los schemes instalados,
-    ordenados por pushbyte) como string, sin escribir nada a disco."""
     ordered_names = sorted(installed.keys(), key=lambda n: installed[n]["pushbyte"])
     out = build_header(cls, vec)
     for name in ordered_names:
@@ -1150,13 +958,6 @@ def _safe_filename(name):
 
 
 def get_pushbyte_options():
-    """Para el selector "Install to Brawlhalla" del launcher: devuelve solo
-    los pushbytes dentro del rango permitido (PUSHBYTE_RANGE_START..END,
-    "Soul Fire".."CMYK" por defecto) y que ademas no esten en
-    HIDDEN_PUSHBYTE_NAMES, como [{"pushbyte": int, "name": str}, ...]. Asi
-    la UI nunca ofrece pisar un color real del juego (Blue, Yellow, etc.)
-    ni ninguno de los ocultos (White, Black, Skyforged, Goldforged,
-    Crystalforged), solo los slots reservados para colores custom."""
     return [
         {"pushbyte": i, "name": OLD_COLOR_NAMES[i - 1]}
         for i in get_allowed_pushbytes()
@@ -1164,10 +965,6 @@ def get_pushbyte_options():
 
 
 def list_installed_schemes(base_dir):
-    """Para el selector de "Quitar color" en la UI: devuelve
-    [{"name": ..., "pushbyte": ..., "old_name": ...}, ...] ordenado por
-    pushbyte. old_name es el nombre del color viejo que reemplaza (de
-    OLD_COLOR_NAMES), para que la UI muestre algo legible."""
     store_path = os.path.join(base_dir, "installed_schemes.json")
     installed = load_installed_schemes(store_path)
     result = []
@@ -1191,15 +988,6 @@ def uninstall_scheme(
     class_name=None,
     **_unused_kwargs,
 ):
-    """Contraparte de install_scheme_and_inject: saca UN scheme instalado
-    (lo borra de installed_schemes.json) y reconstruye+reinyecta el pcode
-    con los que queden. No requiere restaurar el backup: cada inyeccion ya
-    reemplaza el cuerpo del metodo completo, asi que el scheme sacado
-    simplemente deja de estar en la nueva version.
-
-    Devuelve el mismo shape que install_scheme_and_inject:
-    {"success", "message", "output_path", "injected"}.
-    """
     if not VERBOSE_LOG:
         log = _silent
     try:
@@ -1280,10 +1068,6 @@ def uninstall_scheme(
 
 
 def list_installed_team_schemes(base_dir):
-    """Para el selector de "Quitar color de equipo" en la UI: devuelve
-    [{"slot": "TeamRed1", "label": "Rojo 1", "scheme_name": ...}, ...] en
-    TEAM_SLOT_ORDER. Vacio si HIDE_TEAM_COLORS esta activo (salvo modo
-    developer destrabado)."""
     if HIDE_TEAM_COLORS and not is_dev_mode_unlocked():
         return []
     store_path = os.path.join(base_dir, "installed_team_schemes.json")
@@ -1313,25 +1097,6 @@ def install_team_scheme_and_inject(
     class_name=None,
     **_unused_kwargs,
 ):
-    """Equivalente a install_scheme_and_inject pero para un slot de team
-    color (TeamRed1, TeamBlue3, etc.) en vez de un pushbyte de color
-    "normal". Cada slot solo puede tener UN color instalado a la vez
-    (instalar de nuevo en el mismo slot lo reemplaza).
-
-    - xml_text: el <ColorSchemeType>...</ColorSchemeType> del editor.
-    - scheme_name: nombre a mostrar (solo informativo, se guarda junto al
-      slot en installed_team_schemes.json).
-    - team_slot: una de las claves de DEFAULT_TEAM_PROPS (ej "TeamRed1").
-    - base_dir: carpeta donde viven installed_team_schemes.json y export/.
-
-    Genera/actualiza export/TeamColorSwap.pcode con TODOS los team colors
-    instalados y, si do_inject=True, lo inyecta con
-    AppCodeInstaller.inject_team_color_swap() (si esa funcion no existe
-    todavia en AppCodeInstaller.py, el pcode se genera igual y queda listo
-    para inyectar a mano con FFDec).
-
-    Devuelve {"success", "message", "output_path", "injected"}. Nunca lanza.
-    """
     if not VERBOSE_LOG:
         log = _silent
     try:
@@ -1380,9 +1145,6 @@ def install_team_scheme_and_inject(
             inject_kwargs["class_name"] = class_name
 
         try:
-            # OJO: mismo metodo/clase que los colores "normales"
-            # (inject_multicolor_swap, no inject_team_color_swap) porque
-            # ahora es UN solo pcode combinado el que vive ahi.
             patched_swf = inj.inject_multicolor_swap(output_path, **inject_kwargs)
             return {
                 "success": True,
@@ -1420,11 +1182,6 @@ def uninstall_team_scheme(
     class_name=None,
     **_unused_kwargs,
 ):
-    """Contraparte de install_team_scheme_and_inject: vacia UN slot de
-    equipo y reconstruye+reinyecta TeamColorSwap.pcode con los que queden.
-
-    Devuelve el mismo shape que install_team_scheme_and_inject.
-    """
     if not VERBOSE_LOG:
         log = _silent
     try:
@@ -1469,7 +1226,6 @@ def uninstall_team_scheme(
             inject_kwargs["class_name"] = class_name
 
         try:
-            # Mismo pcode combinado / misma clase que los colores normales.
             patched_swf = inj.inject_multicolor_swap(output_path, **inject_kwargs)
             return {
                 "success": True,
@@ -1497,15 +1253,6 @@ def uninstall_team_scheme(
 
 
 def reset_all_schemes(base_dir, ffdec_path=None, swf_path=None, log=print):
-    """Deshace TODO: restaura el .swf original desde el backup (.bak) que
-    AppCodeInstaller crea la primera vez que inyecta algo, y vacia
-    installed_schemes.json + el pcode generado. A diferencia de
-    uninstall_scheme (que reconstruye el pcode sin un color), esto
-    garantiza que el swf vuelva a estar byte a byte como antes de instalar
-    nada, sin depender de que el pcode vacio compile igual al original.
-
-    Devuelve {"success", "message"}. Nunca lanza.
-    """
     try:
         import AppCodeInstaller as inj
 
@@ -1573,22 +1320,6 @@ def reset_all_schemes(base_dir, ffdec_path=None, swf_path=None, log=print):
 
 
 def reinject_installed(base_dir, log=print, ffdec_path=None, swf_path=None, class_name=None):
-    """Reconstruye MultiColorSwap.pcode a partir de TODO lo que ya este
-    guardado en installed_schemes.json + installed_team_schemes.json
-    dentro de base_dir, y lo reinyecta en swf_path. A diferencia de
-    install_scheme_and_inject/uninstall_scheme, no agrega ni quita
-    ningun color: solo vuelve a inyectar los que YA estaban guardados.
-
-    Pensada para el flujo de GameBanana (boton "Update Color Values" con
-    ese perfil activado): ahi el swf aislado se tira y se recrea desde
-    cero (ver AppLauncher._update_color_values_gamebanana), asi que
-    llega sin ningun color instalado y hay que reinyectarle los que ya
-    tenia guardados su propio installed_schemes.json, ya con los
-    identificadores nuevos.
-
-    Devuelve {"success": bool, "message": str, "output_path": str|None,
-    "injected": bool}. Nunca lanza: cualquier error se captura y se
-    reporta en el dict (mismo estilo que install_scheme_and_inject)."""
     if not VERBOSE_LOG:
         log = _silent
     try:
@@ -1649,30 +1380,6 @@ def install_scheme_and_inject(
     class_name=None,
     **_unused_kwargs,
 ):
-    """Orquestador para el boton "Install" del launcher/.exe. Genera
-    export/MultiColorSwap.pcode y, si do_inject=True (default), lo inyecta
-    directo en Brawlhalla llamando a AppCodeInstaller.inject_multicolor_swap()
-    (requiere FFDec instalado). Si la inyeccion falla (FFDec no encontrado,
-    SWF no encontrado, etc.) el pcode generado NO se pierde: queda en
-    export/ igual, listo para inyectarlo a mano.
-
-    - xml_text: el <ColorSchemeType>...</ColorSchemeType> que arma el
-      editor (scheme.generateXML() en index.html).
-    - scheme_name: nombre del scheme (clave dentro de installed_schemes.json;
-      reinstalar el mismo nombre lo actualiza en vez de duplicarlo).
-    - pushbyte_num: numero de color viejo (1-60, ver OLD_COLOR_NAMES) que
-      este scheme va a reemplazar en el juego.
-    - base_dir: carpeta donde viven installed_schemes.json y export/.
-    - do_inject: si False, solo genera el pcode (comportamiento viejo).
-    - ffdec_path / swf_path: rutas explicitas opcionales; si se omiten,
-      inject_multicolor_swap() autodetecta FFDec (PATH + rutas tipicas) y
-      el SWF (Steam/Epic).
-    - class_name: clase AS3 objetivo; por defecto la de AppCodeInstaller.
-
-    Devuelve {"success": bool, "message": str, "output_path": str|None,
-    "injected": bool}. Nunca lanza: cualquier error se captura y se
-    reporta en el dict.
-    """
     if not VERBOSE_LOG:
         log = _silent
     try:
@@ -1722,9 +1429,6 @@ def install_scheme_and_inject(
                 "injected": True,
             }
         except inj.InjectError as e:
-            # El pcode SI se genero bien; solo fallo el paso de FFDec.
-            # No perdemos el trabajo del usuario, avisamos que lo inyecte
-            # a mano.
             return {
                 "success": True,
                 "message": (
@@ -1744,9 +1448,6 @@ def install_scheme_and_inject(
         }
 
 
-# ============================================================================
-# Orquestador principal
-# ============================================================================
 def main():
     _dbg("=== AllInOne: Values + Execute + BuildMultiColorSwap ===\n")
 

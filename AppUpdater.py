@@ -1,36 +1,4 @@
 #!/usr/bin/env python3
-"""
-AppUpdater.py
----------------
-Busca dentro de un SWF (Brawlhalla, compilado con Haxe) la clase que
-contiene EXACTAMENTE estos 4 imports y ningun otro:
-
-    import haxe.IMap;
-    import haxe.ds.EnumValueMap;
-    import haxe.ds.IntMap;
-    import haxe.ds.StringMap;
-
-...y con eso reescribe directamente DEFAULT_CLASS/DEFAULT_VECTOR/
-DEFAULT_ARRAY dentro de AppAllInOne.py. Ya no genera dumb.txt ni backups
-.bak: AppAllInOne.py queda actualizado in place y listo para usar.
-
-No depende del nombre ofuscado de la clase (eso cambia en cada
-actualizacion del juego): busca por la "firma" de imports, que es
-estable entre versiones.
-
-Uso:
-    python AppUpdater.py [ruta_al_swf] [ruta_AppAllInOne.py]
-
-Por defecto:
-    ruta_al_swf      = C:/Program Files (x86)/Steam/steamapps/common/Brawlhalla/BrawlhallaAir.swf
-    ruta_AppAllInOne.py = ./AppAllInOne.py
-
-NOTA sobre la ruta por defecto:
-    - En Windows funciona tal cual.
-    - En WSL, pasa la ruta como primer argumento, algo como:
-      /mnt/c/Program Files (x86)/Steam/steamapps/common/Brawlhalla/BrawlhallaAir.swf
-"""
-
 import datetime
 import glob
 import os
@@ -42,7 +10,6 @@ import tempfile
 import urllib.request
 import zipfile
 
-# ---------- Configuracion ----------
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, SCRIPT_DIR)
 
@@ -55,12 +22,6 @@ LOGFILE = os.path.join(SCRIPT_DIR, "update.log")
 
 
 def _default_swf_path():
-    """Ubica BrawlhallaAir.swf reutilizando la misma deteccion (Steam
-    libraryfolders.vdf + barrido de unidades) que usa
-    AppCodeInstaller.py para UI_MainMenu.swf, asi ambos scripts
-    encuentran el juego sin importar en que disco/carpeta este
-    instalado. Si no lo encuentra, cae al valor fijo de siempre (C:\\)
-    como ultimo recurso, para no romper el uso con --swf manual."""
     try:
         from AppCodeInstaller import find_brawlhalla_dir
         game_dir = find_brawlhalla_dir()
@@ -84,18 +45,6 @@ FIELD_PATTERN = re.compile(
 )
 CLASS_PATTERN = re.compile(r'class\s+(?P<name>[^\s{]+)')
 
-# ---------- Team colors (TeamRed1..4, TeamBlue1..4, TeamYellow1..4, TeamPurple1..4) ----------
-# El identificador ofuscado de cada campo cambia en cada build, pero el
-# nombre logico ("TeamRed1", etc.) es un string literal estable que Haxe
-# siempre usa en el mismo patron fijo dentro de la MISMA clase con
-# NO_COLOR_SCHEME (la que ya ubica find_target_as_file):
-#
-#   §Clase§.§<ofuscado>§ = "TeamRed1" in StringMap.reserved
-#       ? _locN_.getReserved("TeamRed1")
-#       : _locN_.h["TeamRed1"];
-#
-# Buscando por el nombre logico (que NO cambia) se obtiene el identificador
-# ofuscado (que SI cambia) sin tener que adivinar su valor de antemano.
 TEAM_COLOR_NAMES = [
     "TeamRed1", "TeamRed2", "TeamRed3", "TeamRed4",
     "TeamBlue1", "TeamBlue2", "TeamBlue3", "TeamBlue4",
@@ -125,22 +74,14 @@ def fail(msg, code=1):
 
 
 class UpdateError(Exception):
-    """Error de actualizacion que NO debe matar el proceso (a diferencia
-    de fail()/sys.exit, que si esto corre dentro del launcher/.exe con
-    GUI se llevaria puesta toda la app). La usan las funciones
-    "libreria" pensadas para llamarse desde AppRelinker.py/AppLauncher.py
-    (botón "Update Color Values"); el caller la atrapa y la reporta sin
-    cerrar la app. main() (uso por CLI) sigue usando fail() como siempre."""
     pass
 
 
-# ---------- 1. Verificar Java ----------
 def check_java():
     if shutil.which("java") is None:
         fail("No se encontro 'java'. Instala un JDK y vuelve a intentar.")
 
 
-# ---------- 2. Verificar / descargar FFDec ----------
 def ensure_ffdec():
     if os.path.isfile(FFDEC_JAR):
         return
@@ -161,7 +102,6 @@ def ensure_ffdec():
     log(f"FFDec instalado en {FFDEC_DIR}")
 
 
-# ---------- 4. Exportar todos los scripts AS3 a fuente ----------
 def export_scripts(swf_path, export_dir):
     log(f"Decompilando '{swf_path}' (puede tardar 1-3 minutos en un archivo grande)...")
     cmd = [
@@ -182,7 +122,6 @@ def export_scripts(swf_path, export_dir):
     log(f"Decompilados {total} scripts.")
 
 
-# ---------- 5. Buscar la clase con EXACTAMENTE esos 4 imports ----------
 def find_target_as_file(export_dir):
     matches = []
     for path in glob.glob(os.path.join(export_dir, "**", "*.as"), recursive=True):
@@ -216,7 +155,6 @@ def find_target_as_file(export_dir):
     return best
 
 
-# ---------- 6. Extraer identificadores y reescribir AppAllInOne.py ----------
 def strip_marker(name):
     return name.replace("\u00a7", "")
 
@@ -288,11 +226,6 @@ def find_values(dump_text):
 
 
 def find_team_values(dump_text):
-    """Extrae, desde el mismo .as de la clase con NO_COLOR_SCHEME, los 16
-    identificadores ofuscados de los team colors. Devuelve un dict
-    {nombre_logico: identificador_ofuscado} (ej. {"TeamRed1": "_-e3j", ...})
-    o None si falta alguno (senal de que Haxe cambio esta estructura entre
-    versiones, no solo los nombres ofuscados)."""
     result = {}
     for name in TEAM_COLOR_NAMES:
         pattern = re.compile(_TEAM_FIELD_RE_TEMPLATE.format(name=re.escape(name)))
@@ -320,15 +253,6 @@ def patch_allinone(as_path, allinone_path):
 
 
 def write_identifiers_to_allinone(class_name, vector_name, array_name, allinone_path, log=log):
-    """Version "libreria" de la mitad final de patch_allinone(): reescribe
-    DEFAULT_CLASS/DEFAULT_VECTOR/DEFAULT_ARRAY en allinone_path con
-    identificadores YA extraidos (no decompila ni parsea nada de nuevo).
-    Pensada para reutilizarse desde AppRelinker.py (botón "Update Color
-    Values"), que ya obtuvo estos 3 valores en su propio paso 1. A
-    diferencia de patch_allinone()/fail(), nunca llama a sys.exit: ante
-    cualquier problema levanta UpdateError.
-
-    Devuelve True si el archivo cambio, False si ya estaba al dia."""
     with open(allinone_path, "r", encoding="utf-8") as f:
         text = f.read()
 
@@ -354,14 +278,6 @@ _TEAM_PROPS_BLOCK_RE = re.compile(r'DEFAULT_TEAM_PROPS\s*=\s*\{.*?\n\}', re.DOTA
 
 
 def write_team_identifiers_to_allinone(team_map, allinone_path, log=log):
-    """Version "team colors" de write_identifiers_to_allinone(): reescribe
-    el diccionario DEFAULT_TEAM_PROPS completo en allinone_path con los 16
-    identificadores nuevos (dict {nombre_logico: identificador_ofuscado}
-    que devuelve find_team_values()). Mismo estilo de salida (4 pares por
-    linea, agrupados Red/Blue/Yellow/Purple) que el original, para que el
-    diff quede legible. Nunca llama a sys.exit: levanta UpdateError.
-
-    Devuelve True si el archivo cambio, False si ya estaba al dia."""
     with open(allinone_path, "r", encoding="utf-8") as f:
         text = f.read()
 
@@ -388,7 +304,6 @@ def write_team_identifiers_to_allinone(team_map, allinone_path, log=log):
     return False
 
 
-# ---------- Orquestador ----------
 def main():
     swf_path = sys.argv[1] if len(sys.argv) > 1 else _default_swf_path()
     allinone_py = sys.argv[2] if len(sys.argv) > 2 else os.path.join(SCRIPT_DIR, "AppAllInOne.py")
