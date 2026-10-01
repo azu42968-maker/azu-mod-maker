@@ -1963,7 +1963,9 @@ const SWAP_SHADE_ORDER = ['VL', 'Lt', '', 'Dk', 'VD', 'Acc'];
 let theme   = localStorage.getItem('theme') || 'dark';
 const CUSTOM_BG_LS_KEY   = 'customBgImage';
 const CUSTOM_TEXT_LS_KEY = 'customTextColor';
+const CUSTOM_TEXT2_LS_KEY = 'customTextColor2';
 const CUSTOM_FONT_LS_KEY = 'customFont';
+const CUSTOM_FXLESS_LS_KEY = 'customFxLess';
 let format  = 'xml';
 let scheme  = new ColorSchemeType();
 let gameSchemes = [];
@@ -2030,7 +2032,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyTheme(theme);
   applyCustomBackground(localStorage.getItem(CUSTOM_BG_LS_KEY) || null);
   applyCustomTextColor(localStorage.getItem(CUSTOM_TEXT_LS_KEY) || null);
+  setupTextColor2Control();
+  applyCustomTextColor2(localStorage.getItem(CUSTOM_TEXT2_LS_KEY) || null);
   applyCustomFont(localStorage.getItem(CUSTOM_FONT_LS_KEY) || null);
+  applyFxLess(localStorage.getItem(CUSTOM_FXLESS_LS_KEY) === '1');
 
   picker = new ColorPicker(document.getElementById('picker-panel'));
   grid   = new ColorGrid(document.getElementById('grid-panel'));
@@ -2409,6 +2414,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyTheme(e.target.checked ? 'dark' : 'light');
   });
 
+  document.getElementById('customize-fxless-toggle').addEventListener('change', (e) => {
+    applyFxLess(e.target.checked);
+    try { localStorage.setItem(CUSTOM_FXLESS_LS_KEY, e.target.checked ? '1' : '0'); } catch (_) {}
+  });
+
   document.getElementById('customize-bg-input').addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -2437,6 +2447,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('customize-text-color-reset').addEventListener('click', () => {
     applyCustomTextColor(null);
     saveCustomTextColor(null);
+    applyCustomTextColor2(null);
+    saveCustomTextColor2(null);
     const colorInput = document.getElementById('customize-text-color');
     if (colorInput) colorInput.value = (theme === 'dark') ? '#e9f2f0' : '#08080f';
   });
@@ -6965,6 +6977,13 @@ function applyTheme(t) {
   if (picker) picker.setTheme(t);
 }
 
+// "Reduced effects": toggles body.fx-less (styles.css) to tone down glow, neon line, shadows and looping animations.
+function applyFxLess(on) {
+  document.body.classList.toggle('fx-less', !!on);
+  const cb = document.getElementById('customize-fxless-toggle');
+  if (cb) cb.checked = !!on;
+}
+
 function applyCustomBackground(dataUrl) {
   const preview = document.getElementById('customize-bg-preview');
   if (dataUrl) {
@@ -6991,15 +7010,54 @@ function applyCustomTextColor(hex) {
   const colorInput = document.getElementById('customize-text-color');
   if (hex) {
     document.documentElement.style.setProperty('--text', hex);
+    document.documentElement.style.setProperty('--text-1', hex);
     if (colorInput) colorInput.value = hex;
   } else {
     document.documentElement.style.removeProperty('--text');
+    document.documentElement.style.removeProperty('--text-1');
   }
 }
 
 function saveCustomTextColor(hex) {
   if (hex) localStorage.setItem(CUSTOM_TEXT_LS_KEY, hex);
   else localStorage.removeItem(CUSTOM_TEXT_LS_KEY);
+}
+
+// Second text colour: drives the 2-colour gradient of the UI effects (--text-2 in styles.css).
+// Both colours are always applied (colour 2 falls back to TEXT2_DEFAULT_HEX).
+const TEXT2_DEFAULT_HEX = '#4aa8ff';
+
+function setupTextColor2Control() {
+  const first = document.getElementById('customize-text-color');
+  let input = document.getElementById('customize-text-color-2');
+  if (!input) {
+    if (!first) return;
+    input = document.createElement('input');
+    input.type = 'color';
+    input.id = 'customize-text-color-2';
+    input.value = TEXT2_DEFAULT_HEX;
+    input.title = 'Colour 2';
+    input.setAttribute('aria-label', 'Text colour 2');
+    first.insertAdjacentElement('afterend', input);
+  }
+  if (input.dataset.bound) return;
+  input.dataset.bound = '1';
+  input.addEventListener('input', (e) => {
+    applyCustomTextColor2(e.target.value);
+    saveCustomTextColor2(e.target.value);
+  });
+}
+
+function applyCustomTextColor2(hex) {
+  const value = hex || TEXT2_DEFAULT_HEX;
+  const colorInput = document.getElementById('customize-text-color-2');
+  document.documentElement.style.setProperty('--text-2', value);
+  if (colorInput) colorInput.value = value;
+}
+
+function saveCustomTextColor2(hex) {
+  if (hex) localStorage.setItem(CUSTOM_TEXT2_LS_KEY, hex);
+  else localStorage.removeItem(CUSTOM_TEXT2_LS_KEY);
 }
 
 function applyCustomFont(stack) {

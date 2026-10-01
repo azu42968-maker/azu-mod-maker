@@ -18,7 +18,7 @@
 
   <link rel="icon" type="image/png" href="data:,">
 
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
 
@@ -53,8 +53,8 @@
       <div class="toolbar-hue-group" title="Swap two components (rows) or just two individual colour cells">
         <span class="btn-icon toolbar-swap-icon"></span>
         <span class="btn-label toolbar-hue-label">Swap</span>
-        <button id="btn-swap" class="btn btn-sm" type="button" title="Swap two whole components (rows)">Row</button>
-        <button id="btn-swap-cell" class="btn btn-sm" type="button" title="Swap just two individual colour cells">Cell</button>
+        <button id="btn-swap" class="btn btn-sm" type="button" title="Swap two whole components (rows)"><span class="btn-txt">Row</span></button>
+        <button id="btn-swap-cell" class="btn btn-sm" type="button" title="Swap just two individual colour cells"><span class="btn-txt">Cell</span></button>
       </div>
       <button id="btn-shade" class="btn" type="button" title="Auto shade from base colours"><span class="btn-icon"></span><span class="btn-label">Auto Shade</span></button>
       <div class="toolbar-hue-group" title="Shift the hue of the currently selected row">
@@ -65,7 +65,7 @@
       <div class="toolbar-hue-group" title="Force a specific tone onto the whole selected row, even if it currently has no saturation (Hue ± only rotates whatever saturation a cell already has, so it can't put colour into a grey row)">
         <input type="color" id="tint-row-color" value="#4d95a8" title="Pick the tone to apply to the whole row">
         <span class="btn-label toolbar-hue-label">Tint</span>
-        <button id="btn-tint-row" class="btn btn-sm" type="button" title="Apply the picked tone to every shade in the selected row">Apply</button>
+        <button id="btn-tint-row" class="btn btn-sm" type="button" title="Apply the picked tone to every shade in the selected row"><span class="btn-txt">Apply</span></button>
       </div>
       <div class="toolbar-hue-group" title="Darken/lighten the currently selected row (keeps hue and saturation)">
         <button id="btn-bright-minus" class="btn btn-sm btn-icon-only" type="button" title="Darken selected row (keeps each shade's hue/saturation)">&#9662;</button>
@@ -77,8 +77,8 @@
       <div class="toolbar-hue-group" title="Desaturate colours to greyscale">
         <span class="btn-icon toolbar-desat-icon"></span>
         <span class="btn-label toolbar-hue-label">Grey</span>
-        <button id="btn-desat-col" class="btn btn-sm" type="button" title="Desaturate only the selected column to greyscale">Col</button>
-        <button id="btn-desat-all" class="btn btn-sm" type="button" title="Desaturate every column to greyscale">All</button>
+        <button id="btn-desat-col" class="btn btn-sm" type="button" title="Desaturate only the selected column to greyscale"><span class="btn-txt">Col</span></button>
+        <button id="btn-desat-all" class="btn btn-sm" type="button" title="Desaturate every column to greyscale"><span class="btn-txt">All</span></button>
       </div>
     </div>
     <div class="toolbar-sep"></div>
@@ -99,7 +99,7 @@
     <section class="panel panel-grid">
       <div class="grid-type-row">
         <div class="sprite-type-group" title="Which sprite type the default palette and sprite colour-matching should use">
-          <button id="sprite-type-color-btn" class="btn btn-sm sprite-type-color-btn" type="button" title="Color — the game's own 30-colour ColorSchemeType layout">Color</button>
+          <button id="sprite-type-color-btn" class="btn btn-sm sprite-type-color-btn" type="button" title="Color — the game's own 30-colour ColorSchemeType layout"><span class="btn-txt">Color</span></button>
           <div id="sprite-type-shared-dd" title="Dash, Gravity Cancel, Last Jump, and any custom/signature sprite type — shared, full 36-colour layout"></div>
         </div>
         <button id="btn-sprite-types-save" class="btn btn-sm btn-icon-only" type="button" title="Save current colours as a new Sprite Type (writes the XML automatically)"></button>
@@ -394,6 +394,14 @@
         </label>
       </div>
 
+      <div class="customize-row">
+        <span class="customize-label" title="Turns down the glow, neon line, shadows and looping animations">Reduced effects</span>
+        <label class="customize-switch">
+          <input type="checkbox" id="customize-fxless-toggle">
+          <span class="customize-switch-track"></span>
+        </label>
+      </div>
+
       <div class="customize-row customize-row-col">
         <span class="customize-label">Background image</span>
         <div class="customize-bg-preview" id="customize-bg-preview"></div>
@@ -408,7 +416,8 @@
       <div class="customize-row">
         <span class="customize-label">Text colour</span>
         <div class="customize-color-controls">
-          <input type="color" id="customize-text-color" value="#e9f2f0">
+          <input type="color" id="customize-text-color" value="#e9f2f0" title="Colour 1" aria-label="Text colour 1">
+          <input type="color" id="customize-text-color-2" value="#4aa8ff" title="Colour 2" aria-label="Text colour 2">
           <button id="customize-text-color-reset" class="btn btn-sm" type="button">Reset</button>
         </div>
       </div>
@@ -940,6 +949,6 @@
 </script>
 
   <script defer src="codemirror.bundle.js"></script>
-  <script defer src="app.js"></script>
+  <script defer src="app.js?v=4"></script>
 </body>
 </html>

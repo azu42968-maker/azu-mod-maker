@@ -447,8 +447,10 @@ span.CodeMirror-selectedtext { background: none; }
   --custom-bg-image: none;
   --bg:            #080c14;
   --bg-panel:      #0f1520;
-  --bg-input:      #161e2e;
-  --bg-hover:      #1e2a3d;
+  --bg-input:      color-mix(in srgb, var(--text) 7%, transparent);
+  --bg-hover:      color-mix(in srgb, var(--text) 13%, transparent);
+  --bg-input-solid: #1f1f23;
+  --bg-hover-solid: #2c2c31;
   --border:        #1e2a3d;
   --border-focus:  color-mix(in srgb, var(--text) 40%, #07c9d7 60%);
   --text:          #e9f2f0;
@@ -471,6 +473,8 @@ span.CodeMirror-selectedtext { background: none; }
   --bg-panel:      #fcfefd;
   --bg-input:      #e9f2f0;
   --bg-hover:      #cad7ce;
+  --bg-input-solid: #e9f2f0;
+  --bg-hover-solid: #cad7ce;
   --border:        #aeb8a7;
   --border-focus:  color-mix(in srgb, var(--text) 30%, #0081a4 70%);
   --text:          #08080f;
@@ -2591,3 +2595,608 @@ body.has-custom-bg .panel     { position: relative; z-index: 10; }
   .dropdown-btn { min-width: 100px; max-width: 140px; font-size: 11px; }
 }
 
+
+/* =====================================================================
+   CAPA DE EFECTOS (portada de styles_R5Bk.css)
+   Estructura, layout y componentes: los de styles.css (arriba).
+   Colores de efectos: --acid (celeste) y --hazard (azul), derivados de --text.
+   ===================================================================== */
+
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+/* Colores de los efectos: se derivan de --text, así cambian junto con el color de texto.
+   --acid = celeste (antes verde) · --hazard = azul (antes naranja) */
+:root, body {
+  --fx-text2: var(--text-2, var(--text)); /* 2º color de texto */
+  --fx-follow: 65%; /* cuánto pesa el color de texto en los efectos (0% = fijo, 100% = igual al texto) */
+  --acid: var(--text-1, color-mix(in srgb, var(--text) var(--fx-follow), #36c2ff));
+  --hazard: var(--text-2, color-mix(in srgb, var(--fx-text2) var(--fx-follow), #2f6bff));
+  --acid-bright: color-mix(in srgb, var(--acid) 65%, #fff);
+  --hot: #6a5cff;
+  --cyan: #00e5ff;
+  --glow-sm: -5px 0 14px color-mix(in srgb, var(--acid) 45%, transparent), 5px 0 14px color-mix(in srgb, var(--hazard) 45%, transparent);
+  --glow-md: -9px 0 28px color-mix(in srgb, var(--acid) 55%, transparent), 9px 0 28px color-mix(in srgb, var(--hazard) 55%, transparent);
+  --glow-lg: -20px 0 60px color-mix(in srgb, var(--acid) 65%, transparent), 20px 0 60px color-mix(in srgb, var(--hazard) 65%, transparent);
+  --stripe: repeating-linear-gradient(135deg, transparent 0 10px, #000 10px 20px), var(--fx-grad);
+  --stripe-size: var(--stripe-w) 100%, 100% 100%;
+  --stripe-w: 28.2843px;
+  /* degradado del TEXTO: mitad y mitad, color 1 (--text) → color 2 (--text-2) a lo ancho de todo el texto */
+  --fx-text-grad: linear-gradient(90deg, var(--text) 0%, var(--text-2, var(--text)) 100%);
+  --fx-grad: linear-gradient(90deg, var(--acid), var(--hazard));
+  --fx-grad-d: linear-gradient(135deg, var(--acid), var(--hazard));
+}
+
+[data-theme="light"], [data-theme="light"] body {
+  --acid: var(--text-1, color-mix(in srgb, var(--text) var(--fx-follow), #0a8fe0));
+  --hazard: var(--text-2, color-mix(in srgb, var(--fx-text2) var(--fx-follow), #1f4fd8));
+  --glow-sm: -3px 0 10px color-mix(in srgb, var(--acid) 30%, transparent), 3px 0 10px color-mix(in srgb, var(--hazard) 30%, transparent);
+  --glow-md: -6px 0 18px color-mix(in srgb, var(--acid) 35%, transparent), 6px 0 18px color-mix(in srgb, var(--hazard) 35%, transparent);
+  --glow-lg: -11px 0 32px color-mix(in srgb, var(--acid) 40%, transparent), 11px 0 32px color-mix(in srgb, var(--hazard) 40%, transparent);
+}
+
+/* Color fuerte y fiel al texto: toma el tono (hue) del color de texto con mucha saturación.
+   Si el texto es casi neutro (blanco/gris/negro) se queda en celeste/azul.
+   Sin soporte de "relative color" se usa la mezcla de arriba como respaldo. */
+@supports (color: oklch(from red l c h)) {
+  :root, body {
+    --fx-text2: var(--text-2, oklch(from var(--text) l c calc(h + 55)));
+    --acid: var(--text-1, oklch(from var(--text) calc(.78 - .15 * min(1, c / .06)) calc(.12 + .13 * min(1, c / .06)) calc(h * min(1, c / .06) + 235 * (1 - min(1, c / .06)))));
+    --hazard: var(--text-2, oklch(from var(--fx-text2) calc(.62 - .07 * min(1, c / .06)) calc(.19 + .06 * min(1, c / .06)) calc(h * min(1, c / .06) + 262 * (1 - min(1, c / .06)))));
+  }
+  [data-theme="light"], [data-theme="light"] body {
+    --fx-text2: var(--text-2, oklch(from var(--text) l c calc(h + 55)));
+    --acid: var(--text-1, oklch(from var(--text) .56 calc(.14 + .12 * min(1, c / .06)) calc(h * min(1, c / .06) + 235 * (1 - min(1, c / .06)))));
+    --hazard: var(--text-2, oklch(from var(--fx-text2) .46 calc(.18 + .08 * min(1, c / .06)) calc(h * min(1, c / .06) + 262 * (1 - min(1, c / .06)))));
+  }
+}
+
+/* ---------- Selección, scrollbar y foco ---------- */
+::selection { background: var(--acid); color: #000; }
+html { scrollbar-color: var(--acid) var(--bg); }
+::-webkit-scrollbar-thumb { background: linear-gradient(var(--acid), var(--hazard)); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(var(--acid-bright), var(--acid)); }
+a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--acid-bright);
+  outline-offset: 2px;
+}
+input[type="range"] { accent-color: var(--acid); }
+
+/* ---------- Atmósfera de fondo (solo tema oscuro, sin fondo personalizado) ---------- */
+:root:not([data-theme="light"]) html::before,
+html:not([data-theme="light"])::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60vw 45vw at 100% 0, color-mix(in srgb, var(--acid) 12%, transparent), transparent 60%),
+    radial-gradient(50vw 40vw at 0 100%, color-mix(in srgb, var(--hazard) 7%, transparent), transparent 60%);
+}
+html:not([data-theme="light"])::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--hazard) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--acid) 7%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: radial-gradient(ellipse at 100% 0, #000, transparent 70%);
+  mask-image: radial-gradient(ellipse at 100% 0, #000, transparent 70%);
+  animation: grid-pan 5s linear infinite;
+}
+html:has(body.has-custom-bg)::before,
+html:has(body.has-custom-bg)::after { display: none; }
+@keyframes grid-pan { to { background-position: 72px 72px; } }
+
+/* Línea neón superior con brillo corriendo */
+body::after {
+  content: ""; position: fixed; left: 0; top: 0; width: 100%; height: 3px; z-index: 95; pointer-events: none;
+  background: linear-gradient(90deg, var(--acid), var(--hazard), var(--acid));
+  background-size: 200% 100%;
+  box-shadow: -6px 0 16px var(--acid), 6px 0 16px var(--hazard);
+  animation: shimmer 6s linear infinite;
+}
+@keyframes shimmer { from { background-position: 0 0; } to { background-position: 200% 0; } }
+
+/* ---------- Entrada escalonada (rise) ---------- */
+.header, .tabs-bar, .toolbar, .panel { animation: rise .6s backwards; }
+.tabs-bar { animation-delay: .08s; }
+.toolbar  { animation-delay: .16s; }
+.panel:nth-child(1) { animation-delay: .25s; }
+.panel:nth-child(2) { animation-delay: .35s; }
+.panel:nth-child(3) { animation-delay: .45s; }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Header / marca ---------- */
+.header {
+  border-bottom-color: color-mix(in srgb, var(--acid) 45%, transparent);
+  box-shadow: -40px 10px 40px -14px color-mix(in srgb, var(--acid) 45%, transparent), 40px 10px 40px -14px color-mix(in srgb, var(--hazard) 45%, transparent);
+}
+.header-logo-img {
+  filter: drop-shadow(-3px 0 10px color-mix(in srgb, var(--acid) 85%, transparent)) drop-shadow(3px 0 10px color-mix(in srgb, var(--hazard) 85%, transparent));
+  transition: transform .35s cubic-bezier(.2, .9, .3, 1.4);
+}
+.header-logo:hover .header-logo-img { transform: rotate(-10deg) scale(1.1); }
+
+.header-title {
+  --h1-shadow: .06em .06em 0 color-mix(in srgb, var(--hazard) 70%, transparent), 0 0 .6em color-mix(in srgb, var(--acid) 50%, transparent);
+  text-shadow: var(--h1-shadow);
+}
+[data-theme="light"] .header-title { --h1-shadow: .05em .05em 0 color-mix(in srgb, var(--hazard) 35%, transparent); }
+
+/* ---------- Botones: barrido de brillo, glow y sombra dura ---------- */
+.btn {
+  position: relative; overflow: hidden; isolation: isolate;
+  transition: background-color .12s, border-color .12s, transform .2s, box-shadow .25s, color .2s;
+}
+.btn::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .5) 50%, transparent 70%);
+  transform: translateX(-120%); transition: transform .6s ease;
+}
+.btn:hover::after { transform: translateX(120%); }
+.btn:hover { transform: translateY(-2px); box-shadow: var(--glow-sm); border-color: var(--acid); }
+.btn:active { transform: none; }
+.btn-primary { box-shadow: -7px 0 22px color-mix(in srgb, var(--acid) 40%, transparent), 7px 0 22px color-mix(in srgb, var(--hazard) 40%, transparent), 3px 3px 0 color-mix(in srgb, var(--hazard) 45%, #000); }
+.btn-primary:hover { transform: translate(-2px, -3px); box-shadow: -13px 0 40px color-mix(in srgb, var(--acid) 75%, transparent), 13px 0 40px color-mix(in srgb, var(--hazard) 75%, transparent), 5px 6px 0 color-mix(in srgb, var(--hazard) 45%, #000); }
+.btn-danger:hover { box-shadow: 0 0 18px rgba(248, 81, 73, .45); }
+.btn-icon-only { transition: background-color .12s, box-shadow .2s, transform .2s; }
+.btn-icon-only:hover { box-shadow: var(--glow-sm); transform: translateY(-2px); }
+
+/* Botón donar: borde de rayas hazard animadas */
+.btn-donate {
+  background: var(--stripe); background-size: var(--stripe-size); background-repeat: repeat-x, no-repeat;
+  border-color: #000; color: var(--hazard);
+  text-shadow: -4px 0 12px color-mix(in srgb, var(--acid) 70%, transparent), 4px 0 12px color-mix(in srgb, var(--hazard) 70%, transparent);
+  animation: stripe-run .55s linear infinite, donate-pulse 2.4s ease-in-out infinite;
+}
+.btn-donate::before { content: ""; position: absolute; inset: 2px; z-index: -1; background: #0b0b0b; border-radius: 4px; }
+.btn-donate:hover { animation: stripe-run .55s linear infinite; box-shadow: -15px 0 44px color-mix(in srgb, var(--acid) 85%, transparent), 15px 0 44px color-mix(in srgb, var(--hazard) 85%, transparent); }
+@keyframes stripe-run { to { background-position: calc(var(--stripe-w) * -1) 0, 0 0; } }
+@keyframes donate-pulse {
+  0%, 100% { box-shadow: -6px 0 18px color-mix(in srgb, var(--acid) 40%, transparent), 6px 0 18px color-mix(in srgb, var(--hazard) 40%, transparent); }
+  50%      { box-shadow: -13px 0 40px color-mix(in srgb, var(--acid) 85%, transparent), 13px 0 40px color-mix(in srgb, var(--hazard) 85%, transparent); }
+}
+.donate-popover { border-top: 3px solid var(--acid); box-shadow: -1px 0 0 0 color-mix(in srgb, var(--acid) 12%, transparent), 0 -1px 0 0 color-mix(in srgb, var(--acid) 12%, transparent), 1px 0 0 0 color-mix(in srgb, var(--hazard) 12%, transparent), 0 1px 0 0 color-mix(in srgb, var(--hazard) 12%, transparent), var(--glow-md), 0 8px 24px var(--shadow); }
+.donate-popover-link:hover { box-shadow: var(--glow-sm); }
+
+/* ---------- Pestañas ---------- */
+.tabs-bar { border-bottom-color: color-mix(in srgb, var(--acid) 30%, transparent); }
+.app-tab { transition: background .12s, color .12s, box-shadow .25s, transform .2s; }
+.app-tab:hover { box-shadow: var(--glow-sm); }
+.app-tab.active {
+  border-top-color: var(--acid);
+  text-shadow: -4px 0 12px color-mix(in srgb, var(--acid) 60%, transparent), 4px 0 12px color-mix(in srgb, var(--hazard) 60%, transparent);
+  box-shadow: -14px -8px 22px -10px color-mix(in srgb, var(--acid) 80%, transparent), 14px -8px 22px -10px color-mix(in srgb, var(--hazard) 80%, transparent);
+}
+.app-tab-close:hover { box-shadow: var(--glow-sm); }
+.app-tab-add:hover { box-shadow: var(--glow-sm); }
+
+/* ---------- Toolbar ---------- */
+.toolbar { border-bottom-color: color-mix(in srgb, var(--acid) 22%, transparent); }
+.toolbar-hue-group { border: 1px solid color-mix(in srgb, var(--acid) 25%, transparent); }
+.toolbar-hue-group .btn-icon-only:hover { text-shadow: -3px 0 10px color-mix(in srgb, var(--acid) 80%, transparent), 3px 0 10px color-mix(in srgb, var(--hazard) 80%, transparent); box-shadow: none; transform: none; }
+
+/* ---------- Desplegables ---------- */
+.dropdown-btn { transition: border-color .12s, box-shadow .2s, transform .2s; }
+.dropdown-btn:hover, .dropdown-active .dropdown-btn { box-shadow: var(--glow-sm); }
+.dropdown-menu {
+  border-top: 3px solid var(--acid);
+  box-shadow: -1px 0 0 0 color-mix(in srgb, var(--acid) 12%, transparent), 0 -1px 0 0 color-mix(in srgb, var(--acid) 12%, transparent), 1px 0 0 0 color-mix(in srgb, var(--hazard) 12%, transparent), 0 1px 0 0 color-mix(in srgb, var(--hazard) 12%, transparent), -13px 0 40px color-mix(in srgb, var(--acid) 18%, transparent), 13px 0 40px color-mix(in srgb, var(--hazard) 18%, transparent), 0 8px 24px var(--shadow);
+}
+.dropdown-item { transition: background .15s, padding-left .2s; }
+.dropdown-item:hover { padding-left: calc(.65rem + 6px); }
+.dropdown-item.active { box-shadow: inset 4px 0 0 var(--acid); }
+
+/* ---------- Paneles ---------- */
+.panel {
+  border-color: color-mix(in srgb, var(--acid) 22%, transparent);
+  transition: border-color .25s, box-shadow .25s;
+}
+.panel:hover, .panel:focus-within {
+  border-color: color-mix(in srgb, var(--acid) 70%, transparent);
+  box-shadow: -1px 0 0 0 color-mix(in srgb, var(--acid) 30%, transparent), 0 -1px 0 0 color-mix(in srgb, var(--acid) 30%, transparent), 1px 0 0 0 color-mix(in srgb, var(--hazard) 30%, transparent), 0 1px 0 0 color-mix(in srgb, var(--hazard) 30%, transparent), -11px 0 34px color-mix(in srgb, var(--acid) 16%, transparent), 11px 0 34px color-mix(in srgb, var(--hazard) 16%, transparent);
+}
+.panel-title { text-shadow: -4px 0 12px color-mix(in srgb, var(--acid) 45%, transparent), 4px 0 12px color-mix(in srgb, var(--hazard) 45%, transparent); }
+.sprite-section, .template-section { border-bottom-color: color-mix(in srgb, var(--acid) 22%, transparent); }
+
+/* ---------- Selector de color ---------- */
+.pk-tab { transition: background .15s, box-shadow .2s; }
+.pk-tab.active { box-shadow: var(--glow-sm); }
+.pk-dot, .pk-bar { box-shadow: 0 0 2px rgba(0, 0, 0, .65), -4px 0 12px color-mix(in srgb, var(--acid) 60%, transparent), 4px 0 12px color-mix(in srgb, var(--hazard) 60%, transparent); }
+.pk-thumb { box-shadow: 0 1px 3px rgba(0, 0, 0, .25), -3px 0 8px color-mix(in srgb, var(--acid) 50%, transparent), 3px 0 8px color-mix(in srgb, var(--hazard) 50%, transparent); }
+.pk-multiselect-btn-active { box-shadow: 0 0 14px rgba(255, 176, 32, .6); }
+.pk-tbtn { transition: transform .15s ease, border-color .15s ease, box-shadow .2s; }
+.pk-tbtn:hover { box-shadow: var(--glow-sm); }
+.pk-field:focus, .pk-hex-btn:hover { box-shadow: -3px 0 0 0 color-mix(in srgb, var(--acid) 20%, transparent), 0 -3px 0 0 color-mix(in srgb, var(--acid) 20%, transparent), 3px 0 0 0 color-mix(in srgb, var(--hazard) 20%, transparent), 0 3px 0 0 color-mix(in srgb, var(--hazard) 20%, transparent), var(--glow-sm); }
+
+/* ---------- Cuadrícula de colores ---------- */
+.grid-cell { transition: transform .2s, box-shadow .25s; }
+.grid-cell:hover { z-index: 3; transform: scale(1.12); box-shadow: var(--glow-md), 0 8px 18px rgba(0, 0, 0, .5); }
+.grid-cell-empty:hover { box-shadow: none; }
+.grid-cell.active { border-color: var(--acid); box-shadow: 0 0 0 2px var(--acid), var(--glow-md); }
+.grid-cell.active::before {
+  content: ""; position: absolute; inset: -4px; z-index: 4; padding: 2px; pointer-events: none;
+  border-radius: 9px;
+  background: conic-gradient(from var(--spin, 0deg), transparent 0 55%, var(--acid) 78%, var(--acid-bright) 88%, var(--hazard) 94%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: spin-border 2.6s linear infinite;
+}
+@keyframes spin-border { to { --spin: 360deg; } }
+.grid-lock:checked { box-shadow: var(--glow-sm); }
+.grid-row-pick-btn:hover, .grid-row-hue-btn:hover { text-shadow: -3px 0 10px color-mix(in srgb, var(--acid) 80%, transparent), 3px 0 10px color-mix(in srgb, var(--hazard) 80%, transparent); }
+.history-state { transition: border-color .2s, box-shadow .25s, transform .2s, opacity .2s; }
+.history-state:hover { transform: translateY(-3px); box-shadow: var(--glow-sm); }
+.history-state.active { box-shadow: 0 0 0 1px var(--acid), var(--glow-sm); }
+
+/* ---------- Sprite, plantilla y editor ---------- */
+.sprite-preview { transition: border-color .15s, background-color .15s, box-shadow .25s; }
+.sprite-preview.dragover { border-color: var(--acid); box-shadow: inset -10px 0 30px color-mix(in srgb, var(--acid) 20%, transparent), inset 10px 0 30px color-mix(in srgb, var(--hazard) 20%, transparent), var(--glow-md); }
+.template-dropzone:hover, .template-dropzone.dragover { box-shadow: inset -8px 0 24px color-mix(in srgb, var(--acid) 15%, transparent), inset 8px 0 24px color-mix(in srgb, var(--hazard) 15%, transparent), var(--glow-sm); border-color: var(--acid); color: var(--acid); }
+.sprite-zoom-controls, .sprite-anim-controls { border-color: color-mix(in srgb, var(--acid) 35%, transparent); }
+.editor-wrap { border-color: color-mix(in srgb, var(--acid) 30%, transparent); transition: box-shadow .25s, border-color .25s; }
+.editor-wrap:focus-within { border-color: var(--acid); box-shadow: -1px 0 0 0 color-mix(in srgb, var(--acid) 40%, transparent), 0 -1px 0 0 color-mix(in srgb, var(--acid) 40%, transparent), 1px 0 0 0 color-mix(in srgb, var(--hazard) 40%, transparent), 0 1px 0 0 color-mix(in srgb, var(--hazard) 40%, transparent), -10px 0 30px color-mix(in srgb, var(--acid) 20%, transparent), 10px 0 30px color-mix(in srgb, var(--hazard) 20%, transparent); }
+[data-theme="dark"] .editor-wrap .CodeMirror-cursor,
+:root:not([data-theme="light"]) .editor-wrap .CodeMirror-cursor { border-left-color: var(--acid); box-shadow: -3px 0 8px var(--acid), 3px 0 8px var(--hazard); }
+
+/* ---------- Modales ---------- */
+.modal-backdrop { backdrop-filter: blur(6px) saturate(1.3); }
+:root:not([data-theme="light"]) .modal-backdrop { background: rgba(0, 6, 16, .7); }
+.modal {
+  border-color: var(--acid);
+  box-shadow: -1px 0 0 0 color-mix(in srgb, var(--acid) 20%, transparent), 0 -1px 0 0 color-mix(in srgb, var(--acid) 20%, transparent), 1px 0 0 0 color-mix(in srgb, var(--hazard) 20%, transparent), 0 1px 0 0 color-mix(in srgb, var(--hazard) 20%, transparent), -27px 0 80px color-mix(in srgb, var(--acid) 22%, transparent), 27px 0 80px color-mix(in srgb, var(--hazard) 22%, transparent), 0 12px 40px var(--shadow);
+  transform: scale(.96) translateY(10px);
+  transition: transform .22s cubic-bezier(.2, .9, .3, 1.2);
+}
+.modal-overlay.open .modal { transform: none; }
+.modal::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; pointer-events: none;
+  border-radius: 12px 12px 0 0;
+  background: var(--stripe); background-size: var(--stripe-size); background-repeat: repeat-x, no-repeat;
+  animation: stripe-run .55s linear infinite;
+}
+.modal::after {
+  content: ""; position: absolute; inset: -1px; z-index: 2; padding: 2px; pointer-events: none;
+  border-radius: 12px; opacity: .85;
+  background: conic-gradient(from var(--spin, 0deg), transparent 0 55%, var(--acid) 78%, var(--acid-bright) 88%, var(--hazard) 94%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: spin-border 4s linear infinite;
+}
+.modal-title { text-shadow: -7px 0 20px color-mix(in srgb, var(--acid) 50%, transparent), 7px 0 20px color-mix(in srgb, var(--hazard) 50%, transparent), .04em .04em 0 color-mix(in srgb, var(--acid) 35%, transparent); }
+.modal-input, .dropdown-search-input { transition: border-color .2s, box-shadow .2s; }
+.modal-input:focus {
+  border-color: var(--acid);
+  box-shadow: -3px 0 0 0 color-mix(in srgb, var(--acid) 25%, transparent), 0 -3px 0 0 color-mix(in srgb, var(--acid) 25%, transparent), 3px 0 0 0 color-mix(in srgb, var(--hazard) 25%, transparent), 0 3px 0 0 color-mix(in srgb, var(--hazard) 25%, transparent), -7px 0 22px color-mix(in srgb, var(--acid) 30%, transparent), 7px 0 22px color-mix(in srgb, var(--hazard) 30%, transparent);
+}
+.shape-picker-list, .image-preview-wrap { border-color: color-mix(in srgb, var(--acid) 30%, transparent); }
+.shape-picker-row:hover { box-shadow: inset 3px 0 0 var(--acid); }
+.zip-preview-item.zip-preview-clickable:hover .zip-preview-thumb { border-color: var(--acid); box-shadow: var(--glow-sm); }
+.customize-switch-track { transition: background .15s, box-shadow .2s; }
+.customize-switch input:checked + .customize-switch-track { background: var(--acid); box-shadow: var(--glow-sm); }
+.customize-switch input:focus-visible + .customize-switch-track { outline: 2px solid var(--acid-bright); outline-offset: 2px; }
+
+/* ---------- Progreso ---------- */
+.progress-spinner { border-top-color: var(--acid); filter: drop-shadow(-3px 0 6px color-mix(in srgb, var(--acid) 80%, transparent)) drop-shadow(3px 0 6px color-mix(in srgb, var(--hazard) 80%, transparent)); }
+.progress-modal-bar {
+  background: var(--fx-grad);
+  box-shadow: -3px 0 10px color-mix(in srgb, var(--acid) 70%, transparent), 3px 0 10px color-mix(in srgb, var(--hazard) 70%, transparent);
+}
+.progress-modal-percent { text-shadow: -4px 0 12px color-mix(in srgb, var(--acid) 60%, transparent), 4px 0 12px color-mix(in srgb, var(--hazard) 60%, transparent); }
+
+/* ---------- Toasts ---------- */
+.toast { box-shadow: 0 4px 14px var(--shadow), 0 0 18px color-mix(in srgb, currentColor 30%, transparent); }
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html::after, body::after { animation: none; }
+  .header, .tabs-bar, .toolbar, .panel { animation: none; }
+  .btn::after { display: none; }
+  .btn-donate, .modal::before, .modal::after,
+  .grid-cell.active::before { animation-duration: .55s; }
+  .btn-donate { animation: stripe-run .55s linear infinite; }
+  .modal::after, .grid-cell.active::before { animation: none; }
+}
+
+/* ---------- Móvil ---------- */
+@media (max-width: 680px) {
+  .btn:hover, .btn-primary:hover, .btn-icon-only:hover { transform: none; }
+  .grid-cell:hover { transform: scale(1.06); }
+  .panel:hover { box-shadow: none; }
+}
+
+
+/* ---------- Degradado de 2 colores (--acid → --hazard) ---------- */
+.header { border-image: linear-gradient(90deg, var(--acid), var(--hazard), var(--acid)) 1; }
+.btn-primary, .btn-primary:hover {
+  background: var(--fx-grad-d); background-size: 140% 140%; background-position: 0 50%;
+  border-color: transparent; text-shadow: 0 1px 2px rgba(0, 0, 0, .45);
+}
+.btn-primary:hover { background-position: 100% 50%; }
+.pk-tab.active, .dropdown-item.active { background: var(--fx-grad-d); text-shadow: 0 1px 2px rgba(0, 0, 0, .4); }
+.customize-switch input:checked + .customize-switch-track { background: var(--fx-grad); }
+
+#customize-text-color-2 {
+  width: 40px; height: 28px; padding: 0; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 4px; background: none;
+}
+
+
+/* ---------- Texto con degradado (color 1 → color 2) ---------- */
+.header-title,
+.panel-title,
+.modal-title,
+.progress-modal-title,
+.customize-label,
+.toolbar-label,
+.grid-row-label,
+.grid-col-label,
+.app-tab-name,
+.dropdown-btn-text,
+.dropdown-item:not(.active) .dropdown-item-label {
+  background-image: var(--fx-text-grad);
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+.header-title-thin { -webkit-text-fill-color: var(--text-dim); }
+
+/* el glow del texto pasa a drop-shadow (text-shadow taparía el degradado) */
+.header-title { filter: drop-shadow(.06em .06em 0 color-mix(in srgb, var(--hazard) 70%, transparent)) drop-shadow(-.2em 0 .6em color-mix(in srgb, var(--acid) 50%, transparent)) drop-shadow(.2em 0 .6em color-mix(in srgb, var(--hazard) 50%, transparent)); }
+[data-theme="light"] .header-title { filter: drop-shadow(.05em .05em 0 color-mix(in srgb, var(--hazard) 35%, transparent)); }
+.panel-title { filter: drop-shadow(-3px 0 8px color-mix(in srgb, var(--acid) 45%, transparent)) drop-shadow(3px 0 8px color-mix(in srgb, var(--hazard) 45%, transparent)); }
+.modal-title { filter: drop-shadow(-4px 0 12px color-mix(in srgb, var(--acid) 50%, transparent)) drop-shadow(4px 0 12px color-mix(in srgb, var(--hazard) 50%, transparent)); }
+
+
+/* =====================================================================
+   TODOS los efectos de color con degradado (color 1 → color 2)
+   ===================================================================== */
+:root, body {
+  --fx-grad-soft: linear-gradient(90deg, color-mix(in srgb, var(--acid) 30%, transparent), color-mix(in srgb, var(--hazard) 30%, transparent));
+}
+
+/* ---------- Líneas divisorias ---------- */
+.tabs-bar, .toolbar, .sprite-section, .template-section { border-image: var(--fx-grad-soft) 1; }
+
+/* ---------- Bordes con degradado (elementos redondeados, con fondo propio) ---------- */
+.panel {
+  background: linear-gradient(var(--bg-panel), var(--bg-panel)) padding-box, var(--fx-grad-soft) border-box;
+  border-color: transparent;
+}
+.panel:hover, .panel:focus-within {
+  background: linear-gradient(var(--bg-panel), var(--bg-panel)) padding-box, var(--fx-grad) border-box;
+  border-color: transparent;
+}
+.modal {
+  background: linear-gradient(var(--bg-panel), var(--bg-panel)) padding-box, var(--fx-grad) border-box;
+  border-color: transparent;
+}
+.btn:not(.btn-primary):not(.btn-donate):not(.btn-danger):not(:disabled):hover {
+  background: linear-gradient(var(--bg-hover-solid), var(--bg-hover-solid)) padding-box, var(--fx-grad) border-box;
+  border-color: transparent;
+}
+.dropdown-btn:hover, .dropdown-active .dropdown-btn,
+.modal-input:focus, .pk-field:focus, .history-state.active {
+  background: linear-gradient(var(--bg-input-solid), var(--bg-input-solid)) padding-box, var(--fx-grad) border-box;
+  border-color: transparent;
+}
+.app-tab.active {
+  background: linear-gradient(var(--bg-input-solid), var(--bg-input-solid)) padding-box, var(--fx-grad) border-box;
+  border-color: transparent;
+}
+.toolbar-hue-group {
+  background: linear-gradient(var(--bg-input-solid), var(--bg-input-solid)) padding-box, var(--fx-grad-soft) border-box;
+  border-color: transparent;
+}
+.zip-preview-item.zip-preview-clickable:hover .zip-preview-thumb {
+  background: linear-gradient(#14151a, #14151a) padding-box, var(--fx-grad) border-box;
+  border-color: transparent;
+}
+.history-state.active { box-shadow: var(--glow-sm); }
+.grid-cell.active { border-color: #fff; box-shadow: var(--glow-md); }
+
+/* ---------- Barra superior con degradado (menús y popover) ---------- */
+.dropdown-menu { border-top-color: transparent; }
+.dropdown-menu::before {
+  content: ""; position: absolute; left: -1px; right: -1px; top: -3px; height: 3px;
+  border-radius: 8px 8px 0 0; background: var(--fx-grad); pointer-events: none;
+}
+.donate-popover { border-top-color: transparent; }
+.donate-popover::after {
+  content: ""; position: absolute; left: -1px; right: -1px; top: -3px; height: 3px;
+  border-radius: 10px 10px 0 0; background: var(--fx-grad); pointer-events: none;
+}
+
+/* ---------- Marcos con degradado (anillo con máscara) ---------- */
+.editor-wrap { position: relative; border-color: transparent; }
+.editor-wrap:focus-within { border-color: transparent; }
+.sprite-zoom-controls, .sprite-anim-controls { border-color: transparent; }
+.editor-wrap::after, .sprite-zoom-controls::after, .sprite-anim-controls::after {
+  content: ""; position: absolute; inset: 0; z-index: 5; padding: 1px; pointer-events: none;
+  border-radius: inherit; background: var(--fx-grad); opacity: .4; transition: opacity .25s;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+.sprite-zoom-controls::after, .sprite-anim-controls::after { inset: -1px; }
+.editor-wrap:focus-within::after { opacity: 1; }
+
+/* ---------- Otros ---------- */
+.dropdown-item.active { box-shadow: none; }
+.shape-picker-row:hover { box-shadow: none; background: var(--fx-grad-soft); }
+.progress-spinner { border-top-color: var(--acid); border-right-color: var(--hazard); }
+
+/* texto con degradado también en el porcentaje de progreso */
+.progress-modal-percent {
+  background-image: var(--fx-text-grad); background-repeat: no-repeat;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent; text-shadow: none;
+  filter: drop-shadow(-3px 0 6px color-mix(in srgb, var(--acid) 60%, transparent)) drop-shadow(3px 0 6px color-mix(in srgb, var(--hazard) 60%, transparent));
+}
+
+
+/* ---------- Fix: lista desplegable nativa de <select> y botones deshabilitados ---------- */
+/* El popup nativo ignoraba el tema (blanco por defecto): ahora usa el color del panel, opaco */
+select.btn { color-scheme: dark; }
+[data-theme="light"] select.btn { color-scheme: light; }
+select.btn option,
+select.btn optgroup {
+  background-color: var(--bg-input-solid);
+  color: var(--text);
+}
+select.btn option:checked,
+select.btn option:hover {
+  background-color: var(--bg-hover-solid);
+  color: var(--text);
+}
+
+/* Deshabilitados: sin glow/degradado que se transparenta por la opacidad */
+.btn:disabled,
+.btn[disabled] {
+  box-shadow: none;
+  transform: none;
+  text-shadow: none;
+}
+.btn-primary:disabled,
+.btn-primary[disabled] {
+  background: var(--bg-input);
+  background-image: none;
+  border-color: var(--border);
+  color: var(--text-dim);
+}
+
+/* ---------- Preview del sprite: sin rombos, usa el fondo de la app ---------- */
+.sprite-preview {
+  background: transparent;
+}
+
+
+/* ---------- Degradado de texto: resto de textos que seguían con 1 solo color ---------- */
+:root, body {
+  /* versión atenuada para textos secundarios (hints, subtítulos, estados): --text-dim → mezcla con --text-2 */
+  --fx-text-grad-dim: linear-gradient(90deg, var(--text-dim) 0%, color-mix(in srgb, var(--text-2, var(--text-dim)) 65%, var(--text-dim)) 100%);
+}
+
+/* texto principal (mismo degradado que los títulos) */
+.btn .btn-label,
+.btn .btn-txt,
+.toolbar-hue-label,
+.pk-quick-title,
+.pk-tab:not(.active),
+.template-hint b,
+.app-tab-add,
+.progress-modal-subtitle {
+  background-image: var(--fx-text-grad);
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+/* texto secundario (atenuado) */
+.dropdown-group-header,
+.toolbar-value,
+.pk-lbl,
+.pk-unit,
+.pk-hex-btn,
+.pk-multiselect-btn,
+.customize-hint,
+.template-hint,
+.template-dropzone,
+.template-fname,
+.template-status,
+.sprite-status,
+.sprite-empty,
+.sprite-zoom-level,
+.donate-popover-text,
+.btn-primary:disabled .btn-label,
+.btn-primary[disabled] .btn-label {
+  background-image: var(--fx-text-grad-dim);
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+/* excepciones: botones con fondo propio o color semántico */
+.btn-primary:not(:disabled):not([disabled]) .btn-label,
+.btn-primary:not(:disabled):not([disabled]) .btn-txt,
+.btn-donate .btn-label,
+.pk-tab.active {
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+  color: #fff;
+}
+.btn-danger:hover .btn-label,
+.btn-danger:hover .btn-txt {
+  background-image: none;
+  -webkit-text-fill-color: var(--danger);
+}
+.btn-txt { display: inline-block; }
+
+
+/* ---------- Con fondo personalizado: fuera el azul "esport" fijo (marino/neón) ---------- */
+body.has-custom-bg {
+  --bg-panel:   #121214;
+  --border:     color-mix(in srgb, var(--text) 16%, #121214);
+  --grid-empty: #111113;
+  --info:       var(--acid);
+  --info-bg:    color-mix(in srgb, var(--acid) 12%, #0c0c0e);
+  --hot:        var(--hazard);
+  --cyan:       var(--acid);
+}
+:root:not([data-theme="light"]) body.has-custom-bg .modal-backdrop { background: rgba(0, 0, 0, .6); backdrop-filter: blur(6px); }
+body.has-custom-bg::after { display: none; } /* línea neón superior */
+
+
+/* ---------- Efectos reducidos (body.fx-less): menos brillo, sombras y animaciones ---------- */
+body.fx-less {
+  --glow-sm: 0 0 0 0 transparent;
+  --glow-md: 0 0 0 0 transparent;
+  --glow-lg: 0 0 0 0 transparent;
+}
+/* atmósfera de fondo, línea neón y destello de los botones fuera */
+body.fx-less::after,
+html:has(body.fx-less)::before,
+html:has(body.fx-less)::after,
+body.fx-less .btn::after { display: none !important; }
+
+/* texto: sin resplandor */
+body.fx-less *, body.fx-less *::before, body.fx-less *::after { text-shadow: none !important; }
+body.fx-less .btn-primary, body.fx-less .pk-tab.active, body.fx-less .dropdown-item.active { text-shadow: 0 1px 2px rgba(0, 0, 0, .4) !important; }
+body.fx-less .header-title, body.fx-less .panel-title, body.fx-less .modal-title,
+body.fx-less .progress-modal-percent, body.fx-less .progress-spinner { filter: none !important; }
+
+/* sombras de colores grandes → sombra neutra y corta (se conservan los anillos/bordes) */
+body.fx-less .header { box-shadow: none !important; }
+body.fx-less .modal { box-shadow: 0 12px 40px var(--shadow) !important; }
+body.fx-less .dropdown-menu, body.fx-less .donate-popover { box-shadow: 0 8px 24px var(--shadow) !important; }
+body.fx-less .panel:hover, body.fx-less .panel:focus-within,
+body.fx-less .editor-wrap:focus-within { box-shadow: none !important; }
+body.fx-less .btn-primary, body.fx-less .btn-primary:hover { box-shadow: 0 2px 6px rgba(0, 0, 0, .35) !important; }
+body.fx-less .btn-donate, body.fx-less .btn-donate:hover { box-shadow: none !important; animation: stripe-run .55s linear infinite !important; }
+body.fx-less .app-tab.active { box-shadow: none !important; }
+body.fx-less .pk-dot, body.fx-less .pk-bar { box-shadow: 0 0 2px rgba(0, 0, 0, .65) !important; }
+body.fx-less .pk-thumb { box-shadow: 0 1px 3px rgba(0, 0, 0, .25) !important; }
+body.fx-less .pk-field:focus, body.fx-less .pk-hex-btn:hover,
+body.fx-less .modal-input:focus { box-shadow: none !important; }
+body.fx-less .sprite-preview.dragover,
+body.fx-less .template-dropzone:hover, body.fx-less .template-dropzone.dragover { box-shadow: none !important; }
+body.fx-less .progress-modal-bar { box-shadow: none !important; }
+body.fx-less .CodeMirror-cursor { box-shadow: none !important; }
+body.fx-less .btn:hover, body.fx-less .btn-icon-only:hover, body.fx-less .history-state:hover { transform: none; }
+body.fx-less .grid-cell:hover { transform: scale(1.05); }
+
+/* animaciones en bucle y anillos giratorios más suaves */
+body.fx-less .modal::before, body.fx-less .modal::after,
+body.fx-less .grid-cell.active::before { animation: none !important; }
+body.fx-less .modal::after, body.fx-less .editor-wrap::after { opacity: .35; }
+body.fx-less .header, body.fx-less .tabs-bar, body.fx-less .toolbar, body.fx-less .panel { animation: none !important; }
