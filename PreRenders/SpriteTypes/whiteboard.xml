@@ -1,0 +1,32 @@
+<ColorSchemeType>
+	<HairLt_Swap>0xFFFFFF</HairLt_Swap>
+	<Hair_Swap>0xFFFFFF</Hair_Swap>
+	<HairDk_Swap>0xFFFFFF</HairDk_Swap>
+	<Body1VL_Swap>0xFFFFFF</Body1VL_Swap>
+	<Body1Lt_Swap>0xFFFFFF</Body1Lt_Swap>
+	<Body1_Swap>0xFFFFFF</Body1_Swap>
+	<Body1Dk_Swap>0xFFFFFF</Body1Dk_Swap>
+	<Body1VD_Swap>0xFFFFFF</Body1VD_Swap>
+	<Body1Acc_Swap>0xFFFFFF</Body1Acc_Swap>
+	<Body2VL_Swap>0xFFFFFF</Body2VL_Swap>
+	<Body2Lt_Swap>0xFFFFFF</Body2Lt_Swap>
+	<Body2_Swap>0xFFFFFF</Body2_Swap>
+	<Body2Dk_Swap>0xFFFFFF</Body2Dk_Swap>
+	<Body2VD_Swap>0xFFFFFF</Body2VD_Swap>
+	<Body2Acc_Swap>0xFFFFFF</Body2Acc_Swap>
+	<SpecialVL_Swap>0xFFFFFF</SpecialVL_Swap>
+	<SpecialLt_Swap>0xFFFFFF</SpecialLt_Swap>
+	<Special_Swap>0xFFFFFF</Special_Swap>
+	<SpecialDk_Swap>0xFFFFFF</SpecialDk_Swap>
+	<SpecialVD_Swap>0xFFFFFF</SpecialVD_Swap>
+	<SpecialAcc_Swap>0xFFFFFF</SpecialAcc_Swap>
+	<ClothVL_Swap>0xFFFFFF</ClothVL_Swap>
+	<ClothLt_Swap>0xFFFFFF</ClothLt_Swap>
+	<Cloth_Swap>0xFFFFFF</Cloth_Swap>
+	<ClothDk_Swap>0xFFFFFF</ClothDk_Swap>
+	<WeaponVL_Swap>0xFFFFFF</WeaponVL_Swap>
+	<WeaponLt_Swap>0xFFFFFF</WeaponLt_Swap>
+	<Weapon_Swap>0xFFFFFF</Weapon_Swap>
+	<WeaponDk_Swap>0xFFFFFF</WeaponDk_Swap>
+	<WeaponAcc_Swap>0xFFFFFF</WeaponAcc_Swap>
+</ColorSchemeType>
