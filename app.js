@@ -7,6 +7,9 @@ const EMBEDDED_STRING_TABLE_TSV = "StringKey\tEnglish\nColorSchemeType_100Mil_Di
 const EMBEDDED_SVG_TEMPLATE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<svg\n   width=\"2000\"\n   height=\"2000\"\n   viewBox=\"0 0 529.16665 529.16668\"\n   version=\"1.1\"\n   id=\"svg8\"\n   inkscape:version=\"1.4.2 (f4327f4, 2025-05-13)\"\n   sodipodi:docname=\"test.svg\"\n   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\n   xmlns:sodipodi=\"http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd\"\n   xmlns=\"http://www.w3.org/2000/svg\"\n   xmlns:svg=\"http://www.w3.org/2000/svg\"\n   xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n   xmlns:cc=\"http://creativecommons.org/ns#\"\n   xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n  <defs\n     id=\"defs2\" />\n  <sodipodi:namedview\n     id=\"base\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"#666666\"\n     borderopacity=\"1.0\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pageshadow=\"2\"\n     inkscape:zoom=\"0.28956021\"\n     inkscape:cx=\"324.63024\"\n     inkscape:cy=\"1013.6061\"\n     inkscape:document-units=\"px\"\n     inkscape:current-layer=\"layer1\"\n     showgrid=\"false\"\n     units=\"px\"\n     inkscape:window-width=\"1280\"\n     inkscape:window-height=\"657\"\n     inkscape:window-x=\"-8\"\n     inkscape:window-y=\"-8\"\n     inkscape:window-maximized=\"1\"\n     inkscape:showpageshadow=\"0\"\n     inkscape:pagecheckerboard=\"true\"\n     inkscape:deskcolor=\"#505050\"\n     inkscape:document-rotation=\"0\" />\n  <metadata\n     id=\"metadata5\">\n    <rdf:RDF>\n      <cc:Work\n         rdf:about=\"\">\n        <dc:format>image/svg+xml</dc:format>\n        <dc:type\n           rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" />\n      </cc:Work>\n    </rdf:RDF>\n  </metadata>\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer2\"\n     inkscape:label=\"Layer 2\">\n    <rect\n       style=\"opacity:1;fill:#9b9b9b;fill-opacity:1;stroke:none;stroke-width:1.07176387;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"rectBackdrop\"\n       width=\"529.16669\"\n       height=\"529.16669\"\n       x=\"0\"\n       y=\"-232.16669\"\n       rx=\"21.575197\"\n       transform=\"translate(0,232.16667)\" />\n  </g>\n  <g\n     inkscape:label=\"Layer 1\"\n     inkscape:groupmode=\"layer\"\n     id=\"layer1\"\n     transform=\"translate(0,232.16667)\">\n    <rect\n       rx=\"10.066534\"\n       y=\"-111.51667\"\n       x=\"211.66667\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"HairLt_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"Hair_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"264.58334\"\n       y=\"-111.51667\"\n       rx=\"10.066534\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"HairDk_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"317.5\"\n       y=\"-111.51667\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"-58.599998\"\n       x=\"158.75\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"Body1VL_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"Body1Lt_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"211.66667\"\n       y=\"-58.599998\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"-58.599998\"\n       x=\"264.58334\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"Body1_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"Body1Dk_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"317.5\"\n       y=\"-58.599998\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"-58.599998\"\n       x=\"370.41666\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"Body1VD_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"Body1Acc_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"423.33334\"\n       y=\"-58.599998\"\n       rx=\"10.066534\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"Body2VL_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"158.75\"\n       y=\"-5.6833344\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"-5.6833344\"\n       x=\"211.66667\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"Body2Lt_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"Body2_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"264.58334\"\n       y=\"-5.6833344\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"-5.6833344\"\n       x=\"317.5\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"Body2Dk_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"Body2VD_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"370.41666\"\n       y=\"-5.6833344\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"-5.6833344\"\n       x=\"423.33334\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"Body2Acc_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"47.233334\"\n       x=\"158.75\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"SpecialVL_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"SpecialLt_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"211.66667\"\n       y=\"47.233334\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"47.233334\"\n       x=\"264.58334\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"Special_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"SpecialDk_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"317.5\"\n       y=\"47.233334\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"47.233334\"\n       x=\"370.41666\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"SpecialVD_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"SpecialAcc_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"423.33334\"\n       y=\"47.233334\"\n       rx=\"10.066534\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"ClothVL_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"158.75\"\n       y=\"100.15\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"100.15\"\n       x=\"211.66667\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"ClothLt_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"Cloth_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"264.58334\"\n       y=\"100.15\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"100.15\"\n       x=\"317.5\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"ClothDk_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"153.06667\"\n       x=\"158.75\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"WeaponVL_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"WeaponLt_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"211.66667\"\n       y=\"153.06667\"\n       rx=\"10.066534\" />\n    <rect\n       rx=\"10.066534\"\n       y=\"153.06667\"\n       x=\"264.58334\"\n       height=\"50.006248\"\n       width=\"50.006248\"\n       id=\"Weapon_Swap\"\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       id=\"WeaponDk_Swap\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"317.5\"\n       y=\"153.06667\"\n       rx=\"10.066534\" />\n    <rect\n       style=\"opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.47371918;stroke-miterlimit:100;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill\"\n       width=\"50.006248\"\n       height=\"50.006248\"\n       x=\"423.33331\"\n       y=\"153.06667\"\n       rx=\"10.066534\"\n       id=\"WeaponAcc_Swap\" />\n    <text\n       id=\"txtWeapon\"\n       y=\"185.59984\"\n       x=\"34.395832\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       xml:space=\"preserve\"><tspan\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\"\n         y=\"185.59984\"\n         x=\"34.395832\"\n         id=\"tspan899\"\n         sodipodi:role=\"line\">Weapon</tspan></text>\n    <text\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       x=\"34.395832\"\n       y=\"132.68315\"\n       id=\"txtCloth\"><tspan\n         sodipodi:role=\"line\"\n         id=\"tspan895\"\n         x=\"34.395832\"\n         y=\"132.68315\"\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\">Cloth</tspan></text>\n    <text\n       id=\"txtSpecial\"\n       y=\"79.766495\"\n       x=\"34.395832\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       xml:space=\"preserve\"><tspan\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\"\n         y=\"79.766495\"\n         x=\"34.395832\"\n         id=\"tspan891\"\n         sodipodi:role=\"line\">Special</tspan></text>\n    <text\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       x=\"34.395832\"\n       y=\"26.849825\"\n       id=\"txtBody2\"><tspan\n         sodipodi:role=\"line\"\n         id=\"tspan887\"\n         x=\"34.395832\"\n         y=\"26.849825\"\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\">Body<tspan\n   id=\"tspan885\"\n   style=\"font-size:31.75px\">2</tspan></tspan></text>\n    <text\n       id=\"txtBody1\"\n       y=\"-26.066845\"\n       x=\"34.395832\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       xml:space=\"preserve\"><tspan\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\"\n         y=\"-26.066845\"\n         x=\"34.395832\"\n         id=\"tspan877\"\n         sodipodi:role=\"line\">Body<tspan\n   id=\"tspan875\"\n   style=\"font-size:31.75px\">1</tspan></tspan></text>\n    <text\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       x=\"34.395832\"\n       y=\"-78.983498\"\n       id=\"txtHair\"><tspan\n         sodipodi:role=\"line\"\n         id=\"tspan881\"\n         x=\"34.395832\"\n         y=\"-78.983498\"\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\">Hair</tspan></text>\n    <text\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       x=\"431.27084\"\n       y=\"-131.90018\"\n       id=\"txtAccent\"><tspan\n         sodipodi:role=\"line\"\n         id=\"tspan923\"\n         x=\"431.27084\"\n         y=\"-131.90018\"\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\">Acc</tspan></text>\n    <text\n       id=\"txtVeryDark\"\n       y=\"-131.90018\"\n       x=\"381\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       xml:space=\"preserve\"><tspan\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\"\n         y=\"-131.90018\"\n         x=\"381\"\n         id=\"tspan915\"\n         sodipodi:role=\"line\">VD</tspan></text>\n    <text\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       x=\"328.08334\"\n       y=\"-131.90018\"\n       id=\"txtDk\"><tspan\n         sodipodi:role=\"line\"\n         id=\"tspan919\"\n         x=\"328.08334\"\n         y=\"-131.90018\"\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\">Dk</tspan></text>\n    <text\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       x=\"279.08249\"\n       y=\"-131.90018\"\n       id=\"txtNeutral\"><tspan\n         sodipodi:role=\"line\"\n         id=\"tspan911\"\n         x=\"279.08249\"\n         y=\"-131.90018\"\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\">N</tspan></text>\n    <text\n       id=\"txtLight\"\n       y=\"-131.90018\"\n       x=\"222.25\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       xml:space=\"preserve\"><tspan\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\"\n         y=\"-131.90018\"\n         x=\"222.25\"\n         id=\"tspan907\"\n         sodipodi:role=\"line\">Lt</tspan></text>\n    <text\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       x=\"169.33333\"\n       y=\"-131.90018\"\n       id=\"txtVeryLight\"\n       inkscape:label=\"txtVeryLight\"><tspan\n         sodipodi:role=\"line\"\n         id=\"tspan871\"\n         x=\"169.33333\"\n         y=\"-131.90018\"\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:21.1667px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\">VL</tspan></text>\n    <text\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:38.3432px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.958579\"\n       x=\"79.375\"\n       y=\"-179.80034\"\n       id=\"txtTitle\"><tspan\n         sodipodi:role=\"line\"\n         id=\"tspan826\"\n         x=\"79.375\"\n         y=\"-179.80034\"\n         style=\"font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:42.3333px;font-family:'Bespoke Sans';-inkscape-font-specification:'Bespoke Sans Ultra-Bold';stroke-width:0.958579\">Aa</tspan></text>\n  </g>\n</svg>\n";
 
 const BLACK_FALLBACK = 0x010101;
+// Solo el negro puro (#000000, o #010101 que es su sustituto) cuenta como "negro".
+// Los tonos oscuros (#0a0a0a, #141414...) ya NO se tratan como negro.
+function _isPureBlackRGB(r, g, b) { return r <= 1 && g <= 1 && b <= 1; }
 
 const GRID_COLUMNS = [
   { id: 'Hair',    label: 'Hair',    tip: 'Mostly used for hair and some cloth- and leather-like materials' },
@@ -2869,9 +2872,20 @@ function initSpriteUI() {
   const previewZipBtn = document.getElementById('btn-sprite-preview-zip');
   const previewZipInput = document.getElementById('sprite-preview-zip-input');
   if (previewZipBtn && previewZipInput) {
-    previewZipBtn.addEventListener('click', () => {
-      if (_lastSWFPreviewFiles && _lastSWFPreviewFiles.length) { previewSWFFiles(_lastSWFPreviewFiles, _lastSWFPreviewFiles.length === 1 && /\.zip$/i.test(_lastSWFPreviewFiles[0].name), undefined, true); return; }
-      if (_lastSpriteZipFile) { previewAndArmSVGZip(_lastSpriteZipFile); return; }
+    previewZipBtn.addEventListener('click', async () => {
+      // Si el archivo cambio en disco (p.ej. el SWF que acabas de exportar), el File
+      // guardado queda inutilizable: se descarta y se abre el selector para elegir otro.
+      if (_lastSWFPreviewFiles && _lastSWFPreviewFiles.length) {
+        if (await _swfFilesStillReadable(_lastSWFPreviewFiles)) {
+          previewSWFFiles(_lastSWFPreviewFiles, _lastSWFPreviewFiles.length === 1 && /\.zip$/i.test(_lastSWFPreviewFiles[0].name), undefined, true);
+          return;
+        }
+        clearSpriteZipPreview({ silent: true });
+      }
+      if (_lastSpriteZipFile) {
+        if (await _swfFilesStillReadable([_lastSpriteZipFile])) { previewAndArmSVGZip(_lastSpriteZipFile); return; }
+        clearSpriteZipPreview({ silent: true });
+      }
       previewZipInput.click();
     });
     previewZipInput.addEventListener('change', () => {
@@ -2888,6 +2902,17 @@ function initSpriteUI() {
 
   bind('btn-swf-shapes-batch-download', downloadSWFShapesBatchZip);
   bind('btn-swf-shapes-bulk-export', bulkExportSWFShapesToSWF);
+
+  const fastExportBtn = document.getElementById('btn-sprite-fast-export');
+  const fastExportInput = document.getElementById('sprite-fast-export-input');
+  if (fastExportBtn && fastExportInput) {
+    fastExportBtn.addEventListener('click', () => fastExportInput.click());
+    fastExportInput.addEventListener('change', () => {
+      const picked = fastExportInput.files ? Array.from(fastExportInput.files) : [];
+      fastExportInput.value = '';
+      if (picked.length) fastExportSWFShapes(picked);
+    });
+  }
 
   document.getElementById('btn-zip-preview-select-all')?.addEventListener('click', () => {
     for (const cb of _zipPreviewVisibleCheckboxes()) {
@@ -3869,7 +3894,7 @@ function _buildSpriteSVGLabelsColor() {
     }
 
     const r = (shape.hex >> 16) & 0xFF, g = (shape.hex >> 8) & 0xFF, b = shape.hex & 0xFF;
-    if (r <= 20 && g <= 20 && b <= 20) { spriteSVGLabelOf.set(shape.el, -1); continue; }
+    if (_isPureBlackRGB(r, g, b)) { spriteSVGLabelOf.set(shape.el, -1); continue; }
 
     let best = -1, bestDist = Infinity, secondDist = Infinity;
     for (let s = 0; s < seedRgb.length; s++) {
@@ -3902,7 +3927,7 @@ function _buildSpriteSVGLabelsExtended() {
     }
 
     const r = (shape.hex >> 16) & 0xFF, g = (shape.hex >> 8) & 0xFF, b = shape.hex & 0xFF;
-    if (r <= 20 && g <= 20 && b <= 20) {
+    if (_isPureBlackRGB(r, g, b)) {
       spriteSVGLabelOf.set(shape.el, -1);
       continue;
     }
@@ -4207,7 +4232,7 @@ function _recolorSVGTextWithCurrentScheme(text, manualOverrides) {
     let lbl = _resolveExactSwapLabel(shape.el);
     if (lbl === -1) {
       const r = (shape.hex >> 16) & 0xFF, g = (shape.hex >> 8) & 0xFF, b = shape.hex & 0xFF;
-      if (r <= 20 && g <= 20 && b <= 20) {
+      if (_isPureBlackRGB(r, g, b)) {
         lbl = -1;
       } else {
         let best = -1, bestDist = Infinity;
@@ -4578,7 +4603,16 @@ function _fileToDataURL(file) {
   });
 }
 
-function clearSpriteZipPreview() {
+async function _swfFilesStillReadable(files) {
+  try {
+    for (const f of files || []) await f.slice(0, 4).arrayBuffer();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function clearSpriteZipPreview(opts) {
   _endZipManualEditSession();
   _zipPreviewRequestId++;
   _zipPreviewItemsByPath = {};
@@ -4600,7 +4634,7 @@ function clearSpriteZipPreview() {
   const dlBtn = document.getElementById('btn-swf-shapes-batch-download');
   if (dlBtn) dlBtn.style.display = 'none';
 
-  showToast('Preview cleared — pick a new file to preview', 'info');
+  if (!(opts && opts.silent === true)) showToast('Preview cleared — pick a new file to preview', 'info');
 }
 
 function _endZipManualEditSession() {
@@ -5441,6 +5475,15 @@ function _swfSkipMatrix(br) {
   if (nt) { br.readSB(nt); br.readSB(nt); }
 }
 
+function _swfReadMatrix(br) {
+  let sx = 1, sy = 1, r0 = 0, r1 = 0;
+  if (br.readUB(1)) { const n = br.readUB(5); sx = br.readSB(n) / 65536; sy = br.readSB(n) / 65536; }
+  if (br.readUB(1)) { const n = br.readUB(5); r0 = br.readSB(n) / 65536; r1 = br.readSB(n) / 65536; }
+  const nt = br.readUB(5);
+  const tx = br.readSB(nt) / 20, ty = br.readSB(nt) / 20;
+  return { a: sx, b: r0, c: r1, d: sy, e: tx, f: ty };
+}
+
 function _swfReadRect(br) {
   const nbits = br.readUB(5);
   const xMin = br.readSB(nbits), xMax = br.readSB(nbits);
@@ -5460,18 +5503,20 @@ function _swfParseSingleFillStyleFull(br, version, fillStyles) {
   if (type === 0x00) {
     fillStyles.push({ type: 'solid', color: _swfReadColor(br, colorSize) });
   } else if (type === 0x10 || type === 0x12 || type === 0x13) {
-    _swfSkipMatrix(br);
+    const gradMatrix = _swfReadMatrix(br);
     br.align();
     const flagsByte = br.readUI8();
     const numGradients = flagsByte & 0x0F;
+    const spread = (flagsByte >> 6) & 0x3;
     const stops = [];
     for (let g = 0; g < numGradients; g++) {
       const ratio = br.readUI8();
       const color = _swfReadColor(br, colorSize);
       stops.push({ ratio, color });
     }
-    if (type === 0x13) br.skipBytes(2);
-    fillStyles.push({ type: 'gradient', stops });
+    let focal = 0;
+    if (type === 0x13) { let fv = br.readUI16(); if (fv >= 0x8000) fv -= 0x10000; focal = fv / 256; }
+    fillStyles.push({ type: 'gradient', stops, matrix: gradMatrix, radial: type !== 0x10, spread, focal });
   } else if (type >= 0x40 && type <= 0x43) {
     br.readUI16();
     _swfSkipMatrix(br);
@@ -5656,7 +5701,7 @@ function _swfBuildLinePathsByStyle(edges) {
   return result;
 }
 
-function _swfShapeTagToSVG(raw, tagCode) {
+function _swfShapeTagToSVG(raw, tagCode, rawOnly) {
   const version = { 2: 1, 22: 2, 32: 3, 83: 4 }[tagCode];
   if (!version) return null;
   const tagCodeAndLength = raw[0] | (raw[1] << 8);
@@ -5688,7 +5733,7 @@ function _swfShapeTagToSVG(raw, tagCode) {
   const seedRgb = _getBifrostSeedRgb();
   let changed = false;
   const remap = (c) => {
-    if (c.r <= 20 && c.g <= 20 && c.b <= 20) return c;
+    if (_isPureBlackRGB(c.r, c.g, c.b)) return c;
     let best = -1, bestDist = Infinity;
     for (let s = 0; s < seedRgb.length; s++) {
       const [sr, sg, sb] = seedRgb[s];
@@ -5703,12 +5748,14 @@ function _swfShapeTagToSVG(raw, tagCode) {
     if (nr !== c.r || ng !== c.g || nb !== c.b) changed = true;
     return { r: nr, g: ng, b: nb, a: c.a };
   };
-  for (const fs of fillStyles) {
-    if (fs.type === 'solid') fs.color = remap(fs.color);
-    else if (fs.type === 'gradient') fs.stops = fs.stops.map((st) => ({ ratio: st.ratio, color: remap(st.color) }));
-  }
-  for (const ls of lineStyles) {
-    if (ls.color) ls.color = remap(ls.color);
+  if (!rawOnly) {
+    for (const fs of fillStyles) {
+      if (fs.type === 'solid') fs.color = remap(fs.color);
+      else if (fs.type === 'gradient') fs.stops = fs.stops.map((st) => ({ ratio: st.ratio, color: remap(st.color) }));
+    }
+    for (const ls of lineStyles) {
+      if (ls.color) ls.color = remap(ls.color);
+    }
   }
 
   let minX = bounds.xMin / 20, minY = bounds.yMin / 20;
@@ -5746,12 +5793,20 @@ function _swfShapeTagToSVG(raw, tagCode) {
         const stopsMarkup = fs.stops.map((st) =>
           `<stop offset="${(st.ratio / 255).toFixed(3)}" stop-color="${toHex(st.color)}"${st.color.a < 255 ? ` stop-opacity="${(st.color.a / 255).toFixed(3)}"` : ''}/>`
         ).join('');
-        defs.push(`<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${minX}" y1="${minY + h / 2}" x2="${minX + w}" y2="${minY + h / 2}">${stopsMarkup}</linearGradient>`);
+        const m = fs.matrix || { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+        const tf = `matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.e} ${m.f})`;
+        const spreadAttr = fs.spread === 1 ? ' spreadMethod="reflect"' : (fs.spread === 2 ? ' spreadMethod="repeat"' : '');
+        const R = 819.2; // 16384 twips: mitad del "cuadrado de gradiente" de SWF
+        if (fs.radial) {
+          defs.push(`<radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="${R}" fx="${(fs.focal || 0) * R}" fy="0" gradientTransform="${tf}"${spreadAttr}>${stopsMarkup}</radialGradient>`);
+        } else {
+          defs.push(`<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${-R}" y1="0" x2="${R}" y2="0" gradientTransform="${tf}"${spreadAttr}>${stopsMarkup}</linearGradient>`);
+        }
         fillAttr = `url(#${id})`;
       } else {
         fillAttr = '#808080';
       }
-      fillMarkup.push(`<path d="${d}" fill="${fillAttr}"${opacityAttr} fill-rule="nonzero"/>`);
+      fillMarkup.push(`<path d="${d}" fill="${fillAttr}"${opacityAttr} fill-rule="evenodd"/>`);
     }
 
     const lineMarkup = [];
@@ -5768,9 +5823,9 @@ function _swfShapeTagToSVG(raw, tagCode) {
       `<g>${fillMarkup.join('')}${lineMarkup.join('')}</g></svg>`;
   };
 
-  const svg = render(fillStyles, lineStyles);
+  const svg = rawOnly ? null : render(fillStyles, lineStyles);
   const originalSvg = render(origFillStyles, origLineStyles);
-  return { svg, originalSvg, changed, shapeId };
+  return { svg: rawOnly ? originalSvg : svg, originalSvg, changed, shapeId };
 }
 
 function _swfParseCharacterNames(tags) {
@@ -5842,7 +5897,7 @@ function _swfParseShapeToSpriteMap(tags) {
   return shapeToSprite;
 }
 
-async function _swfFileToShapeSVGs(fileBytes) {
+async function _swfFileToShapeSVGs(fileBytes, rawOnly) {
   const { tags } = await _swfDecodeToTags(fileBytes);
   const characterNames = _swfParseCharacterNames(tags);
   const shapeToSprite = _swfParseShapeToSpriteMap(tags);
@@ -5851,7 +5906,7 @@ async function _swfFileToShapeSVGs(fileBytes) {
     if (!SWF_SHAPE_TAG_CODES.has(tag.code)) continue;
     if (tag.code === 46 || tag.code === 84) continue;
     try {
-      const result = _swfShapeTagToSVG(tag.raw, tag.code);
+      const result = _swfShapeTagToSVG(tag.raw, tag.code, rawOnly);
       if (result) {
         const name = characterNames.get(result.shapeId)
           || (shapeToSprite.has(result.shapeId) ? characterNames.get(shapeToSprite.get(result.shapeId)) : null)
@@ -5973,11 +6028,11 @@ async function previewSWFFiles(files, isZip, allowedNames, askShapes) {
         items.push({ name: entry.name, fullPath: entry.name, svg: null, original: null, auto: null, changed: false });
         continue;
       }
-      shapes.forEach(({ svg, changed, name, shapeId }, i) => {
+      shapes.forEach(({ svg, originalSvg, changed, name, shapeId }, i) => {
         const idLabel = shapeId != null ? shapeId : i + 1;
         const label = name ? `${entry.name} — ${name}` : (shapes.length > 1 ? `${entry.name} — shape ${idLabel}` : entry.name);
         const fullPath = `${entry.name}#${shapeId != null ? shapeId : i}`;
-        items.push({ name: label, fullPath, svg, original: null, auto: svg, changed });
+        items.push({ name: label, fullPath, svg, original: originalSvg || null, auto: svg, changed });
       });
     }
 
@@ -6095,6 +6150,103 @@ async function _reRenderSWFShapesFresh(wanted) {
   }
 }
 
+// Fast export: saca los SVG de los SWF tal cual salen del decodificador (formas y colores
+// originales, sin recolorear ni tocar nada), sin armar miniaturas. Solo lista por nombre
+// (con buscador, igual que el filtro del Preview) y exporta un .zip con <shapeId>.svg.
+async function fastExportSWFShapes(files) {
+  if (typeof JSZip === 'undefined') {
+    showToast('JSZip could not be loaded (check your internet connection)', 'error');
+    return;
+  }
+  const isZip = files.length === 1 && /\.zip$/i.test(files[0].name);
+  if (!isZip && !files.every((f) => /\.swf$/i.test(f.name))) {
+    showToast('Fast export needs .swf file(s) or a .zip of .swf files', 'error');
+    return;
+  }
+
+  const items = [];
+  let swfCount = 0;
+  showProgressOverlay('Reading SWF…', 'Decoding shapes (no recolouring)…', false);
+  try {
+    const entries = await _swfEntriesFromFiles(files, isZip);
+    if (!entries.length) {
+      showToast('No .swf files found', 'error');
+      return;
+    }
+    const subtitleEl = document.getElementById('progress-modal-subtitle');
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+      if (subtitleEl) subtitleEl.textContent = `${entry.name} (${i + 1} of ${entries.length})…`;
+      await new Promise((r) => setTimeout(r, 0));
+      let shapes = null;
+      try {
+        shapes = await _swfFileToShapeSVGs(await entry.getBytes(), true);
+      } catch (e) {
+        console.warn(e);
+      }
+      if (!shapes || !shapes.length) continue;
+      swfCount++;
+      for (const s of shapes) {
+        if (!s.originalSvg || s.shapeId == null) continue;
+        const label = `${entry.name} — ${s.name ? s.name + ' ' : ''}#${s.shapeId}`;
+        items.push({ label, swf: entry.name, shapeId: s.shapeId, svg: s.originalSvg });
+      }
+    }
+  } catch (e) {
+    console.error(e);
+    showToast('Could not read the SWF file(s)', 'error');
+    return;
+  } finally {
+    hideProgressOverlay();
+  }
+
+  if (!items.length) {
+    showToast('No shapes found in that SWF', 'error');
+    return;
+  }
+
+  const byLabel = new Map(items.map((it) => [it.label, it]));
+  const picked = await _pickItemsFromList(
+    'Fast export — pick the shapes',
+    items.map((it) => it.label),
+    `${items.length} shape(s) in ${swfCount} SWF — exported exactly as they are in the SWF (original shapes and colours). Search by name, tick what you want.`,
+    new Set()
+  );
+  if (!picked) return;
+
+  const chosen = picked.map((l) => byLabel.get(l)).filter(Boolean);
+  const multi = new Set(chosen.map((it) => it.swf)).size > 1;
+  const outZip = new JSZip();
+  const used = new Set();
+  for (const it of chosen) {
+    const folder = multi
+      ? it.swf.replace(/^.*[\\/]/, '').replace(/\.swf$/i, '').replace(/[\\/:*?"<>|]+/g, '_') + '/'
+      : '';
+    let name = `${folder}${it.shapeId}.svg`;
+    let n = 2;
+    while (used.has(name)) name = `${folder}${it.shapeId}_${n++}.svg`;
+    used.add(name);
+    outZip.file(name, it.svg);
+  }
+
+  try {
+    const blob = await outZip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 1 } });
+    const srcName = (files.length === 1 ? files[0].name : 'swf-shapes').replace(/\.(zip|swf)$/i, '');
+    const filename = promptFilename(`${srcName}-fast-export`, 'zip');
+    if (!filename) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(`Fast export: ${chosen.length} SVG(s), untouched`, 'info');
+  } catch (e) {
+    console.error(e);
+    showToast('Could not build the fast export .zip', 'error');
+  }
+}
+
 async function downloadSWFShapesBatchZip() {
   if (!_zipPreviewIsSWF || !Object.keys(_zipPreviewItemsByPath).length) {
     showToast('No SWF batch has been processed yet', 'error');
@@ -6185,6 +6337,11 @@ async function bulkExportSWFShapesToSWF() {
     const result = await window.pywebview.api.bulk_export_shapes_to_swf(shapes);
     if (result && result.message !== 'cancelled') {
       showToast(result.message, result.success ? 'info' : 'error');
+    }
+    // El SWF destino pudo ser el mismo que se estaba previsualizando y ahora cambio en disco.
+    if (result && result.success) {
+      if (_lastSWFPreviewFiles && !(await _swfFilesStillReadable(_lastSWFPreviewFiles))) _lastSWFPreviewFiles = null;
+      if (_lastSpriteZipFile && !(await _swfFilesStillReadable([_lastSpriteZipFile]))) _lastSpriteZipFile = null;
     }
   } catch (e) {
     showToast(`Export to SWF failed: ${e.message || e}`, 'error');

@@ -133,6 +133,8 @@
             <input type="file" id="sprite-zip-colors-input" accept=".zip,application/zip,.swf" multiple hidden>
             <button id="btn-sprite-preview-zip" class="btn btn-sm" type="button" title="Upload a .zip of SVG sprites to preview them all recoloured with the current palette AND arm the Download button below, OR a .zip of .swf files (or one/several .swf files directly) to preview every decoded shape with a checkbox — download exports only the shapes that changed colour and are still checked, as .svg — auto-detected from what you pick. Re-uses the last file picked if you already have one loaded." onclick="event.stopPropagation()"><span class="btn-icon"></span><span class="btn-label">Preview</span></button>
             <input type="file" id="sprite-preview-zip-input" accept=".zip,application/zip,.swf" multiple hidden>
+            <button id="btn-sprite-fast-export" class="btn btn-sm" type="button" title="Fast export: pick .swf file(s) (or a .zip of .swf) and choose shapes by name — exports them as .svg exactly as they are inside the SWF (no recolouring, no changes to shapes or colours), without building previews" onclick="event.stopPropagation()"><span class="btn-icon"></span><span class="btn-label">Fast export</span></button>
+            <input type="file" id="sprite-fast-export-input" accept=".swf,.zip,application/zip" multiple hidden>
             <button class="section-toggle" type="button" aria-label="Collapse/expand" onclick="event.stopPropagation(); toggleSection('section-sprite')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
           </div>
         </div>
@@ -949,6 +951,6 @@
 </script>
 
   <script defer src="codemirror.bundle.js"></script>
-  <script defer src="app.js?v=4"></script>
+  <script defer src="app.js?v=5"></script>
 </body>
 </html>
