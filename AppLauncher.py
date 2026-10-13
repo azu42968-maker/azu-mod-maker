@@ -11,7 +11,7 @@ import threading
 import traceback
 from pathlib import Path
 
-import AppSelfUpdate as SelfUpdate
+import AppWebSync as WebSync
 
 
 def _base_dir_for_log():
@@ -239,45 +239,8 @@ def _reset_stale_cache_if_new_build():
         pass
 
 
-def _bundled_engine_name():
-    root = sys._MEIPASS if hasattr(sys, "_MEIPASS") else os.environ.get(
-        "AZU_BUNDLE_DIR") or os.path.dirname(os.path.abspath(__file__))
-    for name in ("AppAllInOne.py", "AppPublic.py"):
-        if os.path.exists(os.path.join(root, name)):
-            return name
-    return None
-
-
-def _load_updated_engine():
-    """Usa la actualizacion descargada (si hay). Si no carga, la descarta y sigue con el .exe."""
-    if not SelfUpdate.enabled():
-        return None
-    active = SelfUpdate.get_active()
-    if not active:
-        return None
-    try:
-        SelfUpdate.activate(active)
-        flavor = _bundled_engine_name()
-        names = (flavor,) if flavor else ("AppAllInOne.py", "AppPublic.py")
-        overridden = SelfUpdate.module_names(active)
-        for name in names:
-            if name[:-3] in overridden:
-                return importlib.import_module(name[:-3])
-        return None
-    except Exception:
-        traceback.print_exc()
-        print(f"[update] la version {active['version']} no carga, se descarta")
-        SelfUpdate.mark_bad(active["version"])
-        SelfUpdate.deactivate()
-        return None
-
-
 def _load_allinone_module():
     _reset_stale_cache_if_new_build()
-
-    updated = _load_updated_engine()
-    if updated is not None:
-        return updated
 
     if not hasattr(sys, "_MEIPASS"):
         try:
@@ -333,9 +296,11 @@ TEAM_COLORS_SUPPORTED = hasattr(AllInOne, "get_team_slot_options")
 
 
 def resource_path(relative_path):
-    updated = SelfUpdate.asset_path(relative_path)
-    if updated:
-        return updated
+    # La web (html/js/css) se carga desde %APPDATA%\\AzuModification\\engine, que se
+    # mantiene al dia desde GitHub (AppWebSync.py). El .exe es solo el respaldo.
+    synced = WebSync.web_path(relative_path)
+    if synced:
+        return synced
     if hasattr(sys, "_MEIPASS"):
         base_path = sys._MEIPASS
     else:
@@ -541,14 +506,9 @@ _UPDATE_BANNER_JS = """
 def _notify_update(window, res):
     status = res.get("status")
     version = res.get("version", "")
-    if status in ("staged", "restart_required"):
-        msg = f"Update {version} downloaded. Close and reopen the app to apply it."
-        if res.get("notes"):
-            msg += f" ({res['notes']})"
-    elif status == "needs_new_exe":
-        msg = f"Version {version} is available but needs a fresh download of the app."
-    else:
+    if status != "staged":
         return
+    msg = f"Update {version} downloaded. Close and reopen the app to apply it."
     try:
         window.events.loaded.wait(30)
     except Exception:
@@ -562,9 +522,9 @@ def _notify_update(window, res):
 def _background_update(window):
     """Nunca bloquea ni rompe la app: sin internet o con cualquier error, no hace nada."""
     try:
-        res = SelfUpdate.check_and_stage(log=print)
-        print("[update]", res)
-        _notify_update(window, res)
+        web = WebSync.sync(log=print)
+        print("[web-update]", web)
+        _notify_update(window, web)
     except Exception:
         traceback.print_exc()
 
@@ -578,12 +538,12 @@ class Api:
 
     def get_app_version(self):
         return {
-            "version": SelfUpdate.running_version(),
-            "updater_enabled": SelfUpdate.enabled(),
+            "web_version": WebSync.current_version(),
+            "updater_enabled": WebSync.enabled(),
         }
 
     def check_for_updates(self):
-        return SelfUpdate.check_and_stage(log=print)
+        return WebSync.sync(log=print)
 
     def list_prerenders(self, sprite_type=None):
         results = []
@@ -1100,6 +1060,10 @@ class Api:
 
 def main():
     AllInOne.configure_paths(get_data_dir())
+    try:
+        WebSync.seed()
+    except Exception:
+        traceback.print_exc()
     _seed_bundled_prerenders()
     _seed_bundled_sprite_types()
 
@@ -1137,12 +1101,6 @@ if __name__ == "__main__":
         main()
     except Exception:
         details = traceback.format_exc()
-        bad_version = SelfUpdate.mark_active_bad()
-        if bad_version:
-            details += (
-                f"\n\nLa actualizacion {bad_version} se desactivo. "
-                "Vuelve a abrir el programa para usar la version anterior."
-            )
         _show_fatal_error(
             "Azu Modification — Error",
             "El programa encontró un error y tuvo que cerrarse.\n\n" + details,

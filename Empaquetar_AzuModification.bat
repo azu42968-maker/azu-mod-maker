@@ -118,6 +118,11 @@ echo %%APPDATA%%\AzuModification\PreRenders y \SpriteTypes, y se actualizan
 echo solos cuando subis cambios al repo. Sin internet, la galeria queda
 echo con lo que ya se haya descargado antes.
 echo.
+echo Nota: la interfaz ^(index.html, app.js, styles.css, codemirror.bundle.js^) se
+echo copia en %%APPDATA%%\AzuModification\engine y se actualiza sola desde
+echo GitHub ^(AppWebSync.py^). Lo que va dentro del .exe es solo el respaldo
+echo del primer arranque.
+echo.
 echo Nota: "Update Color Values" ahora guarda su copia editable en
 echo %%APPDATA%%\AzuModification\engine (no en el .exe), para que los
 echo cambios sobrevivan al cerrar y reabrir el programa.
