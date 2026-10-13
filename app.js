@@ -2038,7 +2038,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupTextColor2Control();
   applyCustomTextColor2(localStorage.getItem(CUSTOM_TEXT2_LS_KEY) || null);
   applyCustomFont(localStorage.getItem(CUSTOM_FONT_LS_KEY) || null);
-  applyFxLess(localStorage.getItem(CUSTOM_FXLESS_LS_KEY) === '1');
+  // Por defecto efectos reducidos: solo se desactiva si el usuario lo apago a proposito ('0').
+  applyFxLess(localStorage.getItem(CUSTOM_FXLESS_LS_KEY) !== '0');
 
   picker = new ColorPicker(document.getElementById('picker-panel'));
   grid   = new ColorGrid(document.getElementById('grid-panel'));
@@ -7143,6 +7144,7 @@ function applyTheme(t) {
 // "Reduced effects": toggles body.fx-less (styles.css) to tone down glow, neon line, shadows and looping animations.
 function applyFxLess(on) {
   document.body.classList.toggle('fx-less', !!on);
+  document.documentElement.classList.toggle('fx-less', !!on); // activa el bloque "reduced-effects" al final de styles.css
   const cb = document.getElementById('customize-fxless-toggle');
   if (cb) cb.checked = !!on;
 }

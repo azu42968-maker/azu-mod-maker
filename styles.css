@@ -3157,46 +3157,296 @@ body.has-custom-bg {
 body.has-custom-bg::after { display: none; } /* línea neón superior */
 
 
-/* ---------- Efectos reducidos (body.fx-less): menos brillo, sombras y animaciones ---------- */
+/* =====================================================================
+   EFECTOS REDUCIDOS (body.fx-less) = estilo de https://ducc.engineering/
+   Misma paleta, bordes, botones, paneles, selector de color, cuadrícula,
+   editor, modales, toasts y scrollbars que el styles.css de ducc.engineering.
+   Sin glow, sin línea neón, sin degradados y sin animaciones en bucle.
+   Solo se aplica con body.fx-less: el modo normal no cambia.
+   ===================================================================== */
+
+/* ---------- Paleta ducc.engineering · oscuro ---------- */
 body.fx-less {
-  --glow-sm: 0 0 0 0 transparent;
-  --glow-md: 0 0 0 0 transparent;
-  --glow-lg: 0 0 0 0 transparent;
+  --bg:             #080c14;
+  --bg-panel:       #0f1520;
+  --bg-input:       #161e2e;
+  --bg-hover:       #1e2a3d;
+  --bg-input-solid: #161e2e;
+  --bg-hover-solid: #1e2a3d;
+  --border:         #1e2a3d;
+  --border-focus:   #07c9d7;
+  --text:           var(--text-1, #e9f2f0); /* si el usuario eligió un color de texto, se respeta */
+  --text-dim:       #8ca291;
+  --accent:         #07c9d7;
+  --accent-hover:   #43e1e3;
+  --danger:         #f85149;
+  --danger-bg:      #2d1b1b;
+  --success:        #3fb950;
+  --success-bg:     #1b2d1b;
+  --info:           #5ccec2;
+  --info-bg:        #0d2020;
+  --shadow:         rgba(0, 0, 0, .5);
+  --modal-bg:       rgba(0, 0, 0, .60);
+  --grid-empty:     #0d1520;
 }
-/* atmósfera de fondo, línea neón y destello de los botones fuera */
+
+/* ---------- Paleta ducc.engineering · claro ---------- */
+html[data-theme="light"] body.fx-less {
+  --bg:             #e9f2f0;
+  --bg-panel:       #fcfefd;
+  --bg-input:       #e9f2f0;
+  --bg-hover:       #cad7ce;
+  --bg-input-solid: #e9f2f0;
+  --bg-hover-solid: #cad7ce;
+  --border:         #aeb8a7;
+  --border-focus:   #0081a4;
+  --text:           var(--text-1, #08080f);
+  --text-dim:       #41504a;
+  --accent:         #0081a4;
+  --accent-hover:   #07a4b7;
+  --danger:         #dc3545;
+  --danger-bg:      #fce8ea;
+  --success:        #28a745;
+  --success-bg:     #e8f5ea;
+  --info:           #0081a4;
+  --info-bg:        #d0f0f5;
+  --shadow:         rgba(0, 0, 0, .12);
+  --modal-bg:       rgba(0, 0, 0, .30);
+  --grid-empty:     #cad7ce;
+}
+
+/* colores de efectos → acento plano; sin glow ni degradados */
+body.fx-less,
+html[data-theme="light"] body.fx-less {
+  --acid:           var(--accent);
+  --hazard:         var(--accent);
+  --acid-bright:    var(--accent-hover);
+  --glow-sm:        0 0 0 0 transparent;
+  --glow-md:        0 0 0 0 transparent;
+  --glow-lg:        0 0 0 0 transparent;
+  --fx-grad:        linear-gradient(var(--accent), var(--accent));
+  --fx-grad-d:      linear-gradient(var(--accent), var(--accent));
+  --fx-grad-soft:   linear-gradient(var(--border), var(--border));
+  --fx-text-grad:     linear-gradient(var(--text), var(--text));
+  --fx-text-grad-dim: linear-gradient(var(--text-dim), var(--text-dim));
+}
+
+/* ---------- Fuera: atmósfera de fondo, línea neón, destello de botones, anillos ---------- */
 body.fx-less::after,
 html:has(body.fx-less)::before,
 html:has(body.fx-less)::after,
-body.fx-less .btn::after { display: none !important; }
+body.fx-less .btn::after,
+body.fx-less .modal::before,
+body.fx-less .modal::after,
+body.fx-less .dropdown-menu::before,
+body.fx-less .donate-popover::after,
+body.fx-less .editor-wrap::after,
+body.fx-less .sprite-zoom-controls::after,
+body.fx-less .sprite-anim-controls::after,
+body.fx-less .grid-cell.active::before { display: none !important; }
 
-/* texto: sin resplandor */
+/* ---------- Texto: sin resplandor (ducc solo conserva dos sombras sutiles) ---------- */
 body.fx-less *, body.fx-less *::before, body.fx-less *::after { text-shadow: none !important; }
-body.fx-less .btn-primary, body.fx-less .pk-tab.active, body.fx-less .dropdown-item.active { text-shadow: 0 1px 2px rgba(0, 0, 0, .4) !important; }
+body.fx-less .pk-ticon { text-shadow: 0 1px 1px rgba(0, 0, 0, .3) !important; }
+body.fx-less .grid-cell-hex { text-shadow: 0 1px 3px rgba(0, 0, 0, .8) !important; }
 body.fx-less .header-title, body.fx-less .panel-title, body.fx-less .modal-title,
-body.fx-less .progress-modal-percent, body.fx-less .progress-spinner { filter: none !important; }
+body.fx-less .progress-modal-percent, body.fx-less .progress-spinner,
+body.fx-less .header-logo-img { filter: none !important; }
 
-/* sombras de colores grandes → sombra neutra y corta (se conservan los anillos/bordes) */
-body.fx-less .header { box-shadow: none !important; }
-body.fx-less .modal { box-shadow: 0 12px 40px var(--shadow) !important; }
-body.fx-less .dropdown-menu, body.fx-less .donate-popover { box-shadow: 0 8px 24px var(--shadow) !important; }
-body.fx-less .panel:hover, body.fx-less .panel:focus-within,
-body.fx-less .editor-wrap:focus-within { box-shadow: none !important; }
-body.fx-less .btn-primary, body.fx-less .btn-primary:hover { box-shadow: 0 2px 6px rgba(0, 0, 0, .35) !important; }
+/* ---------- Texto sin degradado: color plano, como en ducc ---------- */
+body.fx-less :is(.header-title, .modal-title, .progress-modal-title, .customize-label, .progress-modal-percent,
+                 .panel-title, .toolbar-label, .grid-col-label, .grid-row-label, .toolbar-hue-label, .pk-quick-title,
+                 .app-tab-add, .progress-modal-subtitle, .dropdown-group-header, .toolbar-value, .pk-lbl, .pk-unit,
+                 .pk-hex-btn, .pk-multiselect-btn, .customize-hint, .template-hint, .template-hint b,
+                 .template-dropzone, .template-fname, .template-status, .sprite-status, .sprite-empty,
+                 .sprite-zoom-level, .donate-popover-text, .app-tab-name, .dropdown-btn-text, .btn-txt),
+body.fx-less .pk-tab:not(.active),
+body.fx-less .btn:where(:not(.btn-donate)) .btn-label,
+body.fx-less .dropdown-item:not(.active) .dropdown-item-label {
+  background-image: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: currentcolor;
+}
+body.fx-less :is(.header-title, .modal-title, .progress-modal-title, .customize-label, .progress-modal-percent, .template-hint b) { color: var(--text); }
+body.fx-less :is(.panel-title, .toolbar-label, .grid-col-label, .grid-row-label, .toolbar-hue-label, .pk-quick-title,
+                 .app-tab-add, .progress-modal-subtitle, .dropdown-group-header, .toolbar-value, .pk-lbl, .pk-unit,
+                 .pk-hex-btn, .pk-multiselect-btn, .customize-hint, .template-hint,
+                 .template-dropzone, .template-fname, .template-status, .sprite-status, .sprite-empty,
+                 .sprite-zoom-level, .donate-popover-text),
+body.fx-less .pk-tab:not(.active) { color: var(--text-dim); }
+body.fx-less :is(.app-tab-name, .dropdown-btn-text, .btn-txt),
+body.fx-less .btn:where(:not(.btn-donate)) .btn-label,
+body.fx-less .dropdown-item:not(.active) .dropdown-item-label { color: inherit; }
+/* los estados hover/activo que cambian el color de texto */
+body.fx-less .pk-hex-btn:hover, body.fx-less .pk-multiselect-btn:hover { color: var(--text); }
+body.fx-less .app-tab-add:hover,
+body.fx-less .template-dropzone:hover, body.fx-less .template-dropzone.dragover { color: var(--accent); }
+
+/* ---------- Header ---------- */
+body.fx-less .header { border-image: none; border-bottom-color: var(--border); box-shadow: none !important; }
+body.fx-less .header-logo-img { transition: none; }
+body.fx-less .header-logo:hover .header-logo-img { transform: none; }
+
+/* ---------- Botones ---------- */
+body.fx-less .btn:where(:not(.btn-donate)),
+body.fx-less .btn-icon-only,
+body.fx-less .dropdown-btn { transition: none; border-color: var(--border); }
+body.fx-less .btn:where(:not(.btn-donate)):hover { background: var(--bg-hover); border-color: var(--accent); box-shadow: none; }
+body.fx-less .btn-icon-only:hover { background: var(--bg-hover); box-shadow: none; }
+body.fx-less .btn:where(:not(.btn-donate)):active { opacity: .85; transform: none; }
+body.fx-less .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+body.fx-less .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+body.fx-less .btn-primary, body.fx-less .btn-primary:hover { box-shadow: none !important; }
+body.fx-less .btn-danger:hover { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); box-shadow: none; }
+body.fx-less .btn:hover, body.fx-less .btn-icon-only:hover, body.fx-less .history-state:hover { transform: none; }
+/* botón de donar: no es de ducc, se queda como estaba (rayas animadas azules, sin brillo).
+   Recupera aquí sus colores de efecto originales, porque arriba el resto de la app los aplanó. */
+body.fx-less .btn-donate {
+  --acid:   var(--text-1, color-mix(in srgb, var(--text) var(--fx-follow), #36c2ff));
+  --hazard: var(--text-2, color-mix(in srgb, var(--fx-text2) var(--fx-follow), #2f6bff));
+}
+html[data-theme="light"] body.fx-less .btn-donate {
+  --acid:   var(--text-1, color-mix(in srgb, var(--text) var(--fx-follow), #0a8fe0));
+  --hazard: var(--text-2, color-mix(in srgb, var(--fx-text2) var(--fx-follow), #1f4fd8));
+}
+@supports (color: oklch(from red l c h)) {
+  body.fx-less .btn-donate {
+    --acid:   var(--text-1, oklch(from var(--text) calc(.78 - .15 * min(1, c / .06)) calc(.12 + .13 * min(1, c / .06)) calc(h * min(1, c / .06) + 235 * (1 - min(1, c / .06)))));
+    --hazard: var(--text-2, oklch(from var(--fx-text2) calc(.62 - .07 * min(1, c / .06)) calc(.19 + .06 * min(1, c / .06)) calc(h * min(1, c / .06) + 262 * (1 - min(1, c / .06)))));
+  }
+  html[data-theme="light"] body.fx-less .btn-donate {
+    --acid:   var(--text-1, oklch(from var(--text) .56 calc(.14 + .12 * min(1, c / .06)) calc(h * min(1, c / .06) + 235 * (1 - min(1, c / .06)))));
+    --hazard: var(--text-2, oklch(from var(--fx-text2) .46 calc(.18 + .08 * min(1, c / .06)) calc(h * min(1, c / .06) + 262 * (1 - min(1, c / .06)))));
+  }
+}
+body.fx-less .btn-donate {
+  --fx-grad: linear-gradient(90deg, var(--acid), var(--hazard));
+  --stripe:  repeating-linear-gradient(135deg, transparent 0 10px, #000 10px 20px), var(--fx-grad);
+  border-color: #000;
+}
 body.fx-less .btn-donate, body.fx-less .btn-donate:hover { box-shadow: none !important; animation: stripe-run .55s linear infinite !important; }
-body.fx-less .app-tab.active { box-shadow: none !important; }
-body.fx-less .pk-dot, body.fx-less .pk-bar { box-shadow: 0 0 2px rgba(0, 0, 0, .65) !important; }
+body.fx-less .donate-popover { border-top: 1px solid var(--border); }
+body.fx-less .donate-popover, body.fx-less .dropdown-menu { box-shadow: 0 8px 24px var(--shadow) !important; }
+body.fx-less .donate-popover-link:hover { box-shadow: none; }
+
+/* ---------- Pestañas de la app y toolbar ---------- */
+body.fx-less .tabs-bar, body.fx-less .toolbar,
+body.fx-less .sprite-section, body.fx-less .template-section { border-image: none; border-bottom-color: var(--border); }
+body.fx-less .app-tab, body.fx-less .app-tab-add { transition: none; }
+body.fx-less .app-tab:hover, body.fx-less .app-tab-close:hover, body.fx-less .app-tab-add:hover { box-shadow: none; }
+body.fx-less .app-tab.active {
+  background: var(--bg-input);
+  border-color: var(--border);
+  border-top-color: var(--accent);
+  box-shadow: none !important;
+}
+body.fx-less .toolbar-hue-group { border: 1px solid var(--border); background: var(--bg-input); }
+
+/* ---------- Desplegables ---------- */
+body.fx-less .dropdown-btn:hover,
+body.fx-less .dropdown-active .dropdown-btn { background: var(--bg-input); border-color: var(--accent); box-shadow: none; }
+body.fx-less .dropdown-menu { border-top: 1px solid var(--border); }
+body.fx-less .dropdown-item { transition: none; }
+body.fx-less .dropdown-item:hover { padding-left: .65rem; background: var(--bg-hover); }
+body.fx-less .dropdown-item.active { background: var(--accent); color: #fff; box-shadow: none; }
+body.fx-less .dropdown-search-input { transition: none; }
+
+/* ---------- Paneles (con fondo personalizado se respeta su cristal translúcido) ---------- */
+body.fx-less .panel { transition: none; }
+body.fx-less:not(.has-custom-bg) .panel,
+body.fx-less:not(.has-custom-bg) .panel:hover,
+body.fx-less:not(.has-custom-bg) .panel:focus-within { background: var(--bg-panel); border-color: var(--border); }
+body.fx-less .panel:hover, body.fx-less .panel:focus-within { box-shadow: none !important; }
+body.fx-less .sprite-zoom-controls, body.fx-less .sprite-anim-controls { border-color: var(--border); }
+@media (min-width: 681px) {
+  body.fx-less .pk-quick-title { margin-top: 4px; margin-bottom: 2px; }
+}
+
+/* ---------- Selector de color ---------- */
+body.fx-less .pk-tab, body.fx-less .pk-tbtn { box-shadow: none; }
+body.fx-less .pk-tab { transition: none; }
+body.fx-less .pk-tab.active { background: var(--accent); color: #fff; box-shadow: none; }
+body.fx-less .pk-tbtn { transition: transform .15s ease, border-color .15s ease; }
+body.fx-less .pk-tbtn:hover { box-shadow: none; }
+body.fx-less .pk-dot { box-shadow: 0 0 2px rgba(0, 0, 0, .65) !important; }
+body.fx-less .pk-dot-ring { box-shadow: 0 0 0 1px rgba(0, 0, 0, .4), inset 0 0 0 1px rgba(0, 0, 0, .25) !important; }
+body.fx-less .pk-bar { box-shadow: 0 0 2px rgba(0, 0, 0, .6) !important; }
 body.fx-less .pk-thumb { box-shadow: 0 1px 3px rgba(0, 0, 0, .25) !important; }
-body.fx-less .pk-field:focus, body.fx-less .pk-hex-btn:hover,
-body.fx-less .modal-input:focus { box-shadow: none !important; }
+body.fx-less .pk-multiselect-btn-active { box-shadow: none; }
+body.fx-less .pk-field:focus, body.fx-less .modal-input:focus {
+  background: var(--bg-input);
+  border-color: var(--border-focus);
+  box-shadow: none !important;
+}
+body.fx-less .pk-hex-btn:hover { box-shadow: none !important; }
+body.fx-less input[type="range"] { accent-color: auto; }
+
+/* ---------- Cuadrícula de colores ---------- */
+body.fx-less .grid-cell { transition: none; }
+body.fx-less .grid-cell:hover { transform: scale(1.06); z-index: 2; box-shadow: none; }
+body.fx-less .grid-cell-empty:hover { transform: none; }
+body.fx-less .grid-cell.active,
+body.fx-less .grid-cell.active:hover { border-color: #fff; box-shadow: 0 0 0 2px var(--accent) !important; z-index: 3; }
+body.fx-less .grid-lock:checked { box-shadow: none; }
+body.fx-less .history-state { transition: none; }
+body.fx-less .history-state:hover { box-shadow: none; }
+body.fx-less .history-state.active {
+  background: var(--bg-input);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent) !important;
+}
+@media (min-width: 681px) {
+  body.fx-less .grid-lock { width: 16px; height: 16px; }
+  body.fx-less .grid-row-label { font-size: 11px; font-weight: 500; }
+}
+body.fx-less .grid-row-pick-btn:hover, body.fx-less .grid-row-hue-btn:hover { text-shadow: none; }
+
+/* ---------- Sprite, plantilla y editor ---------- */
+body.fx-less .sprite-preview, body.fx-less .template-dropzone { transition: border-color .15s, background-color .15s; }
 body.fx-less .sprite-preview.dragover,
 body.fx-less .template-dropzone:hover, body.fx-less .template-dropzone.dragover { box-shadow: none !important; }
-body.fx-less .progress-modal-bar { box-shadow: none !important; }
+body.fx-less .editor-wrap,
+body.fx-less .editor-wrap:focus-within { border-color: var(--border); transition: none; box-shadow: none !important; }
+html:not([data-theme="light"]) body.fx-less .editor-wrap .CodeMirror-cursor { border-left-color: #FFCC00; box-shadow: none !important; }
 body.fx-less .CodeMirror-cursor { box-shadow: none !important; }
-body.fx-less .btn:hover, body.fx-less .btn-icon-only:hover, body.fx-less .history-state:hover { transform: none; }
-body.fx-less .grid-cell:hover { transform: scale(1.05); }
 
-/* animaciones en bucle y anillos giratorios más suaves */
-body.fx-less .modal::before, body.fx-less .modal::after,
-body.fx-less .grid-cell.active::before { animation: none !important; }
-body.fx-less .modal::after, body.fx-less .editor-wrap::after { opacity: .35; }
+/* ---------- Modales ---------- */
+body.fx-less .modal-backdrop { background: var(--modal-bg) !important; backdrop-filter: blur(3px) !important; }
+body.fx-less .modal {
+  background: var(--bg-panel);
+  border-color: var(--border);
+  box-shadow: 0 12px 40px var(--shadow) !important;
+  transform: none;
+  transition: none;
+}
+body.fx-less .modal-input { transition: border-color .15s; }
+body.fx-less .shape-picker-list, body.fx-less .image-preview-wrap { border-color: var(--border); }
+body.fx-less .shape-picker-row:hover { box-shadow: none; background: rgba(255, 255, 255, 0.06); }
+body.fx-less .zip-preview-item.zip-preview-clickable:hover .zip-preview-thumb {
+  background: #14151a;
+  border-color: var(--accent);
+  box-shadow: none;
+}
+body.fx-less .customize-switch-track { transition: background .15s; }
+body.fx-less .customize-switch input:checked + .customize-switch-track { background: var(--accent); box-shadow: none; }
+
+/* ---------- Progreso ---------- */
+body.fx-less .progress-spinner { border-top-color: var(--accent); border-right-color: var(--border); }
+body.fx-less .progress-modal-bar { background: var(--accent); box-shadow: none !important; }
+
+/* ---------- Toasts ---------- */
+body.fx-less .toast { box-shadow: 0 4px 14px var(--shadow); }
+
+/* ---------- Scrollbars, selección y foco (como ducc: los del navegador / sencillos) ---------- */
+html:has(body.fx-less) { scrollbar-color: auto; }
+body.fx-less ::-webkit-scrollbar-thumb,
+html:has(body.fx-less)::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+body.fx-less ::-webkit-scrollbar-thumb:hover,
+html:has(body.fx-less)::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+body.fx-less ::selection { background: Highlight; color: HighlightText; }
+body.fx-less a:focus-visible, body.fx-less button:focus-visible,
+body.fx-less summary:focus-visible, body.fx-less [tabindex]:focus-visible { outline: revert; outline-offset: revert; }
+
+/* ---------- Sin entrada escalonada ni bucles ---------- */
 body.fx-less .header, body.fx-less .tabs-bar, body.fx-less .toolbar, body.fx-less .panel { animation: none !important; }
