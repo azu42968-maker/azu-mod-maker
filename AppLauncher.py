@@ -239,6 +239,15 @@ def _reset_stale_cache_if_new_build():
         pass
 
 
+def _exec_module_from(name, path):
+    module_name = name[:-3]
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 def _load_allinone_module():
     _reset_stale_cache_if_new_build()
 
@@ -255,24 +264,23 @@ def _load_allinone_module():
     for name in ("AppAllInOne.py", "AppPublic.py"):
         dst = os.path.join(persistent_dir, name)
         if os.path.exists(dst):
-            module_name = name[:-3]
-            spec = importlib.util.spec_from_file_location(module_name, dst)
-            module = importlib.util.module_from_spec(spec)
-            sys.modules[module_name] = module
-            spec.loader.exec_module(module)
-            return module
+            try:
+                return _exec_module_from(name, dst)
+            except Exception:
+                # Copia sincronizada desde GitHub rota: se descarta y se usa la del .exe.
+                traceback.print_exc()
+                sys.modules.pop(name[:-3], None)
+                try:
+                    os.remove(dst)
+                except OSError:
+                    pass
 
     for name in ("AppAllInOne.py", "AppPublic.py"):
         src = os.path.join(sys._MEIPASS, name)
         if os.path.exists(src):
             dst = os.path.join(persistent_dir, name)
             shutil.copy2(src, dst)
-            module_name = name[:-3]
-            spec = importlib.util.spec_from_file_location(module_name, dst)
-            module = importlib.util.module_from_spec(spec)
-            sys.modules[module_name] = module
-            spec.loader.exec_module(module)
-            return module
+            return _exec_module_from(name, dst)
 
     raise ImportError(
         "No se encontró AppAllInOne.py ni AppPublic.py dentro del .exe "

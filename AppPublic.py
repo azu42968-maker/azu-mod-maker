@@ -62,7 +62,7 @@ OLD_COLOR_NAMES = [
     "Pact of Poison", "Darkheart", "Armageddon", "Kirakira",
     "Ancient Curse", "Neon Hanafuda", "Dragon Fire", "tint glass", "White", "Black",
     "Skyforged", "Goldforged", "Crystalforged", "RGB","CMYK", "Blacklight",
-    "Community V1", "Community V2", "ES", "ES 2", "ES 3", "ES 4", "ES 5",
+    "Community V1", "Community V2", "Community V3", "ES", "ES 2", "ES 3", "ES 4", "ES 5",
     "ES 6", "ES 7", "Guild"
 ]
 
