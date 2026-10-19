@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.directory
+Ejecutables/
+build/
+dist/
+release/
+__pycache__/
+*.pyc

@@ -2,11 +2,17 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from pathlib import Path
 
 
 def get_config_dir() -> Path:
-    base = os.getenv("APPDATA") or os.path.expanduser("~")
+    if sys.platform.startswith("win"):
+        base = os.getenv("APPDATA") or os.path.expanduser("~")
+    elif sys.platform == "darwin":
+        base = os.path.expanduser("~/Library/Application Support")
+    else:
+        base = os.getenv("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
     path = Path(base) / "AzuModification"
     path.mkdir(parents=True, exist_ok=True)
     return path
@@ -44,4 +50,23 @@ def clear_brawlhalla_path() -> None:
     data = _read()
     if "brawlhalla_dir" in data:
         del data["brawlhalla_dir"]
+        _config_file().write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+
+def get_box_name() -> str | None:
+    """Nombre del distrobox donde se ejecuta la app (ver AppBox.py)."""
+    raw = _read().get("distrobox")
+    return raw if isinstance(raw, str) and raw.strip() else None
+
+
+def set_box_name(name) -> None:
+    data = _read()
+    data["distrobox"] = str(name).strip()
+    _config_file().write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+
+def clear_box_name() -> None:
+    data = _read()
+    if "distrobox" in data:
+        del data["distrobox"]
         _config_file().write_text(json.dumps(data, indent=2), encoding="utf-8")

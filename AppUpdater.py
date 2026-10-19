@@ -15,7 +15,37 @@ sys.path.insert(0, SCRIPT_DIR)
 
 BRAWLHALLA_AIR_SWF_NAME = "BrawlhallaAir.swf"
 FFDEC_DIR = os.path.join(SCRIPT_DIR, "ffdec")
-FFDEC_JAR = os.path.join(FFDEC_DIR, "ffdec.jar")
+IS_WIN = sys.platform.startswith("win")
+
+
+def _data_root():
+    if IS_WIN:
+        base = os.getenv("APPDATA") or os.path.expanduser("~")
+    elif sys.platform == "darwin":
+        base = os.path.expanduser("~/Library/Application Support")
+    else:
+        base = os.getenv("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
+    return os.path.join(base, "AzuModification")
+
+
+def _resolve_ffdec_jar():
+    """Busca ffdec.jar: ./ffdec, prerequisites/ffdec (lo que baja AppLauncher) o junto al ffdec del PATH."""
+    candidates = [
+        os.path.join(FFDEC_DIR, "ffdec.jar"),
+        os.path.join(SCRIPT_DIR, "prerequisites", "ffdec", "ffdec.jar"),
+        os.path.join(_data_root(), "prerequisites", "ffdec", "ffdec.jar"),
+    ]
+    for name in ("ffdec", "ffdec.sh", "ffdec.bat"):
+        found = shutil.which(name)
+        if found:
+            candidates.append(os.path.join(os.path.dirname(os.path.realpath(found)), "ffdec.jar"))
+    for c in candidates:
+        if os.path.isfile(c):
+            return c
+    return os.path.join(FFDEC_DIR, "ffdec.jar")
+
+
+FFDEC_JAR = _resolve_ffdec_jar()
 FFDEC_VERSION_TAG = "version25.0.0"
 FFDEC_ZIP_NAME = "ffdec_25.0.0.zip"
 LOGFILE = os.path.join(SCRIPT_DIR, "update.log")
@@ -31,7 +61,12 @@ def _default_swf_path():
                 return str(candidate)
     except Exception:
         pass
-    return r"C:/Program Files (x86)/Steam/steamapps/common/Brawlhalla/BrawlhallaAir.swf"
+    if IS_WIN:
+        return r"C:/Program Files (x86)/Steam/steamapps/common/Brawlhalla/BrawlhallaAir.swf"
+    return os.path.join(
+        os.path.expanduser("~"), ".local", "share", "Steam", "steamapps", "common",
+        "Brawlhalla", BRAWLHALLA_AIR_SWF_NAME,
+    )
 
 REQUIRED_IMPORTS = [
     "import haxe.IMap;",
@@ -79,10 +114,12 @@ class UpdateError(Exception):
 
 def check_java():
     if shutil.which("java") is None:
-        fail("No se encontro 'java'. Instala un JDK y vuelve a intentar.")
+        fail("No se encontro 'java'. Instala un JDK (en Bazzite: dentro de tu distrobox, o brew install openjdk) y vuelve a intentar.")
 
 
 def ensure_ffdec():
+    global FFDEC_JAR
+    FFDEC_JAR = _resolve_ffdec_jar()
     if os.path.isfile(FFDEC_JAR):
         return
     log("FFDec no encontrado, descargando (una sola vez)...")
@@ -99,6 +136,7 @@ def ensure_ffdec():
             fail(f"no se pudo descargar FFDec desde {url}: {e}")
         with zipfile.ZipFile(zip_path) as zf:
             zf.extractall(FFDEC_DIR)
+    FFDEC_JAR = _resolve_ffdec_jar()
     log(f"FFDec instalado en {FFDEC_DIR}")
 
 

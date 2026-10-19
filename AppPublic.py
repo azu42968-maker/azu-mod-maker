@@ -7,7 +7,7 @@ from os import walk
 from pathlib import Path
 
 import xmltodict
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 
 

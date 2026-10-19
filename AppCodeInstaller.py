@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import shutil
 import subprocess
@@ -11,7 +12,12 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
-BRAWLHALLA_DIR = Path(r"C:\Program Files (x86)\Steam\steamapps\common\Brawlhalla")
+IS_WIN = sys.platform.startswith("win")
+
+if IS_WIN:
+    BRAWLHALLA_DIR = Path(r"C:\Program Files (x86)\Steam\steamapps\common\Brawlhalla")
+else:
+    BRAWLHALLA_DIR = Path.home() / ".local" / "share" / "Steam" / "steamapps" / "common" / "Brawlhalla"
 
 SWF_NAME = "UI_MainMenu.swf"
 SWF_PATH = BRAWLHALLA_DIR / SWF_NAME
@@ -27,13 +33,38 @@ TEAM_CLASS_NAME = CLASS_NAME
 
 CONSTRUCTOR_SIGNATURE = f"public function {CLASS_NAME}("
 
-FFDEC_CANDIDATES = [
-    r"C:\Program Files (x86)\FFDec\ffdec.bat",
-    r"C:\Program Files\FFDec\ffdec.bat",
-    r"C:\FFDec\ffdec.bat",
-    str(SCRIPT_DIR / "ffdec" / "ffdec.bat"),
-    str(SCRIPT_DIR / "tools" / "ffdec" / "ffdec.bat"),
-]
+def _data_root() -> Path:
+    if IS_WIN:
+        base = os.getenv("APPDATA") or os.path.expanduser("~")
+    elif sys.platform == "darwin":
+        base = os.path.expanduser("~/Library/Application Support")
+    else:
+        base = os.getenv("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
+    return Path(base) / "AzuModification"
+
+
+if IS_WIN:
+    FFDEC_CANDIDATES = [
+        r"C:\Program Files (x86)\FFDec\ffdec.bat",
+        r"C:\Program Files\FFDec\ffdec.bat",
+        r"C:\FFDec\ffdec.bat",
+        str(SCRIPT_DIR / "ffdec" / "ffdec.bat"),
+        str(SCRIPT_DIR / "tools" / "ffdec" / "ffdec.bat"),
+    ]
+else:
+    _home = Path.home()
+    FFDEC_CANDIDATES = [
+        str(SCRIPT_DIR / "ffdec" / "ffdec.sh"),
+        str(SCRIPT_DIR / "tools" / "ffdec" / "ffdec.sh"),
+        str(SCRIPT_DIR / "prerequisites" / "ffdec" / "ffdec.sh"),
+        str(_data_root() / "prerequisites" / "ffdec" / "ffdec.sh"),
+        str(_home / "ffdec" / "ffdec.sh"),
+        str(_home / ".local" / "share" / "ffdec" / "ffdec.sh"),
+        "/opt/ffdec/ffdec.sh",
+        "/usr/share/ffdec/ffdec.sh",
+        "/usr/local/bin/ffdec",
+        "/usr/bin/ffdec",
+    ]
 
 
 class InjectError(Exception):
@@ -47,7 +78,7 @@ def find_ffdec(explicit: str | None) -> str:
             return str(p)
         raise InjectError(f"No se encontró FFDec en la ruta indicada: {explicit}")
 
-    for name in ("ffdec.bat", "ffdec-cli.exe", "ffdec"):
+    for name in ("ffdec.bat", "ffdec-cli.exe", "ffdec", "ffdec.sh"):
         found = shutil.which(name)
         if found:
             return found
@@ -69,13 +100,19 @@ def find_ffdec(explicit: str | None) -> str:
             continue
 
     raise InjectError(
-        "No pude encontrar FFDec automáticamente. Instálalo o pasa la ruta "
+        "No pude encontrar FFDec automáticamente (en Linux se busca ffdec.sh / ffdec en el PATH, "
+        "en la carpeta prerequisites y en ~/ffdec). Instálalo o pasa la ruta "
         "manualmente (ffdec_path)."
     )
 
 
 def run_ffdec(ffdec_path: str, args: list[str]) -> subprocess.CompletedProcess:
-    cmd = [ffdec_path] + args
+    if ffdec_path.lower().endswith(".jar"):
+        cmd = ["java", "-jar", ffdec_path] + args
+    elif not IS_WIN and ffdec_path.lower().endswith(".sh") and not os.access(ffdec_path, os.X_OK):
+        cmd = ["bash", ffdec_path] + args
+    else:
+        cmd = [ffdec_path] + args
     print("[*] Ejecutando:", " ".join(f'"{a}"' if " " in a else a for a in cmd))
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.stdout.strip():
@@ -165,11 +202,49 @@ def replace_method_body(
         raise InjectError("FFDec devolvió un error al reemplazar el pcode.")
 
 
-def _steam_library_paths() -> list[Path]:
-    vdf_candidates = [
-        Path(r"C:\Program Files (x86)\Steam\steamapps\libraryfolders.vdf"),
-        Path(r"C:\Program Files\Steam\steamapps\libraryfolders.vdf"),
+def _steam_roots_linux() -> list[Path]:
+    home = Path.home()
+    roots = [
+        home / ".local" / "share" / "Steam",
+        home / ".steam" / "steam",
+        home / ".steam" / "root",
+        home / ".var" / "app" / "com.valvesoftware.Steam" / ".local" / "share" / "Steam",
+        home / "snap" / "steam" / "common" / ".local" / "share" / "Steam",
     ]
+    seen, out = set(), []
+    for r in roots:
+        try:
+            key = r.resolve()
+        except OSError:
+            key = r
+        if key not in seen and r.exists():
+            seen.add(key)
+            out.append(r)
+    return out
+
+
+def _mounted_drive_roots() -> list[Path]:
+    """Discos montados en Linux (Bazzite/Fedora: /run/media/<user>/*, /var/mnt/*, /mnt/*)."""
+    import glob
+    user = os.getenv("USER") or Path.home().name
+    patterns = [f"/run/media/{user}/*", f"/media/{user}/*", "/var/mnt/*", "/mnt/*"]
+    out = []
+    for pat in patterns:
+        for p in glob.glob(pat):
+            pp = Path(p)
+            if pp.is_dir():
+                out.append(pp)
+    return out
+
+
+def _steam_library_paths() -> list[Path]:
+    if IS_WIN:
+        vdf_candidates = [
+            Path(r"C:\Program Files (x86)\Steam\steamapps\libraryfolders.vdf"),
+            Path(r"C:\Program Files\Steam\steamapps\libraryfolders.vdf"),
+        ]
+    else:
+        vdf_candidates = [r / "steamapps" / "libraryfolders.vdf" for r in _steam_roots_linux()]
     paths = []
     for vdf in vdf_candidates:
         if not vdf.exists():
@@ -185,6 +260,8 @@ def _steam_library_paths() -> list[Path]:
 
 
 def _all_drive_letters() -> list[str]:
+    if not IS_WIN:
+        return []
     import string
     drives = []
     for letter in string.ascii_uppercase:
@@ -202,12 +279,15 @@ def find_brawlhalla_dir() -> Path | None:
     except Exception:
         pass
 
-    candidates = [
-        Path(r"C:\Program Files (x86)\Steam\steamapps\common\Brawlhalla"),
-        Path(r"C:\Program Files\Steam\steamapps\common\Brawlhalla"),
-        Path(r"C:\Program Files\Epic Games\Brawlhalla"),
-        Path(r"C:\Program Files (x86)\Epic Games\Brawlhalla"),
-    ]
+    if IS_WIN:
+        candidates = [
+            Path(r"C:\Program Files (x86)\Steam\steamapps\common\Brawlhalla"),
+            Path(r"C:\Program Files\Steam\steamapps\common\Brawlhalla"),
+            Path(r"C:\Program Files\Epic Games\Brawlhalla"),
+            Path(r"C:\Program Files (x86)\Epic Games\Brawlhalla"),
+        ]
+    else:
+        candidates = [r / "steamapps" / "common" / "Brawlhalla" for r in _steam_roots_linux()]
     for c in candidates:
         if c.exists():
             return c
@@ -216,6 +296,18 @@ def find_brawlhalla_dir() -> Path | None:
         c = lib / "steamapps" / "common" / "Brawlhalla"
         if c.exists():
             return c
+
+    if not IS_WIN:
+        for drive in _mounted_drive_roots():
+            for sub in (
+                "SteamLibrary/steamapps/common/Brawlhalla",
+                "steamapps/common/Brawlhalla",
+                "Steam/steamapps/common/Brawlhalla",
+                "Games/Brawlhalla",
+            ):
+                c = drive / sub
+                if c.exists():
+                    return c
 
     for letter in _all_drive_letters():
         for sub in (
@@ -365,7 +457,7 @@ def inject_team_color_swap(
 
 def main():
     parser = argparse.ArgumentParser(description="Inyecta MultiColorSwap.pcode o TeamColorSwap.pcode en el SWF")
-    parser.add_argument("--ffdec", help="Ruta a ffdec.bat / ffdec-cli.exe / ffdec.jar", default=None)
+    parser.add_argument("--ffdec", help="Ruta a ffdec.bat / ffdec.sh / ffdec-cli.exe / ffdec.jar", default=None)
     parser.add_argument("--swf", help="Ruta al SWF de entrada", default=str(SWF_PATH))
     parser.add_argument(
         "--mode",
