@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import traceback
 import urllib.request
 import zipfile
 
@@ -48,7 +49,17 @@ def _resolve_ffdec_jar():
 FFDEC_JAR = _resolve_ffdec_jar()
 FFDEC_VERSION_TAG = "version25.0.0"
 FFDEC_ZIP_NAME = "ffdec_25.0.0.zip"
-LOGFILE = os.path.join(SCRIPT_DIR, "update.log")
+def _log_path():
+    """update.log en una ruta persistente (en el exe SCRIPT_DIR es una carpeta temporal que se borra)."""
+    d = _data_root()
+    try:
+        os.makedirs(d, exist_ok=True)
+    except Exception:
+        d = tempfile.gettempdir()
+    return os.path.join(d, "update.log")
+
+
+LOGFILE = _log_path()
 
 
 def _default_swf_path():
@@ -103,6 +114,10 @@ def log(msg):
         pass
 
 
+def log_exc(prefix="EXCEPCION"):
+    log(f"{prefix}:\n{traceback.format_exc()}")
+
+
 def fail(msg, code=1):
     log(f"ERROR: {msg}")
     sys.exit(code)
@@ -112,9 +127,56 @@ class UpdateError(Exception):
     pass
 
 
+JAVA_BIN = None
+
+
+def _find_java():
+    """Busca java: PATH, JAVA_HOME, JRE portable que baja AppLauncher y rutas comunes (brew, /usr/lib/jvm)."""
+    found = shutil.which("java")
+    if found:
+        return found
+    exe = "java.exe" if IS_WIN else "java"
+    candidates = []
+    jh = os.environ.get("JAVA_HOME")
+    if jh:
+        candidates.append(os.path.join(jh, "bin", exe))
+    roots = [
+        os.path.join(_data_root(), "prerequisites", "jre"),
+        os.path.join(SCRIPT_DIR, "prerequisites", "jre"),
+    ]
+    for root in roots:
+        if os.path.isdir(root):
+            for dirpath, _dirs, files in os.walk(root):
+                if os.path.basename(dirpath) == "bin" and exe in files:
+                    candidates.append(os.path.join(dirpath, exe))
+    if not IS_WIN:
+        candidates += [
+            "/home/linuxbrew/.linuxbrew/bin/java",
+            os.path.expanduser("~/.linuxbrew/bin/java"),
+            "/usr/bin/java",
+            "/usr/local/bin/java",
+        ]
+        for base in ("/usr/lib/jvm", "/usr/lib64/jvm"):
+            if os.path.isdir(base):
+                for d in sorted(os.listdir(base)):
+                    candidates.append(os.path.join(base, d, "bin", "java"))
+    for c in candidates:
+        if os.path.isfile(c) and os.access(c, os.X_OK):
+            return c
+    log(f"_find_java: no encontrado. PATH={os.environ.get('PATH')} JAVA_HOME={jh}")
+    return None
+
+
 def check_java():
-    if shutil.which("java") is None:
+    global JAVA_BIN
+    JAVA_BIN = _find_java()
+    if JAVA_BIN is None:
         fail("No se encontro 'java'. Instala un JDK (en Bazzite: dentro de tu distrobox, o brew install openjdk) y vuelve a intentar.")
+    # que los subprocess (ffdec.sh, etc.) tambien lo encuentren
+    jdir = os.path.dirname(JAVA_BIN)
+    if jdir not in os.environ.get("PATH", "").split(os.pathsep):
+        os.environ["PATH"] = jdir + os.pathsep + os.environ.get("PATH", "")
+    log(f"java: {JAVA_BIN}")
 
 
 def ensure_ffdec():
@@ -140,16 +202,29 @@ def ensure_ffdec():
     log(f"FFDec instalado en {FFDEC_DIR}")
 
 
+def _clean_env():
+    """En un exe de PyInstaller, java hereda un LD_LIBRARY_PATH con las libs del bundle y puede crashear."""
+    env = os.environ.copy()
+    if getattr(sys, "frozen", False):
+        for var in ("LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH"):
+            orig = env.get(var + "_ORIG")
+            if orig is not None:
+                env[var] = orig
+            else:
+                env.pop(var, None)
+    return env
+
+
 def export_scripts(swf_path, export_dir):
     log(f"Decompilando '{swf_path}' (puede tardar 1-3 minutos en un archivo grande)...")
     cmd = [
-        "java", "-jar", FFDEC_JAR,
+        JAVA_BIN or "java", "-jar", FFDEC_JAR,
         "-onerror", "ignore",
         "-exportFileTimeout", "15",
         "-exportTimeout", "1100",
         "-export", "script", export_dir, swf_path,
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, env=_clean_env())
     if result.returncode != 0:
         log("ERROR: la decompilacion fallo.")
         log(result.stdout)
@@ -245,15 +320,18 @@ def find_values(dump_text):
             target = (name, body)
             break
     if not target:
+        log("find_values: ninguna clase contiene NO_COLOR_SCHEME")
         return None
 
     class_name, body = target
     fields = extract_fields(body)
     vector_fields = [f for f in fields if f["is_static"] and f["type"].startswith("Vector.<")]
     array_fields = [f for f in fields if not f["is_static"] and f["type"] == "Array"]
+    log(f"find_values: {len(fields)} campos, {len(vector_fields)} vectores static, {len(array_fields)} arrays")
     vector_name = vector_fields[-1]["name"] if vector_fields else None
     array_name = array_fields[-1]["name"] if array_fields else None
     if not vector_name or not array_name:
+        log(f"find_values: faltan campos (vector={vector_name}, array={array_name})")
         return None
 
     return {
@@ -269,6 +347,7 @@ def find_team_values(dump_text):
         pattern = re.compile(_TEAM_FIELD_RE_TEMPLATE.format(name=re.escape(name)))
         m = pattern.search(dump_text)
         if not m:
+            log(f"find_team_values: no encontre {name}")
             return None
         result[name] = strip_marker(m.group("field"))
     return result
@@ -346,6 +425,7 @@ def main():
     swf_path = sys.argv[1] if len(sys.argv) > 1 else _default_swf_path()
     allinone_py = sys.argv[2] if len(sys.argv) > 2 else os.path.join(SCRIPT_DIR, "AppAllInOne.py")
     log(f"Usando SWF: {swf_path}")
+    log(f"frozen={getattr(sys, 'frozen', False)} SCRIPT_DIR={SCRIPT_DIR} FFDEC_JAR={FFDEC_JAR} java={JAVA_BIN} LOGFILE={LOGFILE}")
 
     check_java()
     ensure_ffdec()

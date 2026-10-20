@@ -105,6 +105,16 @@ def _show_fatal_error(title, message):
             pass
 
 
+def _tee_log(msg):
+    """print + update.log (en el exe print no deja rastro)."""
+    print(msg)
+    try:
+        import AppUpdater as _upd
+        _upd.log(str(msg))
+    except Exception:
+        pass
+
+
 def _prereqs_dir():
     if hasattr(sys, "_MEIPASS"):
         path = os.path.join(_data_root(), "prerequisites")
@@ -411,7 +421,7 @@ except Exception:
     )
     sys.exit(1)
 
-ensure_prerequisites(log=print)
+ensure_prerequisites(log=_tee_log)
 
 TEAM_COLORS_SUPPORTED = hasattr(AllInOne, "get_team_slot_options")
 
@@ -979,14 +989,18 @@ class Api:
             allinone_path=AllInOne.__file__,
             ffdec_path=ffdec_path,
             base_dir=base_dir,
-            log=print,
+            log=_tee_log,
         )
 
     def _update_color_values_gamebanana(self, brawlhalla_air_swf_path=None,
                                          ffdec_path=None, swf_path=None):
         import AppRelinker as relinker
+        upd = relinker.upd
 
-        log = print
+        def log(msg):
+            print(msg)
+            upd.log(msg)
+
         try:
             log("--- GameBanana: identificadores nuevos (BrawlhallaAir.swf) ---")
             air_path = brawlhalla_air_swf_path or relinker.upd._default_swf_path()
@@ -999,16 +1013,18 @@ class Api:
             relinker.upd.write_team_identifiers_to_allinone(
                 new_team, AllInOne.__file__, log=log
             )
-        except SystemExit:
+        except SystemExit as e:
+            upd.log(f"SystemExit code={e.code}")
             return {
                 "success": False,
                 "message": (
                     "No se pudieron extraer los identificadores nuevos desde "
-                    "BrawlhallaAir.swf. Revisa update.log para más detalles."
+                    f"BrawlhallaAir.swf. Revisa el log en: {upd.LOGFILE}"
                 ),
             }
         except Exception as e:
-            return {"success": False, "message": f"Fallo actualizando identificadores: {e}"}
+            upd.log_exc("Fallo actualizando identificadores")
+            return {"success": False, "message": f"Fallo actualizando identificadores: {e}. Log: {upd.LOGFILE}"}
 
         log("--- GameBanana: regenerando el swf aislado desde el juego real ---")
         gb_swf = get_gamebanana_swf_path()
@@ -1177,6 +1193,11 @@ class Api:
 
 
 def main():
+    try:
+        import AppUpdater as _u
+        _u.log(f"=== AppLauncher iniciado (frozen={getattr(sys, 'frozen', False)}) log={_u.LOGFILE} ===")
+    except Exception as _e:
+        print(f"[log] no pude inicializar update.log: {_e}")
     AllInOne.configure_paths(get_data_dir())
     try:
         WebSync.seed()

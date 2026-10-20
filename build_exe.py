@@ -36,7 +36,9 @@ APPS = {
             "styles.css", "codemirror.bundle.js",
         ],
         # Carpetas completas
-        "data_dirs": ["PreRenders", "SpriteTypes"],
+        # "ffdec": igual que el viejo Empaquetar_AzuModification.bat, que metia la carpeta ffdec\ dentro
+        # del exe (AppUpdater la busca en <bundle>/ffdec/ffdec.jar). Se omite si no existe.
+        "data_dirs": ["PreRenders", "SpriteTypes", "ffdec"],
         # Modulos que PyInstaller no ve (imports dentro de funciones o cargados con exec)
         "hidden_imports": [
             "AppBox", "AppConfig", "AppCodeInstaller", "AppRelinker", "AppUpdater",
@@ -107,6 +109,9 @@ def build(name: str, cfg: dict, dry: bool, keep: bool) -> Path:
         else:
             print(f"[aviso] no esta {f}, se omite")
     for d in cfg["data_dirs"]:
+        if d == "ffdec" and not (HERE / d / "ffdec.jar").is_file():
+            print("[aviso] ffdec/ffdec.jar no esta, no se incluye FFDec en el ejecutable")
+            continue
         if (HERE / d).is_dir():
             cmd += ["--add-data", f"{HERE / d}{os.pathsep}{d}"]
     for h in cfg["hidden_imports"]:

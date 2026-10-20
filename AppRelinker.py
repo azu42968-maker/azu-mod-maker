@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import os
+import shutil
 import re
 import sys
 import tempfile
@@ -20,6 +21,7 @@ def log(msg):
 def find_new_identifiers(brawlhalla_air_swf_path):
     upd.check_java()
     upd.ensure_ffdec()
+    upd.log(f"frozen={getattr(sys, 'frozen', False)} SCRIPT_DIR={upd.SCRIPT_DIR} FFDEC_JAR={upd.FFDEC_JAR} java={upd.JAVA_BIN} LOGFILE={upd.LOGFILE}")
 
     if not os.path.isfile(brawlhalla_air_swf_path):
         upd.fail(f"No se encontro BrawlhallaAir.swf en '{brawlhalla_air_swf_path}'.")
@@ -306,16 +308,18 @@ def update_color_values(
     log("--- Paso 1/4: identificadores nuevos (BrawlhallaAir.swf actualizado) ---")
     try:
         new_cls, new_vec, new_arr, new_team = find_new_identifiers(brawlhalla_air_swf_path)
-    except SystemExit:
+    except SystemExit as e:
+        upd.log(f"SystemExit code={e.code}")
         return {
             "success": False,
             "message": (
                 "No se pudieron extraer los identificadores nuevos desde "
-                "BrawlhallaAir.swf. Revisa update.log para más detalles."
+                f"BrawlhallaAir.swf. Revisa el log en: {upd.LOGFILE}"
             ),
         }
     except Exception as e:
-        return {"success": False, "message": f"Fallo el paso 1 (identificadores nuevos): {e}"}
+        upd.log_exc("Fallo el paso 1 (identificadores nuevos)")
+        return {"success": False, "message": f"Fallo el paso 1 (identificadores nuevos): {e}. Log: {upd.LOGFILE}"}
     log(f'Nuevos identificadores -> Class="{new_cls}" Vector="{new_vec}" Array="{new_arr}"')
     log(f'Nuevos identificadores de team colors -> {new_team}')
 
@@ -324,9 +328,11 @@ def update_color_values(
         upd.write_identifiers_to_allinone(new_cls, new_vec, new_arr, allinone_path, log=log)
         upd.write_team_identifiers_to_allinone(new_team, allinone_path, log=log)
     except upd.UpdateError as e:
-        return {"success": False, "message": f"Fallo actualizando AppAllInOne.py: {e}"}
+        upd.log_exc("Paso 2 (UpdateError)")
+        return {"success": False, "message": f"Fallo actualizando AppAllInOne.py: {e}. Log: {upd.LOGFILE}"}
     except Exception as e:
-        return {"success": False, "message": f"Fallo actualizando AppAllInOne.py: {e}"}
+        upd.log_exc("Paso 2")
+        return {"success": False, "message": f"Fallo actualizando AppAllInOne.py: {e}. Log: {upd.LOGFILE}"}
 
     try:
         resolved_ffdec = inj.find_ffdec(ffdec_path)
