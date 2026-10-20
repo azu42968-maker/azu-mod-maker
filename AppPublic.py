@@ -47,9 +47,9 @@ def _dbg(*args, **kwargs):
         print(*args, **kwargs)
 
 
-DEFAULT_CLASS = "_-o31"
-DEFAULT_VECTOR = "_-YO"
-DEFAULT_ARRAY = "_-t25"
+DEFAULT_CLASS = "_-31J"
+DEFAULT_VECTOR = "_-gQ"
+DEFAULT_ARRAY = "_-Qv"
 
 OLD_COLOR_NAMES = [
     "Blue", "Yellow", "Green", "Brown", "Purple", "Orange", "Cyan", "Sunset",
@@ -119,10 +119,10 @@ def get_allowed_pushbytes():
 
 
 DEFAULT_TEAM_PROPS = {
-    "TeamRed1": "_-42w", "TeamRed2": "_-v3F", "TeamRed3": "_-v5T", "TeamRed4": "_-Xt",
-    "TeamBlue1": "_-u1M", "TeamBlue2": "_-o5J", "TeamBlue3": "_-W1l", "TeamBlue4": "_-L3v",
-    "TeamYellow1": "_-L2z", "TeamYellow2": "_-R60", "TeamYellow3": "_-m3B", "TeamYellow4": "_-D2T",
-    "TeamPurple1": "_-N59", "TeamPurple2": "_-41D", "TeamPurple3": "_-p5a", "TeamPurple4": "_-V5n",
+    "TeamRed1": "_-X18", "TeamRed2": "_-n2I", "TeamRed3": "_-O1Z", "TeamRed4": "_-219",
+    "TeamBlue1": "_-b6K", "TeamBlue2": "_-x5p", "TeamBlue3": "_-x2Z", "TeamBlue4": "_-p4h",
+    "TeamYellow1": "_-S1Z", "TeamYellow2": "_-a6H", "TeamYellow3": "_-Kg", "TeamYellow4": "_-U1P",
+    "TeamPurple1": "_-CN", "TeamPurple2": "_-T2b", "TeamPurple3": "_-ng", "TeamPurple4": "_-865",
 }
 
 TEAM_SLOT_LABELS = {

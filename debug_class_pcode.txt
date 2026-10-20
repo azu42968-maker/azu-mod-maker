@@ -1,0 +1,211 @@
+package
+{
+   import flash.display.MovieClip;
+   import flash.system.ApplicationDomain;
+   import flash.text.TextField;
+   
+   [Embed(source="/_assets/assets.swf", symbol="symbol24")]
+   public dynamic class a_BattlePassSplashArtButton extends MovieClip
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 9
+            maxscopedepth 10
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public var am_Footer:TextField;
+      
+      public var am_Footer1:TextField;
+      
+      public var am_Footer2:TextField;
+      
+      public var am_Header:TextField;
+      
+      public function a_BattlePassSplashArtButton()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 37
+               localcount 14
+               initscopedepth 10
+               maxscopedepth 11
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  pushstring "_-31J"
+                  coerce_s
+                  setlocal 6
+                  getlex QName(PackageNamespace("flash.system"),"ApplicationDomain")
+                  getproperty QName(PackageNamespace("","4"),"currentDomain")
+                  coerce QName(PackageNamespace("flash.system"),"ApplicationDomain")
+                  setlocal 4
+                  getlocal 4
+                  getlocal 6
+                  callproperty QName(PackageNamespace("","4"),"hasDefinition"), 1
+                  iffalse ofs0118
+                  getlocal 4
+                  getlocal 6
+                  callproperty QName(PackageNamespace("","4"),"getDefinition"), 1
+                  setlocal 5
+                  getlocal 5
+                  getproperty QName(PackageNamespace("","4"),"_-gQ")
+                  setlocal 7
+                  getlocal 7
+                  pushbyte 1
+                  getproperty MultinameL([PackageNamespace("","3")])
+                  coerce QName(PackageNamespace("","4"),"_-31J")
+                  setlocal 13
+                  getlocal 13
+                  pushuint 0
+                  pushuint 9604400
+                  pushuint 6775575
+                  pushuint 4802064
+                  pushuint 14022843
+                  pushuint 9482104
+                  pushuint 6716501
+                  pushuint 4741180
+                  pushuint 2899487
+                  pushuint 6455322
+                  pushuint 12360396
+                  pushuint 6896256
+                  pushuint 3940681
+                  pushuint 2758452
+                  pushuint 1970469
+                  pushuint 8395383
+                  pushuint 12642815
+                  pushuint 6604281
+                  pushuint 4688816
+                  pushuint 3302012
+                  pushuint 2377304
+                  pushuint 2326192
+                  pushuint 0
+                  pushuint 0
+                  pushuint 0
+                  pushuint 0
+                  pushuint 15663040
+                  pushuint 13762388
+                  pushuint 11001614
+                  pushuint 7575818
+                  pushuint 13369280
+                  pushuint 7470932
+                  pushuint 4386591
+                  pushuint 2791700
+                  pushuint 5762847
+                  newarray 35
+                  coerce QName(PackageNamespace("","4"),"Array")
+                  initproperty QName(PackageNamespace("","4"),"_-Qv")
+                  getlocal 7
+                  pushbyte 21
+                  getproperty MultinameL([PackageNamespace("","3")])
+                  coerce QName(PackageNamespace("","4"),"_-31J")
+                  setlocal 13
+                  getlocal 13
+                  pushuint 0
+                  pushuint 3301527
+                  pushuint 1523051
+                  pushuint 1059660
+                  pushuint 10139852
+                  pushuint 2776960
+                  pushuint 798018
+                  pushuint 532527
+                  pushuint 398881
+                  pushuint 1516928
+                  pushuint 16775872
+                  pushuint 16773460
+                  pushuint 13681730
+                  pushuint 9669423
+                  pushuint 6709280
+                  pushuint 13676330
+                  pushuint 15249359
+                  pushuint 10769794
+                  pushuint 7617628
+                  pushuint 5384769
+                  pushuint 3808558
+                  pushuint 8395355
+                  pushuint 0
+                  pushuint 0
+                  pushuint 0
+                  pushuint 0
+                  pushuint 13410002
+                  pushuint 8925588
+                  pushuint 6231913
+                  pushuint 4395082
+                  pushuint 12636415
+                  pushuint 5405687
+                  pushuint 2574767
+                  pushuint 1848444
+                  pushuint 2314927
+                  newarray 35
+                  coerce QName(PackageNamespace("","4"),"Array")
+                  initproperty QName(PackageNamespace("","4"),"_-Qv")
+         ofs0118:
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+   }
+}
+
+method
+   name null
+   returns null
+   
+   body
+      maxstack 2
+      localcount 1
+      initscopedepth 1
+      maxscopedepth 9
+      
+      code
+         getlocal0
+         pushscope
+         getscopeobject 0
+         getlex QName(PackageNamespace(""),"Object")
+         pushscope
+         getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+         pushscope
+         getlex QName(PackageNamespace("flash.display"),"DisplayObject")
+         pushscope
+         getlex QName(PackageNamespace("flash.display"),"InteractiveObject")
+         pushscope
+         getlex QName(PackageNamespace("flash.display"),"DisplayObjectContainer")
+         pushscope
+         getlex QName(PackageNamespace("flash.display"),"Sprite")
+         pushscope
+         getlex QName(PackageNamespace("flash.display"),"MovieClip")
+         pushscope
+         getlex QName(PackageNamespace("flash.display"),"MovieClip")
+         newclass 0
+         popscope
+         popscope
+         popscope
+         popscope
+         popscope
+         popscope
+         popscope
+         initproperty QName(PackageNamespace(""),"a_BattlePassSplashArtButton")
+         returnvoid
+      end ; code
+   end ; body
+end ; method
+
