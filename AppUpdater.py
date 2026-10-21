@@ -185,7 +185,11 @@ def ensure_ffdec():
     if os.path.isfile(FFDEC_JAR):
         return
     log("FFDec no encontrado, descargando (una sola vez)...")
-    os.makedirs(FFDEC_DIR, exist_ok=True)
+    # En el exe SCRIPT_DIR es una carpeta temporal que se borra al cerrar: ahi se bajaria en cada
+    # ejecucion. Se instala en la carpeta de datos, que _resolve_ffdec_jar() ya revisa.
+    install_dir = (os.path.join(_data_root(), "prerequisites", "ffdec")
+                   if getattr(sys, "frozen", False) else FFDEC_DIR)
+    os.makedirs(install_dir, exist_ok=True)
     url = (
         "https://github.com/jindrapetrik/jpexs-decompiler/releases/download/"
         f"{FFDEC_VERSION_TAG}/{FFDEC_ZIP_NAME}"
@@ -197,9 +201,11 @@ def ensure_ffdec():
         except Exception as e:
             fail(f"no se pudo descargar FFDec desde {url}: {e}")
         with zipfile.ZipFile(zip_path) as zf:
-            zf.extractall(FFDEC_DIR)
+            zf.extractall(install_dir)
     FFDEC_JAR = _resolve_ffdec_jar()
-    log(f"FFDec instalado en {FFDEC_DIR}")
+    if not os.path.isfile(FFDEC_JAR):
+        fail(f"se descargo FFDec pero no aparece ffdec.jar en {install_dir}")
+    log(f"FFDec instalado en {install_dir}")
 
 
 def _clean_env():

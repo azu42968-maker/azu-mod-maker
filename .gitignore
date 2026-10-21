@@ -9,3 +9,5 @@ dist/
 release/
 __pycache__/
 *.pyc
+.build-venv/
+.build-python312/

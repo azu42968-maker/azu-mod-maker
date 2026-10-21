@@ -601,6 +601,10 @@ def _background_sync(window):
         print("[sync]", res)
         if res.get("updated") or res.get("removed"):
             payload = json.dumps({"updated": res.get("updated", 0), "removed": res.get("removed", 0)})
+            try:
+                window.events.loaded.wait(60)   # si la pagina aun no cargo, el evento se perderia
+            except Exception:
+                pass
             window.evaluate_js(
                 "window.dispatchEvent(new CustomEvent('azu-content-updated', {detail: %s}));" % payload
             )
