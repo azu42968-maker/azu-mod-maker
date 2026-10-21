@@ -3567,6 +3567,7 @@ function _applySVGFrameToDOM(srcRoot, forcedViewBox) {
   for (const child of Array.from(srcRoot.childNodes)) {
     svgEl.appendChild(document.importNode(child, true));
   }
+  svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
   if (forcedViewBox) {
     svgEl.setAttribute('viewBox', forcedViewBox);
     return;

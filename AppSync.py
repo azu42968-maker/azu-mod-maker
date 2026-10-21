@@ -23,6 +23,7 @@ import json
 import os
 import threading
 import urllib.error
+import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path, PurePosixPath
@@ -160,7 +161,7 @@ class ContentSync:
 
             def fetch(path):
                 dest = self._dest_for(path)
-                data = _http_get(f"{_RAW}/{commit}/{path}")
+                data = _http_get(f"{_RAW}/{commit}/{urllib.parse.quote(path)}")   # nombres con espacios/parentesis
                 if len(data) > MAX_FILE_BYTES:
                     raise SyncError("supera el tamano maximo permitido")
                 if _git_blob_sha(data) != remote[path]["sha"]:
