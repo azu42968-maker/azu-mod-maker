@@ -1216,6 +1216,17 @@ def main():
         print(f"No se encontró el archivo: {html_path}")
         sys.exit(1)
 
+    if not IS_WIN and not IS_MAC:
+        # PyQt6 aborta el proceso entero si un slot/callback lanza una excepcion sin
+        # manejar (cookies raras, permisos, etc.). Se registra el error y la app sigue viva.
+        def _qt_safe_excepthook(exc_type, exc, tb):
+            _tee_log("[!] Excepcion no manejada (ignorada):\n"
+                     + "".join(traceback.format_exception(exc_type, exc, tb)))
+        sys.excepthook = _qt_safe_excepthook
+        if os.path.exists("/run/.containerenv"):
+            # Dentro de distrobox Chromium no puede usar su sandbox ni la GPU.
+            os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox --disable-gpu")
+
     webview.settings['ALLOW_DOWNLOADS'] = True
 
     api = Api()

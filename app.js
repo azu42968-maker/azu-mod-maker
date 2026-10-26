@@ -1883,7 +1883,7 @@ class ColorPicker {
   async _copyHex() {
     const hex = '#' + this._hexIn.value.trim().replace(/^#/, '').toUpperCase();
     try {
-      await navigator.clipboard.writeText(hex);
+      await copyTextToClipboard(hex);
       showToast(`Copied ${hex}`, 'info');
     } catch (e) {
       showToast('Failed to copy hex', 'error');
@@ -5367,7 +5367,7 @@ function copySpriteColorsList() {
   const text = _lastSpriteColorsAnalysis
     .map(([hex, count]) => `#${hex.toString(16).padStart(6, '0')}  x${count}`)
     .join('\n');
-  navigator.clipboard.writeText(text)
+  copyTextToClipboard(text)
     .then(() => showToast('Colour list copied', 'info'))
     .catch(() => showToast('Could not copy', 'error'));
 }
@@ -7656,17 +7656,43 @@ function effectColorblind(mode) {
   _applyEffect((c) => daltonizeColour(c, mode), `Applied ${CVD_LABELS[mode]} colour correction`);
 }
 
+const SHARE_BASE_URL = 'https://talafhah1.github.io/ColourGuyElfOnline/';
+
+// Copia texto sin pedir permiso del navegador. navigator.clipboard lo deniega QtWebEngine
+// (pywebview) y en file:// no hay origen valido; execCommand('copy') funciona con el clic.
+function copyTextToClipboard(text) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy');
+    ta.remove();
+    if (ok) return Promise.resolve();
+  } catch (e) { /* cae al API moderno */ }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+  return Promise.reject(new Error('clipboard unavailable'));
+}
+
 function share() {
   const hexStr = scheme.toHexString();
-  const base = window.location.origin + window.location.pathname;
+  // En la app de escritorio la pagina se carga desde file:// (origin = "null"):
+  // el link se arma con la URL publica del sitio.
+  const isWeb = /^https?:$/.test(window.location.protocol);
+  const base = isWeb ? window.location.origin + window.location.pathname : SHARE_BASE_URL;
   const url  = `${base}?colour=${encodeURIComponent(btoa(hexStr))}`;
-  navigator.clipboard.writeText(url)
+  copyTextToClipboard(url)
     .then(() => showToast('Share link copied!', 'info'))
     .catch(() => showToast('Failed to copy link', 'error'));
 }
 
 function copyEditor() {
-  navigator.clipboard.writeText(editor.getValue())
+  copyTextToClipboard(editor.getValue())
     .then(() => showToast('Copied to clipboard', 'info'))
     .catch(() => showToast('Failed to copy', 'error'));
 }
