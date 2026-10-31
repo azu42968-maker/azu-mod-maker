@@ -1196,6 +1196,63 @@ class Api:
         return {"success": True, "message": message, "path": str(target_swf)}
 
 
+def _patch_qt_downloads():
+    """Arregla las descargas (Fast export, Download SVG/PNG/ZIP...) con el backend Qt.
+
+    pywebview 6.x (platforms/qt.py -> BrowserView.on_download_requested) llama a
+    QWebEngineDownloadRequest.setPath(), que NO existe en PyQt6/Qt6 (ahi se usan
+    setDownloadDirectory()/setDownloadFileName()). Al hacer click en cualquier
+    <a download> salta AttributeError dentro de un slot de Qt y PyQt6 aborta todo
+    el proceso: la app "se crashea". Ademas usaba la ruta del blob: como nombre
+    por defecto en vez del nombre que pone el JS (a.download).
+
+    Esta version usa el nombre sugerido por la pagina, guarda con la API de Qt6
+    y nunca deja escapar una excepcion del slot. En GTK/Windows/macOS no hace
+    nada (esos backends no tienen el problema)."""
+    if IS_WIN or IS_MAC:
+        return
+    try:
+        from webview.platforms import qt as _qt
+        BrowserView = _qt.BrowserView
+        QFileDialog = _qt.QFileDialog
+    except Exception:
+        return  # backend GTK (o sin Qt): nada que parchar
+
+    def on_download_requested(self, download):
+        try:
+            name = ""
+            try:
+                name = download.suggestedFileName() or ""
+            except Exception:
+                pass
+            if not name:
+                name = os.path.basename(download.url().path()) or "download"
+            name = re.sub(r'[\\/:*?"<>|]+', "_", name)
+
+            downloads = Path.home() / "Downloads"
+            start_dir = downloads if downloads.is_dir() else Path.home()
+            path, _filter = QFileDialog.getSaveFileName(
+                self, "Guardar archivo", str(start_dir / name)
+            )
+            if not path:
+                download.cancel()
+                return
+            if hasattr(download, "setDownloadDirectory"):      # Qt6
+                download.setDownloadDirectory(os.path.dirname(path))
+                download.setDownloadFileName(os.path.basename(path))
+            else:                                               # Qt5 (por si acaso)
+                download.setPath(path)
+            download.accept()
+        except Exception:
+            _tee_log("[!] Fallo al guardar la descarga:\n" + traceback.format_exc())
+            try:
+                download.cancel()
+            except Exception:
+                pass
+
+    BrowserView.on_download_requested = on_download_requested
+
+
 def main():
     try:
         import AppUpdater as _u
@@ -1228,6 +1285,7 @@ def main():
             os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox --disable-gpu")
 
     webview.settings['ALLOW_DOWNLOADS'] = True
+    _patch_qt_downloads()
 
     api = Api()
 

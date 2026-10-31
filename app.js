@@ -3992,7 +3992,7 @@ function downloadSpriteSVG() {
   a.href = url;
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
 }
 
 function _rasterizeSVGToPNGBlob(svgEl, size = 1024) {
@@ -4047,7 +4047,7 @@ async function copySpriteAsPNG() {
     a.href = URL.createObjectURL(blob);
     a.download = 'sprite.png';
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => URL.revokeObjectURL(a.href), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
     showToast('Clipboard not supported — PNG downloaded instead', 'info');
   } catch (e) {
     showToast('Could not copy the sprite', 'error');
@@ -5213,7 +5213,7 @@ async function downloadRecoloredZip() {
     a.href = URL.createObjectURL(blob);
     a.download = filename;
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => URL.revokeObjectURL(a.href), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
     showToast(`Recoloured ZIP: ${recoloredFiles} sprites, ${totalColorChanges} colour values changed`, 'info');
   } catch (e) {
     console.error(e);
@@ -5405,7 +5405,7 @@ async function downloadBatchZip() {
   a.href = url;
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
 }
 
 const SWF_SHAPE_TAG_CODES = new Set([2, 22, 32, 83, 46, 84]);
@@ -6241,7 +6241,7 @@ async function fastExportSWFShapes(files) {
     a.href = url;
     a.download = filename;
     a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => URL.revokeObjectURL(url), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
     showToast(`Fast export: ${chosen.length} SVG(s), untouched`, 'info');
   } catch (e) {
     console.error(e);
@@ -6288,7 +6288,7 @@ async function downloadSWFShapesBatchZip() {
     a.href = url;
     a.download = filename;
     a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
   }).catch((e) => {
     console.error(e);
     showToast('Could not build the SWF shapes .zip', 'error');
@@ -7714,7 +7714,7 @@ function downloadFile() {
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(a.href);
+  setTimeout(() => URL.revokeObjectURL(a.href), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
   showToast('File installed', 'info');
 }
 
@@ -7787,7 +7787,7 @@ function downloadXMLFile() {
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(a.href);
+  setTimeout(() => URL.revokeObjectURL(a.href), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
   showToast('XML exported', 'info');
 }
 
@@ -7799,7 +7799,7 @@ function downloadWcolorFile() {
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(a.href);
+  setTimeout(() => URL.revokeObjectURL(a.href), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
   showToast('.wcolor exported', 'info');
 }
 
@@ -8414,7 +8414,7 @@ async function copyImagePNG() {
     a.href = URL.createObjectURL(blob);
     a.download = 'ColourScheme.png';
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => URL.revokeObjectURL(a.href), 120000); // Qt: el dialogo de guardar abre despues del click; no revocar antes
     showToast('Clipboard unsupported — PNG downloaded instead', 'info');
   } catch (e) {
     showToast('Failed to copy PNG', 'error');
