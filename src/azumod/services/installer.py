@@ -272,7 +272,7 @@ def _all_drive_letters() -> list[str]:
 
 def find_brawlhalla_dir() -> Path | None:
     try:
-        import AppConfig
+        from azumod import config as AppConfig
         saved = AppConfig.get_saved_brawlhalla_path()
         if saved is not None:
             return saved

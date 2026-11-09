@@ -1,0 +1,17 @@
+
+======================================================================
+No se encontró AppAllInOne.py ni AppPublic.py (o falló al cargarlos).
+
+Traceback (most recent call last):
+  File "/var/home/azu/azu42968-maker/azu-mod-maker/src/azumod/main.py", line 379, in _load_allinone_module
+    import AppAllInOne as AllInOne
+ModuleNotFoundError: No module named 'AppAllInOne'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/var/home/azu/azu42968-maker/azu-mod-maker/src/azumod/main.py", line 415, in <module>
+    AllInOne = _load_allinone_module()
+  File "/var/home/azu/azu42968-maker/azu-mod-maker/src/azumod/main.py", line 382, in _load_allinone_module
+    import AppPublic as AllInOne
+ModuleNotFoundError: No module named 'AppPublic'

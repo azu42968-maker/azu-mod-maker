@@ -10,8 +10,8 @@ from pathlib import Path
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, SCRIPT_DIR)
 
-import AppUpdater as upd
-import AppCodeInstaller as inj
+from azumod.services import updater as upd
+from azumod.services import installer as inj
 
 
 def log(msg):

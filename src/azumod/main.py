@@ -14,14 +14,14 @@ import threading
 import traceback
 from pathlib import Path
 
-import AppBox
+from azumod.services import box as AppBox
 
 if __name__ == "__main__":
     # Si hay un distrobox configurado (AZU_BOX / config.json / unico box), la app
     # se relanza ahi adentro, donde estan Java, FFDec y pywebview. AZU_NO_BOX=1 lo evita.
     AppBox.relaunch_in_box_if_needed()
 
-import AppWebSync as WebSync
+from azumod.services import websync as WebSync
 
 IS_WIN = sys.platform.startswith("win")
 IS_MAC = sys.platform == "darwin"
@@ -109,7 +109,7 @@ def _tee_log(msg):
     """print + update.log (en el exe print no deja rastro)."""
     print(msg)
     try:
-        import AppUpdater as _upd
+        from azumod.services import updater as _upd
         _upd.log(str(msg))
     except Exception:
         pass
@@ -253,7 +253,7 @@ def _setup_ffdec_launcher(launcher):
 
 def ensure_ffdec(log=print):
     try:
-        import AppCodeInstaller as inj
+        from azumod.services import installer as inj
         inj.find_ffdec(None)
         return True
     except Exception:
@@ -379,7 +379,7 @@ def _load_allinone_module():
             import AppAllInOne as AllInOne
             return AllInOne
         except ImportError:
-            import AppPublic as AllInOne
+            from azumod.services import public as AllInOne
             return AllInOne
 
     persistent_dir = _persistent_module_dir()
@@ -474,7 +474,7 @@ def _ensure_gamebanana_swf(swf_path_override=None):
     if os.path.exists(target):
         return target
 
-    import AppCodeInstaller as inj
+    from azumod.services import installer as inj
 
     if swf_path_override:
         real_swf = Path(swf_path_override)
@@ -592,7 +592,7 @@ def _background_sync(window):
     Baja PreRenders/SpriteTypes nuevos desde GitHub (ver AppSync.py). Nunca bloquea
     ni rompe la app: sin internet o con cualquier error, simplemente no hace nada."""
     try:
-        import AppSync
+        from azumod.services import sync as AppSync
         res = AppSync.ContentSync(
             prerenders_dir=get_prerenders_dir(),
             sprite_types_dir=get_sprite_types_dir(),
@@ -789,8 +789,8 @@ class Api:
         return path
 
     def get_brawlhalla_status(self):
-        import AppConfig
-        import AppCodeInstaller as inj
+        from azumod import config as AppConfig
+        from azumod.services import installer as inj
 
         saved = AppConfig.get_saved_brawlhalla_path()
         if saved is not None:
@@ -803,7 +803,7 @@ class Api:
         return {"path": None, "source": "none"}
 
     def _validate_and_save_brawlhalla_path(self, raw_path):
-        import AppConfig
+        from azumod import config as AppConfig
 
         if not raw_path:
             return {"success": False, "message": "No indicaste ninguna carpeta."}
@@ -836,7 +836,7 @@ class Api:
         return self._validate_and_save_brawlhalla_path(raw_path)
 
     def clear_brawlhalla_folder(self):
-        import AppConfig
+        from azumod import config as AppConfig
         AppConfig.clear_brawlhalla_path()
         return self.get_brawlhalla_status()
 
@@ -985,7 +985,7 @@ class Api:
                 swf_path=swf_path,
             )
 
-        import AppRelinker as relinker
+        from azumod.services import relinker
         base_dir, resolved_swf = _resolve_profile(profile, swf_path)
         return relinker.update_color_values(
             brawlhalla_air_swf_path=brawlhalla_air_swf_path,
@@ -998,7 +998,7 @@ class Api:
 
     def _update_color_values_gamebanana(self, brawlhalla_air_swf_path=None,
                                          ffdec_path=None, swf_path=None):
-        import AppRelinker as relinker
+        from azumod.services import relinker
         upd = relinker.upd
 
         def log(msg):
@@ -1084,7 +1084,7 @@ class Api:
 
     def bulk_export_shapes_to_swf(self, shapes, ffdec_path=None):
         import tempfile
-        import AppCodeInstaller as inj
+        from azumod.services import installer as inj
 
         MAX_CMDLINE_CHARS = 7500 if IS_WIN else 100000
 
@@ -1255,7 +1255,7 @@ def _patch_qt_downloads():
 
 def main():
     try:
-        import AppUpdater as _u
+        from azumod.services import updater as _u
         _u.log(f"=== AppLauncher iniciado (frozen={getattr(sys, 'frozen', False)}) log={_u.LOGFILE} ===")
     except Exception as _e:
         print(f"[log] no pude inicializar update.log: {_e}")
@@ -1267,7 +1267,7 @@ def main():
     _seed_bundled_prerenders()
     _seed_bundled_sprite_types()
 
-    html_path = resource_path("index.html")
+    html_path = resource_path("ui/index.html")
 
     if not os.path.exists(html_path):
         print(f"No se encontró el archivo: {html_path}")
