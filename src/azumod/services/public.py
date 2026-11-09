@@ -9,6 +9,7 @@ from pathlib import Path
 import xmltodict
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw, ImageColor, ImageFont
+from azumod.services.identifiers import get_identifiers, get_team_props
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,9 +48,6 @@ def _dbg(*args, **kwargs):
         print(*args, **kwargs)
 
 
-DEFAULT_CLASS = "_-31J"
-DEFAULT_VECTOR = "_-gQ"
-DEFAULT_ARRAY = "_-Qv"
 
 OLD_COLOR_NAMES = [
     "Blue", "Yellow", "Green", "Brown", "Purple", "Orange", "Cyan", "Sunset",
@@ -79,7 +77,7 @@ DEV_MODE_PASSCODE = "200922"
 
 
 def _dev_mode_flag_path():
-    import AppConfig
+    from azumod import config as AppConfig
     return AppConfig.get_config_dir() / "dev_mode.flag"
 
 
@@ -118,12 +116,6 @@ def get_allowed_pushbytes():
     ]
 
 
-DEFAULT_TEAM_PROPS = {
-    "TeamRed1": "_-X18", "TeamRed2": "_-n2I", "TeamRed3": "_-O1Z", "TeamRed4": "_-219",
-    "TeamBlue1": "_-b6K", "TeamBlue2": "_-x5p", "TeamBlue3": "_-x2Z", "TeamBlue4": "_-p4h",
-    "TeamYellow1": "_-S1Z", "TeamYellow2": "_-a6H", "TeamYellow3": "_-Kg", "TeamYellow4": "_-U1P",
-    "TeamPurple1": "_-CN", "TeamPurple2": "_-T2b", "TeamPurple3": "_-ng", "TeamPurple4": "_-865",
-}
 
 TEAM_SLOT_LABELS = {
     "TeamRed1": "TeamRed 1", "TeamRed2": "TeamRed 2", "TeamRed3": "TeamRed 3", "TeamRed4": "TeamRed 4",
@@ -141,7 +133,7 @@ TEAM_SLOT_ORDER = [
 
 
 def get_team_identifiers():
-    return dict(DEFAULT_TEAM_PROPS)
+    return dict(get_team_props())
 
 
 def get_team_slot_options():
@@ -153,8 +145,6 @@ def get_team_slot_options():
     ]
 
 
-def get_identifiers():
-    return DEFAULT_CLASS, DEFAULT_VECTOR, DEFAULT_ARRAY
 
 
 def _as_list(value):
@@ -1029,7 +1019,7 @@ def uninstall_scheme(
             )
 
         log("--- Reinyectando en Brawlhalla (FFDec) ---")
-        import AppCodeInstaller as inj
+        from azumod.services import installer as inj
 
         inject_kwargs = {"log": log}
         if ffdec_path:
@@ -1100,7 +1090,7 @@ def install_team_scheme_and_inject(
     if not VERBOSE_LOG:
         log = _silent
     try:
-        if team_slot not in DEFAULT_TEAM_PROPS:
+        if team_slot not in get_team_props():
             return {
                 "success": False,
                 "message": f'"{team_slot}" no es un slot de equipo valido.',
@@ -1134,7 +1124,7 @@ def install_team_scheme_and_inject(
             }
 
         log("--- Inyectando en Brawlhalla (FFDec) ---")
-        import AppCodeInstaller as inj
+        from azumod.services import installer as inj
 
         inject_kwargs = {"log": log}
         if ffdec_path:
@@ -1215,7 +1205,7 @@ def uninstall_team_scheme(
             }
 
         log("--- Reinyectando en Brawlhalla (FFDec) ---")
-        import AppCodeInstaller as inj
+        from azumod.services import installer as inj
 
         inject_kwargs = {"log": log}
         if ffdec_path:
@@ -1254,7 +1244,7 @@ def uninstall_team_scheme(
 
 def reset_all_schemes(base_dir, ffdec_path=None, swf_path=None, log=print):
     try:
-        import AppCodeInstaller as inj
+        from azumod.services import installer as inj
 
         log("--- Ubicando el swf y su backup ---")
         try:
@@ -1331,7 +1321,7 @@ def reinject_installed(base_dir, log=print, ffdec_path=None, swf_path=None, clas
         log(f"--- Pcode generado en: {output_path} ---")
 
         log("--- Inyectando en el swf (FFDec) ---")
-        import AppCodeInstaller as inj
+        from azumod.services import installer as inj
 
         inject_kwargs = {"log": log}
         if ffdec_path:
@@ -1410,7 +1400,7 @@ def install_scheme_and_inject(
             }
 
         log("--- Inyectando en Brawlhalla (FFDec) ---")
-        import AppCodeInstaller as inj
+        from azumod.services import installer as inj
 
         inject_kwargs = {"log": log}
         if ffdec_path:

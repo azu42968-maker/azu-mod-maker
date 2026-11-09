@@ -64,7 +64,7 @@ LOGFILE = _log_path()
 
 def _default_swf_path():
     try:
-        from AppCodeInstaller import find_brawlhalla_dir
+        from azumod.services.installer import find_brawlhalla_dir
         game_dir = find_brawlhalla_dir()
         if game_dir is not None:
             candidate = game_dir / BRAWLHALLA_AIR_SWF_NAME
@@ -375,56 +375,26 @@ def patch_allinone(as_path, allinone_path):
         fail(str(e), code=2)
 
 
-def write_identifiers_to_allinone(class_name, vector_name, array_name, allinone_path, log=log):
-    with open(allinone_path, "r", encoding="utf-8") as f:
-        text = f.read()
-
-    new_text, n1 = re.subn(r'^DEFAULT_CLASS\s*=\s*".*?"', f'DEFAULT_CLASS = "{class_name}"', text, count=1, flags=re.M)
-    new_text, n2 = re.subn(r'^DEFAULT_VECTOR\s*=\s*".*?"', f'DEFAULT_VECTOR = "{vector_name}"', new_text, count=1, flags=re.M)
-    new_text, n3 = re.subn(r'^DEFAULT_ARRAY\s*=\s*".*?"', f'DEFAULT_ARRAY = "{array_name}"', new_text, count=1, flags=re.M)
-
-    if not (n1 and n2 and n3):
-        raise UpdateError(f"no encontre DEFAULT_CLASS/DEFAULT_VECTOR/DEFAULT_ARRAY en {allinone_path}")
-
+def write_identifiers_to_allinone(class_name, vector_name, array_name, allinone_path=None, log=log):
+    """Compat: ahora guarda en identifiers.json (allinone_path se ignora)."""
+    from azumod.services import identifiers as ids
+    cur = ids.load()
+    changed = ids.save(class_name, vector_name, array_name, cur.get("team", {}))
     log(f'ColorSwapClass="{class_name}" Vector="{vector_name}" Array="{array_name}"')
-    if new_text != text:
-        with open(allinone_path, "w", encoding="utf-8") as f:
-            f.write(new_text)
-        log(f"AppAllInOne.py actualizado: {allinone_path}")
-        return True
-
-    log("AppAllInOne.py ya estaba al dia, sin cambios.")
-    return False
+    log("Identificadores guardados." if changed else "Identificadores ya al dia.")
+    return changed
 
 
 _TEAM_PROPS_BLOCK_RE = re.compile(r'DEFAULT_TEAM_PROPS\s*=\s*\{.*?\n\}', re.DOTALL)
 
 
-def write_team_identifiers_to_allinone(team_map, allinone_path, log=log):
-    with open(allinone_path, "r", encoding="utf-8") as f:
-        text = f.read()
-
-    pairs = list(team_map.items())
-    lines = ["DEFAULT_TEAM_PROPS = {"]
-    for i in range(0, len(pairs), 4):
-        row = ", ".join(f'"{k}": "{v}"' for k, v in pairs[i:i + 4])
-        lines.append(f"    {row},")
-    lines.append("}")
-    new_block = "\n".join(lines)
-
-    new_text, n = _TEAM_PROPS_BLOCK_RE.subn(new_block, text, count=1)
-    if n == 0:
-        raise UpdateError(f"no encontre DEFAULT_TEAM_PROPS en {allinone_path}")
-
+def write_team_identifiers_to_allinone(team_map, allinone_path=None, log=log):
+    """Compat: ahora guarda en identifiers.json (allinone_path se ignora)."""
+    from azumod.services import identifiers as ids
+    cur = ids.load()
+    changed = ids.save(cur["class"], cur["vector"], cur["array"], team_map)
     log(f"DEFAULT_TEAM_PROPS actualizado ({len(team_map)} slots)")
-    if new_text != text:
-        with open(allinone_path, "w", encoding="utf-8") as f:
-            f.write(new_text)
-        log(f"AppAllInOne.py (team colors) actualizado: {allinone_path}")
-        return True
-
-    log("DEFAULT_TEAM_PROPS ya estaba al dia, sin cambios.")
-    return False
+    return changed
 
 
 def main():
